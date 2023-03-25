@@ -1,4 +1,5 @@
 {
+  "ignorePatterns": ["tailwind.config.js", "postcss.config.js", "next.config.js"],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint", "prettier", "unused-imports"],
   "extends": [

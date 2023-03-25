@@ -4,10 +4,10 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        inter: ['Inter', 'sans-serif'],
-      },
-    },
+        inter: ['Inter', 'sans-serif']
+      }
+    }
   },
   plugins: [],
-  darkMode: false, // or 'media' or 'class'
-};
+  darkMode: 'media' // or 'media' or 'class'
+}
