@@ -12,4 +12,6 @@
   scroll-behavior: smooth;
   font-family: 'Inter', sans-serif;
   list-style: none;
+  background-color: rgb(49 46 129 / 1); /* bg-indigo-900 */
+  color: rgb(243 244 246 /1); /* text-gray-100 */
 }
