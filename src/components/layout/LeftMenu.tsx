@@ -11,7 +11,7 @@ type ButtonsI = {
 
 const IconToRender = (props: ButtonsI) => {
   const leftMenu = useLeftMenu()
-  return leftMenu.isOpen ? <Maximize {...props} /> : <Minimize {...props} />
+  return leftMenu.isOpen ? <Minimize {...props} /> : <Maximize {...props} />
 }
 
 export const LeftMenu: FC = () => {
