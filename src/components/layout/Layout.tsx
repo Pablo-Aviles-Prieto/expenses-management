@@ -1,5 +1,6 @@
 import type { FC } from 'react'
-import { Header } from './Header'
+import { LeftMenuProvider } from '@/contexts'
+import { Content } from './Content'
 import { LeftMenu } from './LeftMenu'
 
 type Props = {
@@ -9,9 +10,10 @@ type Props = {
 export const Layout: FC<Props> = ({ children }) => {
   return (
     <div className="relative">
-      <Header />
-      <LeftMenu />
-      <div className="mx-12 my-6">{children}</div>
+      <LeftMenuProvider>
+        <LeftMenu />
+        <Content>{children}</Content>
+      </LeftMenuProvider>
     </div>
   )
 }

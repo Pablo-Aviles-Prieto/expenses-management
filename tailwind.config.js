@@ -5,6 +5,9 @@ module.exports = {
     extend: {
       fontFamily: {
         inter: ['Inter', 'sans-serif']
+      },
+      transitionProperty: {
+        spacing: 'margin, padding'
       }
     }
   },
