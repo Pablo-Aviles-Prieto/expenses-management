@@ -14,7 +14,7 @@ export const Content: FC<Props> = ({ children }) => {
   return (
     <div className={`transition-spacing duration-500 ease-out ${leftMargin}`}>
       <Header classes="px-12" />
-      <div className="mx-12 my-6">{children}</div>
+      <div className="h-full px-12 py-6">{children}</div>
     </div>
   )
 }

@@ -1,5 +1,8 @@
 import type { FC } from 'react'
+import { SummaryLanding } from '@/components/SummaryLanding'
 
-const Home: FC = () => <h1 className="text-3xl font-bold font-inter">Hello world</h1>
+const Home: FC = () => {
+  return <SummaryLanding />
+}
 
 export default Home
