@@ -2,8 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import jwt from 'jsonwebtoken'
 import { DecodedUser, ExtendedRequest } from '@/interfaces'
 
-const authJWTMiddleware = (handler: (req: ExtendedRequest, res: NextApiResponse) => void) => {
-  return (req: NextApiRequest, res: NextApiResponse) => {
+const authJWTMiddleware = (handler: (req: ExtendedRequest, res: NextApiResponse) => Promise<void>) => {
+  return async (req: NextApiRequest, res: NextApiResponse) => {
     const token = req.headers.authorization?.replace('Bearer ', '')
 
     if (!token) {
