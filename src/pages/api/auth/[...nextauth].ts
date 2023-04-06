@@ -18,14 +18,11 @@ export default NextAuth({
         const client = await clientPromise
         const user = (await client.db().collection('users').findOne({ email: credentials?.email })) as IUser | null
         if (!user) return null
-
         const returnedUser = {
           id: user._id.toString(),
           name: user.name,
           email: user.email
         }
-        console.log('returnedUser', returnedUser)
-
         return returnedUser
       },
       credentials: {
