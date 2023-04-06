@@ -8,11 +8,9 @@ interface DBENVI {
   DB_PROTOCOL: string
 }
 
-let cachedDb: mongoose.mongo.Db | null = null
-
-export async function getDb(): Promise<mongoose.mongo.Db> {
-  if (cachedDb) {
-    return cachedDb
+export async function connectDb(): Promise<void> {
+  if (mongoose.connection.readyState) {
+    return
   }
 
   const {
@@ -41,12 +39,9 @@ export async function getDb(): Promise<mongoose.mongo.Db> {
 
   const connection = await mongoose.connect(databaseUrl)
 
-  cachedDb = connection.connection.db
-
   console.log(
     `Connected to Mongo! (${OVERRIDE_NODE_ENV === 'development' ? 'DEV DB' : 'PROD DB'}) Database name: ${
-      cachedDb?.namespace ?? 'NONE'
+      connection.connection.db.namespace ?? 'NONE'
     }`
   )
-  return cachedDb
 }

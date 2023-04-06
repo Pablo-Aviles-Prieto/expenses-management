@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import jwt from 'jsonwebtoken'
-import { DecodedUser, ExtendedRequest } from '@/interfaces'
+import { DecodedUser, ExtendedApiRequest } from '@/interfaces'
 
-const authJWTMiddleware = (handler: (req: ExtendedRequest, res: NextApiResponse) => Promise<void>) => {
+const authJWTMiddleware = (handler: (req: ExtendedApiRequest, res: NextApiResponse) => Promise<void>) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     const token = req.headers.authorization?.replace('Bearer ', '')
 
@@ -14,9 +14,9 @@ const authJWTMiddleware = (handler: (req: ExtendedRequest, res: NextApiResponse)
       const decoded = jwt.verify(token, process.env.JWT_SECRET ?? '')
 
       if (typeof decoded === 'string') throw new Error()
-      ;(req as ExtendedRequest).user = decoded as DecodedUser
+      ;(req as ExtendedApiRequest).user = decoded as DecodedUser
 
-      return handler(req as ExtendedRequest, res)
+      return handler(req as ExtendedApiRequest, res)
     } catch (error) {
       console.log('error', error)
       return res.status(401).json({ message: 'Invalid auth token' })

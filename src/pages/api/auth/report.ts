@@ -4,16 +4,12 @@ import { getSession } from 'next-auth/react'
 
 const endpointController = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req })
-  const userEmail = req.query.email
-
-  console.log('session expenses/report', session)
-  console.log('userEmail', userEmail)
-  console.log('session?.user?.email', session?.user?.email)
+  console.log('session auth/report', session)
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  console.log('session?.user?.email !== req.body.email', session?.user?.email !== userEmail)
+  console.log('req.body.email', req.body.email)
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  if (!session || session?.user?.email !== userEmail) {
+  if (!session || session?.user?.email !== req.body.email) {
     res.status(401).json({ message: 'Unauthorized' })
     return
   }

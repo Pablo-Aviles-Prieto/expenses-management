@@ -1,13 +1,23 @@
 import { Layout } from '@/components/layout/Layout'
-import type { AppProps } from 'next/app'
+import type { AppProps as NextAppProps } from 'next/app'
 import type { FC } from 'react'
 import '@/styles/global.css'
+import { SessionProvider } from 'next-auth/react'
 
-const App: FC<AppProps> = ({ Component, pageProps }) => {
+interface AppPropsI extends NextAppProps {
+  pageProps: {
+    session?: unknown
+  } & NextAppProps['pageProps']
+}
+
+const App: FC<AppPropsI> = ({ Component, pageProps }: AppPropsI) => {
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    <SessionProvider session={pageProps.session}>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </SessionProvider>
   )
 }
 

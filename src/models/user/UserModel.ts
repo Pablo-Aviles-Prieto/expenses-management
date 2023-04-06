@@ -1,7 +1,8 @@
 /* eslint-disable max-len */
-import { Schema, model, Document } from 'mongoose'
+import { Schema, model, Document, ObjectId } from 'mongoose'
 
-interface IUser extends Document {
+export interface IUser extends Document {
+  _id: ObjectId
   photo: string
   name: string
   email: string
