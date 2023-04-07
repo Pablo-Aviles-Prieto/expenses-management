@@ -3,7 +3,7 @@ import { ExtendedRequest, ExtendedApiRequest } from '@/interfaces'
 // import authJWTMiddleware from '@/utils/authJWTMiddleware'
 // import { getDb } from '@/config/database'
 // import mongoose from 'mongoose'
-import { UserModel } from '@/models'
+import UserModel from '@/models/user/UserModel'
 
 type Data = {
   result: any[]

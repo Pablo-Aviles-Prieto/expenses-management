@@ -1,4 +1,4 @@
-import { type MutableRefObject, useCallback, useRef, useState } from 'react'
+import { type MutableRefObject, useCallback, useRef, useState, useEffect } from 'react'
 import { keyIsEmptyArray } from '@/utils/validations'
 import { useFetch } from './useFetch'
 
@@ -10,7 +10,6 @@ type Args<T> = {
   url: string | null
   args?: Record<string, any>
   fetchOnMount?: boolean
-  token: string
   checkOptions?: {
     keyToCheck?: T extends object ? keyof T : never
     checkIsEmpty?: MutableRefObject<boolean>
@@ -23,33 +22,51 @@ export type MakeRequestParams = {
   checkIsEmpty?: boolean
 }
 
-export const useQuery = <T,>({ url, args, token, fetchOnMount = true, checkOptions }: Args<T>) => {
-  const { keyToCheck, checkIsEmpty, checkOnMount = true } = checkOptions ?? {}
+const makeIsEmptyToast = () => {
+  // TODO: set toast
+  console.log('EMPTY search')
+  // notify(
+  //   <ToastContent type="informative" title="INFO" description="No results found for this search" />,
+  // )
+}
 
+export const useQuery = <T>({ url, args, fetchOnMount = true, checkOptions }: Args<T>) => {
+  const { keyToCheck, checkIsEmpty, checkOnMount = true } = checkOptions ?? {}
   const [data, setData] = useState<T | undefined>(undefined)
   const [errorState, setError] = useState<Error | undefined>(undefined)
   const [loading, setLoading] = useState(false)
-
   const renderCount = useRef(0)
   const { fetchWithToken } = useFetch()
 
+  if (renderCount.current === 0 && fetchOnMount) {
+    renderCount.current += 1
+  }
+
   const makeRequest = useCallback(
-    async (params?: MakeRequestParams) => {
-      const { signal, checkIsEmpty: checkedEmpty } = params || {}
+    async (params?: MakeRequestParams, dynamicArgs?: Record<string, any>) => {
+      // eslint-disable-next-line @typescript-eslint/no-shadow
+      const { signal, checkIsEmpty = true } = params || {}
 
       const shouldCheckIsEmpty = checkIsEmpty && (checkOnMount || renderCount.current > 0)
 
       if (url) {
         try {
           setLoading(true)
-          const response = await fetchWithToken<T>(url, token, {
+          setError(undefined)
+
+          const response = await fetchWithToken<T>(url, {
             ...(args || defaultArgs),
+            ...dynamicArgs,
             signal
           })
 
           const responseIsEmptyArray = Array.isArray(response) && response.length === 0
 
           const isEmpty = keyIsEmptyArray(response, keyToCheck) || responseIsEmptyArray
+
+          if (shouldCheckIsEmpty && isEmpty) {
+            makeIsEmptyToast()
+          }
 
           setData(response)
         } catch (error) {
@@ -79,22 +96,29 @@ export const useQuery = <T,>({ url, args, token, fetchOnMount = true, checkOptio
     setLoading(false)
   }
 
-  // useEffect(() => {
-  //   const abortController = new AbortController()
+  useEffect(() => {
+    const abortController = new AbortController()
 
-  //   if (fetchOnMount || renderCount.current > 0) {
-  //     makeRequest({ signal: abortController.signal, checkIsEmpty: checkIsEmpty?.current })
+    if (fetchOnMount || renderCount.current > 1) {
+      // eslint-disable-next-line no-void
+      void makeRequest({ signal: abortController.signal, checkIsEmpty: checkIsEmpty?.current })
 
-  //     if (checkIsEmpty?.current === false) {
-  //       checkIsEmpty.current = true
-  //     }
+      if (checkIsEmpty?.current === false) {
+        checkIsEmpty.current = true
+      }
 
-  //     return () => {
-  //       abortController.abort()
-  //     }
-  //   }
-  //   renderCount.current += 1
-  // }, [makeRequest, fetchOnMount, checkIsEmpty])
+      return () => {
+        abortController.abort()
+      }
+    }
+    renderCount.current += 1
+  }, [makeRequest, fetchOnMount, checkIsEmpty])
 
-  return { data, error: errorState, loading, refetch: makeRequest, refreshQuery }
+  return {
+    data,
+    error: errorState,
+    loading,
+    refetch: (dynamicArgs?: Record<string, any>) => makeRequest(undefined, dynamicArgs),
+    refreshQuery
+  }
 }

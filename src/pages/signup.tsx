@@ -3,6 +3,10 @@ import React, { useState } from 'react'
 import { Formik, Form, FormikHelpers, FormikErrors } from 'formik'
 import { DebouncedFieldText, FieldText } from '@/components/Form'
 import { SignupSchema, PasswordSchema } from '@/validations/auth'
+import { useQuery } from '@/hooks/useQuery'
+
+const URL_API = process.env.API_URL
+const URL = `${URL_API || ''}/api/user/register`
 
 const INITIAL_VALUES = {
   name: '',
@@ -18,18 +22,43 @@ type btnDisabledI = {
   debouncedPasswordError?: string
 }
 
+type ResponseI = {
+  email: string
+  id: string
+  name: string
+  photo: string
+  signupDate: string
+}
+
 const SignIn = () => {
   const [debouncedPwrdError, setDebouncedPwrdError] = useState<string | undefined>(undefined)
+  const {
+    data,
+    error,
+    loading,
+    refetch: saveNewUser
+  } = useQuery<ResponseI>({
+    url: URL,
+    fetchOnMount: false
+  })
+  console.log('data', data)
+  console.log('loading', loading)
+  console.log('error response', error)
 
-  const handleSubmit = (values: FormValues, actions: FormikHelpers<FormValues>) => {
-    console.log('Form data', values)
-    // Handle form submission, e.g. call your signUp function
+  const handleSubmit = async (values: FormValues, actions: FormikHelpers<FormValues>) => {
+    const response = await saveNewUser({
+      method: 'POST',
+      body: JSON.stringify(values)
+    })
+    console.log('response', response)
     actions.resetForm()
   }
 
   const bntIsDisabled = ({ isSubmitting, errorsObj, debouncedPasswordError }: btnDisabledI) => {
     return isSubmitting || Object.keys(errorsObj).length > 0 || !!debouncedPasswordError
   }
+
+  if (loading) return <h1 className="text-9xl">Registering user</h1>
 
   return (
     <Formik initialValues={INITIAL_VALUES} validationSchema={SignupSchema} onSubmit={handleSubmit}>
