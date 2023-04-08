@@ -1,11 +1,13 @@
 /* eslint-disable max-len */
-import React, { useState } from 'react'
-import { Formik, Form, FormikHelpers, FormikErrors } from 'formik'
+import { FC, useState } from 'react'
+import { Formik, Form, FormikHelpers } from 'formik'
 import { DebouncedFieldText, FieldText } from '@/components/Form'
 import { SignupSchema, PasswordSchema } from '@/validations/auth'
 import { useQuery } from '@/hooks/useQuery'
+import { formikBtnIsDisabled } from '@/utils'
+import { ResponseUserI } from '@/interfaces'
+import { URL_API } from '@/utils/const'
 
-const URL_API = process.env.API_URL
 const URL = `${URL_API || ''}/api/user/register`
 
 const INITIAL_VALUES = {
@@ -16,34 +18,21 @@ const INITIAL_VALUES = {
 
 type FormValues = typeof INITIAL_VALUES
 
-type btnDisabledI = {
-  isSubmitting: boolean
-  errorsObj: FormikErrors<FormValues>
-  debouncedPasswordError?: string
-}
-
-type ResponseI = {
-  email: string
-  id: string
-  name: string
-  photo: string
-  signupDate: string
-}
-
-const SignIn = () => {
+const SignUp: FC = () => {
   const [debouncedPwrdError, setDebouncedPwrdError] = useState<string | undefined>(undefined)
   const {
     data,
     error,
     loading,
     refetch: saveNewUser
-  } = useQuery<ResponseI>({
+  } = useQuery<ResponseUserI>({
     url: URL,
-    fetchOnMount: false
+    fetchOnMount: false,
+    useToken: false
   })
   console.log('data', data)
-  console.log('loading', loading)
-  console.log('error response', error)
+  // console.log('loading', loading)
+  // console.log('error response', error)
 
   const handleSubmit = async (values: FormValues, actions: FormikHelpers<FormValues>) => {
     const response = await saveNewUser({
@@ -52,10 +41,6 @@ const SignIn = () => {
     })
     console.log('response', response)
     actions.resetForm()
-  }
-
-  const bntIsDisabled = ({ isSubmitting, errorsObj, debouncedPasswordError }: btnDisabledI) => {
-    return isSubmitting || Object.keys(errorsObj).length > 0 || !!debouncedPasswordError
   }
 
   if (loading) return <h1 className="text-9xl">Registering user</h1>
@@ -80,12 +65,12 @@ const SignIn = () => {
             <div className="flex items-center justify-between">
               <button
                 className={`px-4 py-2 font-bold text-white rounded focus:outline-none focus:shadow-outline ${
-                  bntIsDisabled({ isSubmitting, errorsObj: errors, debouncedPasswordError: debouncedPwrdError })
+                  formikBtnIsDisabled({ isSubmitting, errorsObj: errors, debouncedPasswordError: debouncedPwrdError })
                     ? 'bg-gray-500'
                     : 'bg-blue-500 hover:bg-blue-700'
                 }`}
                 type="submit"
-                disabled={bntIsDisabled({
+                disabled={formikBtnIsDisabled({
                   isSubmitting,
                   errorsObj: errors,
                   debouncedPasswordError: debouncedPwrdError
@@ -101,4 +86,4 @@ const SignIn = () => {
   )
 }
 
-export default SignIn
+export default SignUp

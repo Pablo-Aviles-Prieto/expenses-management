@@ -1,3 +1,5 @@
 export type { LeftMenuContextData } from './LeftMenuContextData'
 export type { ExtendedApiRequest, ExtendedRequest } from './ExtendedRequest'
 export type { DecodedUser } from './ExtendedRequest'
+export type { ResponseUserI } from './ResponseUserI'
+export type { CustomSessionI } from './CustomSessionI'

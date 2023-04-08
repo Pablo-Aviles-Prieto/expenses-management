@@ -1,10 +1,12 @@
-import NextAuth from 'next-auth'
+import NextAuth, { User as NextAuthUser, DefaultSession } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter'
 import clientPromise from '@/config/mongoDB'
 import { MongoClient } from 'mongodb'
 import { IUser } from '@/models'
+import { JWT, encode } from 'next-auth/jwt'
+import { CustomSessionI } from '@/interfaces'
 
 export default NextAuth({
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
@@ -21,7 +23,8 @@ export default NextAuth({
         const returnedUser = {
           id: user._id.toString(),
           name: user.name,
-          email: user.email
+          email: user.email,
+          image: user.image
         }
         return returnedUser
       },
@@ -44,6 +47,41 @@ export default NextAuth({
   },
   jwt: {
     secret: process.env.JWT_SECRET
+  },
+  callbacks: {
+    // eslint-disable-next-line @typescript-eslint/require-await
+    async jwt({ token, user }: { token: JWT; user?: NextAuthUser }) {
+      // This callback is called whenever a JWT is created or updated.
+      // When signing in, `user` will contain the user data returned by the `authorize` function.
+      if (user) {
+        token.id = user.id
+        token.name = user.name
+        token.email = user.email
+        token.image = user.image
+      }
+      return token
+    },
+    // eslint-disable-next-line @typescript-eslint/require-await
+    async session({ session, token }: { session: DefaultSession; token: JWT }) {
+      // This callback is called whenever the session data is accessed.
+      // You can include additional user information from the `token` object.
+      if (session.user) {
+        const jwtString = await encode({ token, secret: process.env.JWT_SECRET || '' })
+        const customSession: Partial<CustomSessionI> & DefaultSession = {
+          ...session,
+          accessToken: jwtString,
+          user: {
+            ...session.user,
+            id: token.id as string,
+            name: token.name,
+            email: token.email,
+            image: token.image as string
+          }
+        }
+        return customSession
+      }
+      return session
+    }
   },
   debug: false
 })

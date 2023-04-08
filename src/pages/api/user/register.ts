@@ -20,8 +20,11 @@ const endpointController = async (req: NextApiRequest, res: NextApiResponse) => 
 
   const { name, email, password } = req.body as ReqObjI
 
-  // TODO: improve error
-  if (!name || !email || !password) throw new Error('Fill all the inputs')
+  // TODO: improve error's
+  if (!name || !email || !password) {
+    res.status(400).json({ error: 'Missing data to handle register' })
+    return
+  }
 
   try {
     await connectDb()
