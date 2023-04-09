@@ -1,15 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { hash, genSalt } from 'bcrypt'
+import { hash } from 'bcrypt'
 import connectDb from '@/config/mongooseDB'
 import UserModel from '@/models/user/UserModel'
+import { bcryptSalt } from '@/utils/genBcryptSalt'
 
 type ReqObjI = {
   name: string
   email: string
   password: string
+  image?: string
 }
-
-const { BCRYPT_SALT } = process.env
 
 const endpointController = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
@@ -18,7 +18,7 @@ const endpointController = async (req: NextApiRequest, res: NextApiResponse) => 
     return
   }
 
-  const { name, email, password } = req.body as ReqObjI
+  const { name, email, password, image } = req.body as ReqObjI
 
   // TODO: improve error's
   if (!name || !email || !password) {
@@ -35,11 +35,11 @@ const endpointController = async (req: NextApiRequest, res: NextApiResponse) => 
       return
     }
 
-    const salt = await genSalt(+BCRYPT_SALT!)
+    const salt = await bcryptSalt()
     const hashedPassword = await hash(password, salt)
 
     const newUser = new UserModel({
-      image: 'default-photo-url', // replace with actual photo URL or logic
+      image: image || 'http://localhost:3000/images/default-avatar.jpg',
       name,
       email,
       password: hashedPassword,

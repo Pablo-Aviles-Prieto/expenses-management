@@ -28,6 +28,7 @@ const endpointController = async (req: NextApiRequest, res: NextApiResponse) => 
 
   try {
     const tokenNext = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+    console.log('req', req.cookies)
     console.log('tokenNext', tokenNext)
 
     if (!tokenNext || tokenNext.id !== id) {

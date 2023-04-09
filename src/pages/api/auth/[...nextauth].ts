@@ -7,11 +7,11 @@ import { MongoClient } from 'mongodb'
 import { IUser } from '@/models'
 import { JWT, encode } from 'next-auth/jwt'
 import { CustomSessionI } from '@/interfaces'
+import { compare } from 'bcrypt'
 
 export default NextAuth({
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
   adapter: MongoDBAdapter(clientPromise as Promise<MongoClient>),
-  // adapter: MongooseAdapter(connectDb()).getAdapter,
   providers: [
     CredentialsProvider({
       id: 'user-pw',
@@ -20,6 +20,8 @@ export default NextAuth({
         const client = await clientPromise
         const user = (await client.db().collection('users').findOne({ email: credentials?.email })) as IUser | null
         if (!user) return null
+        const passwordMatches = await compare(credentials?.password || '', user.password)
+        if (!passwordMatches) return null
         const returnedUser = {
           id: user._id.toString(),
           name: user.name,

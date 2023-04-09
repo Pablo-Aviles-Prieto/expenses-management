@@ -1,35 +1,56 @@
 // import { useQuery } from '@/hooks/useQuery'
-// import { useRouter } from 'next/router'
-// import { ResponseUserI } from '@/interfaces'
-// import { URL_API } from '@/utils/const'
+import { useRouter } from 'next/router'
+import { ResponseUserI } from '@/interfaces'
+import { URL_API } from '@/utils/const'
+import { NextPageContext } from 'next'
+import { FC, useEffect } from 'react'
 
-// const URL = `${URL_API || ''}/api/user`
+const URL = `${URL_API || ''}/api/user`
 
-// type ResponseI = {
-//   user: ResponseUserI
-// }
+type IProps = {
+  userData: ResponseI | undefined
+}
 
-const UserDetails = () => {
-  console.log('check1')
-  // const router = useRouter()
-  // const { userId } = router.query
-  // const { data } = useQuery<ResponseI>({ url: `${URL}/${userId as string}` })
-  // console.log('data', data)
-  // console.log('loading', loading)
+type ResponseI = {
+  user?: ResponseUserI
+  error?: string
+}
 
-  // if (loading) {
-  //   return <div className="text-9xl">Loading details ...</div>
-  // }
+export async function getServerSideProps(context: NextPageContext) {
+  const { userId } = context.query
+  const cookies = context.req?.headers.cookie || ''
 
-  // if (error) {
-  //   console.log('ERROR', error)
-  //   // eslint-disable-next-line no-void
-  //   void router.push('/')
-  // }
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  if (typeof userId !== 'string') return
+  const res: Response = await fetch(`${URL}/${userId}`, {
+    headers: {
+      cookie: cookies
+    }
+  })
+  const data = (await res.json()) as ResponseI
+
+  return {
+    props: {
+      userData: data
+    }
+  }
+}
+
+const UserDetails: FC<IProps> = ({ userData }) => {
+  const router = useRouter()
+  console.log('userData', userData)
+
+  useEffect(() => {
+    if (userData?.error) {
+      console.log('ERROR', userData.error)
+      // eslint-disable-next-line no-void
+      void router.push('/')
+    }
+  }, [userData, router])
 
   return (
     <div>
-      <h1>{/* Welcome back {data?.user.name} ({userId}) */}</h1>
+      <h1>Welcome back {userData?.user?.name}</h1>
       {/* Render user details here */}
     </div>
   )

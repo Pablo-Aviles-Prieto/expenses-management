@@ -1,6 +1,6 @@
 /* eslint-disable no-void */
 /* eslint-disable max-len */
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Formik, Form, FormikHelpers } from 'formik'
 import { FieldText } from '@/components/Form'
 import { LoginSchema } from '@/validations/auth'
@@ -18,9 +18,10 @@ type FormValues = typeof INITIAL_VALUES
 
 const Signin: FC = () => {
   const { data: session, status } = useCustomSession()
+  const [signInLoading, setSignInLoading] = useState(false)
+  const [credentialsError, setCredentialsError] = useState<string | boolean>(false)
   const router = useRouter()
   console.log('session', session)
-  console.log('status', status)
 
   useEffect(() => {
     if (session?.user) {
@@ -30,23 +31,33 @@ const Signin: FC = () => {
 
   const handleSubmit = async (values: FormValues, actions: FormikHelpers<FormValues>) => {
     try {
+      setSignInLoading(true)
       const response = await signIn('user-pw', {
         email: values.email,
         password: values.password,
-        redirect: false,
-        callbackUrl: 'http://localhost:3000'
+        redirect: false
       })
       if (response?.ok) {
         // The sign-in was successful.
         // You can handle the response object as needed, e.g., update the UI, redirect the user, etc.
         console.log('Sign-in successful:', response)
+        setCredentialsError(false)
       } else {
         // The sign-in failed.
         console.log('Sign-in failed:', response)
+        setCredentialsError('Check the credentials provided')
       }
+      setSignInLoading(false)
     } catch (error) {
+      // TODO: Handle toast (not using setCredentialsError since is a form warning)
+      setSignInLoading(false)
       console.log('Error during sign-in:', error)
     }
+  }
+
+  if (signInLoading || status === 'loading') {
+    // TODO: checkear como hacer q no acabe el loading y se vea el form.
+    return <h1 className="text-5xl">LOADING...</h1>
   }
 
   return (
@@ -73,6 +84,7 @@ const Signin: FC = () => {
                 Log in
               </button>
             </div>
+            {typeof credentialsError === 'string' && <p className="mt-4 text-red-500">{credentialsError}</p>}
           </Form>
         </div>
       )}

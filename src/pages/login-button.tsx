@@ -47,10 +47,7 @@ const LoginButton: React.FC = () => {
           <button
             type="button"
             onClick={async () => {
-              if (session?.user?.email) {
-                return fetchHandler(session.user.email)
-              }
-              return fetchHandler('')
+              return fetchHandler(session.user?.email || '')
             }}
           >
             Fetch /api/auth/report
