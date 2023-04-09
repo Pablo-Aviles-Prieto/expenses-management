@@ -1,16 +1,18 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable no-return-await */
 import type { FC } from 'react'
-import { signOut, useSession } from 'next-auth/react'
+import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import { Logout, Login } from '../icons'
+import { useCustomSession } from '@/hooks/useCustomSession'
+import { Logout, Login } from '../../icons'
+import { HeaderProfileImg } from './HeaderProfileImg'
 
 type PropsI = {
   classes?: string
 }
 
 export const Header: FC<PropsI> = ({ classes = '' }) => {
-  const { data: session, status } = useSession()
+  const { data: session, status } = useCustomSession()
   const router = useRouter()
 
   const loginClasses = 'transform group-hover:scale-110'
@@ -31,7 +33,7 @@ export const Header: FC<PropsI> = ({ classes = '' }) => {
       <div className="flex">
         {session?.user && (
           <div className="flex items-center gap-2 mr-10">
-            <div>Photo</div>
+            <HeaderProfileImg classes="w-8 h-8" data={session} />
             <div>{session?.user?.name}</div>
           </div>
         )}

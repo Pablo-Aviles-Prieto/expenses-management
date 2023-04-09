@@ -7,7 +7,7 @@ export const Menu: FC = () => {
   const { data: session } = useCustomSession()
   const router = useRouter()
 
-  const handleNavigate = () => {
+  const navigateToProfile = () => {
     if (!session?.user) {
       void router.push(`/user/signin`)
       return
@@ -15,11 +15,18 @@ export const Menu: FC = () => {
     void router.push(`/user/${session.user.id}/details`)
   }
 
+  const navigateToRegister = () => {
+    void router.push('/user/signup')
+  }
+
   return (
-    <div className="h-48 my-6">
+    <div className="flex flex-col h-48 gap-3 my-6">
       <p>Menu</p>
-      <button type="button" onClick={handleNavigate}>
-        Go to profile
+      <button type="button" onClick={navigateToProfile}>
+        {!session?.user ? 'Login' : 'My profile'}
+      </button>
+      <button type="button" onClick={navigateToRegister}>
+        Register
       </button>
     </div>
   )
