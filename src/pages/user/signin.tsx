@@ -22,11 +22,11 @@ type FormValues = typeof INITIAL_VALUES
 type IProvider = 'google'
 
 const Signin: FC = () => {
-  const { data: session } = useCustomSession()
+  const { data: session, status: statusSession } = useCustomSession()
   const [signInLoading, setSignInLoading] = useState(false)
   const [credentialsError, setCredentialsError] = useState<string | boolean>(false)
   const router = useRouter()
-  console.log('session', session)
+  console.log('statusSession', statusSession)
 
   useEffect(() => {
     if (session?.user) {
@@ -63,6 +63,10 @@ const Signin: FC = () => {
 
   const handleProviderAuth = async (provider: IProvider) => {
     await signIn(provider)
+  }
+
+  if (statusSession === 'authenticated') {
+    return <h1 className="text-5xl">Loading user data...</h1>
   }
 
   return (
