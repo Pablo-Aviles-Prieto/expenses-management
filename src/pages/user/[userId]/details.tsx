@@ -40,6 +40,7 @@ const UserDetails: FC<IProps> = ({ userData }) => {
 
   useEffect(() => {
     if (userData?.error) {
+      // TODO: toast error
       console.log('ERROR', userData.error)
       // eslint-disable-next-line no-void
       void router.push('/')
