@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import { useLeftMenu } from '@/hooks/useLeftMenu'
+import { useLeftMenu } from '@/hooks'
 import { Header } from './Header'
 
 type Props = {

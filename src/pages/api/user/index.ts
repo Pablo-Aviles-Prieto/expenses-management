@@ -5,6 +5,9 @@ type Data = {
   name: string
 }
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+const endpointController = (req: NextApiRequest, res: NextApiResponse<Data>) => {
+  console.log('test')
   res.status(200).json({ name: 'John Doe' })
 }
+
+export default endpointController
