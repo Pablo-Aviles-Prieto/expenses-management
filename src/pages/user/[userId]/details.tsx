@@ -1,4 +1,3 @@
-// import { useQuery } from '@/hooks/useQuery'
 import { useRouter } from 'next/router'
 import { ResponseUserI } from '@/interfaces'
 import { URL_API } from '@/utils/const'
@@ -38,7 +37,6 @@ export async function getServerSideProps(context: NextPageContext) {
 
 const UserDetails: FC<IProps> = ({ userData }) => {
   const router = useRouter()
-  console.log('userData', userData)
 
   useEffect(() => {
     if (userData?.error) {

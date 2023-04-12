@@ -37,7 +37,7 @@ export const useQuery = <T>({ url, args, fetchOnMount = true, useToken = true, c
   const [errorState, setError] = useState<Error | undefined>(undefined)
   const [loading, setLoading] = useState(false)
   const renderCount = useRef(0)
-  const { fetchOptionalToken } = useFetch()
+  const { fetchPetition } = useFetch()
 
   // if (renderCount.current === 0 && fetchOnMount) {
   //   renderCount.current += 1
@@ -56,7 +56,7 @@ export const useQuery = <T>({ url, args, fetchOnMount = true, useToken = true, c
           setLoading(true)
           setError(undefined)
 
-          const response = await fetchOptionalToken<T>(
+          const response = await fetchPetition<T>(
             url,
             {
               ...(args || defaultArgs),
@@ -93,7 +93,7 @@ export const useQuery = <T>({ url, args, fetchOnMount = true, useToken = true, c
         setLoading(false)
       }
     },
-    [url, args, fetchOptionalToken, keyToCheck, checkOnMount]
+    [url, args, fetchPetition, keyToCheck, checkOnMount]
   )
 
   const refreshQuery = () => {

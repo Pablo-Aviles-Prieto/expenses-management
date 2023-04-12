@@ -1,28 +1,17 @@
 /* eslint-disable max-len */
 import { useCallback } from 'react'
-// import { useCustomSession } from './useCustomSession'
 
 type ErrorI = {
   error: string
 }
 
 export function useFetch() {
-  // const { data: session } = useCustomSession()
-
-  const fetchOptionalToken = useCallback(
-    async <DataType = any>(
-      url: string,
-      args?: { [x: string]: any },
-      useToken = true,
-      jsonResponse = true
-    ): Promise<DataType> => {
+  const fetchPetition = useCallback(
+    async <DataType = any>(url: string, args?: { [x: string]: any }, jsonResponse = true): Promise<DataType> => {
       try {
         const res = await fetch(url, {
           ...args,
-          headers: {
-            // Authorization: useToken ? `Bearer ${session?.accessToken || ''}` : '',
-            'Content-Type': 'application/json'
-          }
+          headers: { 'Content-Type': 'application/json' }
         })
 
         if (!res.ok) {
@@ -45,5 +34,5 @@ export function useFetch() {
     []
   )
 
-  return { fetchOptionalToken }
+  return { fetchPetition }
 }
