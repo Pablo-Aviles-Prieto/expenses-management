@@ -1,4 +1,4 @@
-import { ToastContent, ToastOptions, UpdateOptions, toast } from 'react-toastify'
+import { ToastContent, ToastOptions, TypeOptions, toast, Id } from 'react-toastify'
 
 interface IToast {
   content?: ToastContent<JSX.Element>
@@ -6,36 +6,44 @@ interface IToast {
   options?: ToastOptions
 }
 
-interface IPromiseToast<DataType> {
-  promiseFn: Promise<DataType>
-  onPending: string
-  onSuccess?: UpdateOptions<DataType>
-  onError?: UpdateOptions<unknown>
+interface IUpdateToast {
+  toastId: Id
+  content: ToastContent
+  type: TypeOptions
+  otherOpts?: ToastOptions
 }
 
 export const useToast = () => {
+  const defaultOptions: ToastOptions = {
+    position: 'top-right',
+    autoClose: 2500,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: 'dark',
+    type: 'default'
+  }
+
   const showToast = ({ content, msg = '', options = {} }: IToast) => {
-    const defaultOptions: ToastOptions = {
-      position: 'top-right',
-      autoClose: 2500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'dark',
-      type: 'default'
-    }
     toast(msg || content, { ...defaultOptions, ...options })
   }
 
-  const promiseToast = async <T>({ promiseFn, onPending, onSuccess, onError }: IPromiseToast<T>) => {
-    await toast.promise(promiseFn, {
-      pending: onPending,
-      success: onSuccess,
-      error: onError
+  const showLoadingToast = ({ content, msg = '', options = {} }: IToast) => {
+    const toastId = toast.loading(msg || content, { ...defaultOptions, ...options })
+    return toastId
+  }
+
+  const updateToast = ({ toastId, content, type, otherOpts }: IUpdateToast) => {
+    toast.update(toastId, {
+      autoClose: 2000,
+      render: content,
+      type,
+      isLoading: false,
+      ...otherOpts
     })
   }
 
-  return { showToast, promiseToast }
+  return { showToast, showLoadingToast, updateToast }
 }

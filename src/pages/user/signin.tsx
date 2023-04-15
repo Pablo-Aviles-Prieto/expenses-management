@@ -6,13 +6,13 @@ import { Formik, Form } from 'formik'
 import { FieldText } from '@/components/Form'
 import { LoginSchema } from '@/validations/auth'
 import { formikBtnIsDisabled } from '@/utils'
-import { signIn } from 'next-auth/react'
+import { getSession, signIn } from 'next-auth/react'
 import { useCustomSession } from '@/hooks/useCustomSession'
 import { useRouter } from 'next/router'
 import { Spinner } from '@/components/styles'
 import { GoogleSVG } from '@/components/icons'
 import { useToast } from '@/hooks'
-import { toast } from 'react-toastify'
+import { CustomSessionI } from '@/interfaces'
 
 const INITIAL_VALUES = {
   email: '',
@@ -28,7 +28,7 @@ const Signin: FC = () => {
   const [signInLoading, setSignInLoading] = useState(false)
   const [credentialsError, setCredentialsError] = useState<string | boolean>(false)
   const router = useRouter()
-  const { showToast, promiseToast } = useToast()
+  const { showLoadingToast, updateToast } = useToast()
 
   useEffect(() => {
     if (session?.user) {
@@ -37,80 +37,56 @@ const Signin: FC = () => {
   }, [session])
 
   const handleSubmit = async (values: FormValues) => {
+    const signInToast = showLoadingToast({ msg: 'Signing in...' })
     setSignInLoading(true)
-
-    await promiseToast({
-      promiseFn: signIn('user-pw', {
+    try {
+      const response = await signIn('user-pw', {
         email: values.email,
         password: values.password,
         redirect: false
-      }),
-      onPending: 'Signing in...',
-      onSuccess: {
-        render: response => {
-          if (response.data?.ok) {
-            setCredentialsError(false)
-            // TODO: Should make a setTimeout so whenever the user successfully logs in
-            // it waits until the session has the ID data to make the redirect
-            return 'Signed in succesfully'
-          }
-          if (response.data?.error === 'CredentialsSignin') {
-            toast.error('Please, check the credentials provided')
-            setCredentialsError('Incorrect credentials')
-            return
-            // setCredentialsError('Incorrect credentials')
-            // return 'Please, check the credentials provided'
-          }
-          setCredentialsError('Incorrect credentials')
-          return 'Sign-in failed. Please try again later!'
+      })
+      if (response?.ok) {
+        const updatedSession = (await getSession()) as CustomSessionI | null
+        if (updatedSession?.user) {
+          await router.push(`/user/${updatedSession.user.id}/details`)
+          updateToast({
+            toastId: signInToast,
+            content: 'Signed in successfully',
+            type: 'success',
+            otherOpts: { autoClose: 1500 }
+          })
+          setCredentialsError(false)
+          setSignInLoading(false)
         }
-      },
-      onError: {
-        render: error => {
-          // Not using setCredentialsError since its a form error state
-          console.log('Error during sign-in:', error)
-          return `Unexpected error during sign-in. Please try again later`
-        }
+      } else {
+        updateToast({
+          toastId: signInToast,
+          content: 'Please, check your credentials',
+          type: 'error',
+          otherOpts: { autoClose: 1500 }
+        })
+        setCredentialsError('Check the credentials provided')
       }
-    })
-
-    setSignInLoading(false)
+      setSignInLoading(false)
+    } catch (error) {
+      updateToast({
+        toastId: signInToast,
+        content: 'There was an error. Please try again later',
+        type: 'error'
+      })
+      setSignInLoading(false)
+      console.log('Error during sign-in:', error)
+    }
   }
 
-  // const handleSubmit = async (values: FormValues) => {
-  //   try {
-  //     setSignInLoading(true)
-  //     const response = await signIn('user-pw', {
-  //       email: values.email,
-  //       password: values.password,
-  //       redirect: false
-  //     })
-  //     if (response?.ok) {
-  //       // The sign-in was successful.
-  //       // TODO: Should make a setTimeout so whenever the user succesfully logs in
-  //       // it waits until the session has the ID data to make the redirect
-  //       showToast({ msg: 'Welcome back' })
-  //       console.log('Sign-in successful:', response)
-  //       setCredentialsError(false)
-  //     } else {
-  //       // The sign-in failed.
-  //       console.log('Sign-in failed:', response)
-  //       setCredentialsError('Check the credentials provided')
-  //     }
-  //     setSignInLoading(false)
-  //   } catch (error) {
-  //     // TODO: Handle toast (not using setCredentialsError since is a form warning)
-  //     setSignInLoading(false)
-  //     console.log('Error during sign-in:', error)
-  //   }
-  // }
-
-  const handleProviderAuth = async (provider: IProvider) => {
-    await signIn(provider)
+  const handleProviderAuth = (provider: IProvider) => {
+    void signIn(provider, { redirect: false })
   }
 
-  if (statusSession === 'authenticated') {
-    return <h1 className="text-5xl">Loading user data...</h1>
+  // TODO: set spinner
+  // This only happens when a logged user visit this page or redirected by Oauth
+  if (statusSession === 'authenticated' && !signInLoading) {
+    return <h1 className="text-5xl">Loading personal page..</h1>
   }
 
   return (
@@ -144,8 +120,10 @@ const Signin: FC = () => {
                 type="button"
                 onClick={() => handleProviderAuth('google')}
                 className={`flex items-center gap-2 px-2 py-2 font-bold text-blue-900 hover:text-blue-300 
-								rounded focus:outline-none focus:shadow-outline ${isSubmitting ? 'bg-gray-500' : 'bg-blue-300 hover:bg-blue-700'}`}
-                disabled={isSubmitting}
+								rounded focus:outline-none focus:shadow-outline ${
+                  isSubmitting || signInLoading ? 'bg-gray-500' : 'bg-blue-300 hover:bg-blue-700'
+                }`}
+                disabled={isSubmitting || signInLoading}
               >
                 <GoogleSVG width={18} height={18} />
                 Login w/ Google
