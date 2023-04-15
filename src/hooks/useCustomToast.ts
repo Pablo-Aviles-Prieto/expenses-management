@@ -13,7 +13,7 @@ interface IUpdateToast {
   otherOpts?: ToastOptions
 }
 
-export const useToast = () => {
+export const useCustomToast = () => {
   const defaultOptions: ToastOptions = {
     position: 'top-right',
     autoClose: 2500,

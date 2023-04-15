@@ -1,11 +1,5 @@
-import { FormikErrors } from 'formik'
+import type { IFormikBtnDisabled } from '@/interfaces'
 
-type BtnDisabledI<T> = {
-  isSubmitting: boolean
-  errorsObj: FormikErrors<T>
-  debouncedPasswordError?: string
-}
-
-export const formikBtnIsDisabled = <T>({ isSubmitting, errorsObj, debouncedPasswordError }: BtnDisabledI<T>) => {
+export const formikBtnIsDisabled = <T>({ isSubmitting, errorsObj, debouncedPasswordError }: IFormikBtnDisabled<T>) => {
   return isSubmitting || Object.keys(errorsObj).length > 0 || !!debouncedPasswordError
 }

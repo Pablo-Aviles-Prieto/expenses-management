@@ -7,9 +7,10 @@ import { useFetch } from '@/hooks/useFetch'
 import { formikBtnIsDisabled } from '@/utils'
 import { ResponseUserI } from '@/interfaces'
 import { URL_API } from '@/utils/const'
-import { Spinner } from '@/components/styles'
+import { FormBtn } from '@/components/styles'
 import { signIn } from 'next-auth/react'
 import router from 'next/router'
+import { useCustomToast } from '@/hooks'
 
 const URL = `${URL_API || ''}/api/user/register`
 
@@ -26,9 +27,10 @@ const SignUp: FC = () => {
   const [registerError, setRegisterError] = useState<string | undefined>(undefined)
   const [registerLoading, setRegisterLoading] = useState(false)
   const { fetchPetition } = useFetch()
+  const { showLoadingToast, updateToast } = useCustomToast()
 
   const handleSubmit = async (values: FormValues) => {
-    // TODO: Signin the user after register with user/pw
+    const registeringToast = showLoadingToast({ msg: 'Registering...' })
     setRegisterLoading(true)
     try {
       const registerResponse = await fetchPetition<ResponseUserI>(URL, {
@@ -42,13 +44,30 @@ const SignUp: FC = () => {
       })
       if (loginResponse?.ok) {
         await router.push(`/user/${registerResponse.id}/details`)
+        updateToast({
+          toastId: registeringToast,
+          content: `Welcome ${registerResponse.name}`,
+          type: 'success'
+        })
       } else {
         setRegisterError('Something went wrong. Try again later!')
+        updateToast({
+          toastId: registeringToast,
+          content: 'Something went wrong. Try again later!',
+          type: 'error',
+          otherOpts: { autoClose: 3000 }
+        })
       }
     } catch (err) {
       const errorString = err instanceof Error ? err.message : 'Try again later'
       const errorMessage = errorString.includes('Email already in use') && 'Email already registered'
       setRegisterError(errorMessage || errorString)
+      updateToast({
+        toastId: registeringToast,
+        content: errorMessage || errorString,
+        type: 'error',
+        otherOpts: { autoClose: 3000 }
+      })
     } finally {
       setRegisterLoading(false)
     }
@@ -74,22 +93,16 @@ const SignUp: FC = () => {
               validationSchema={PasswordSchema}
             />
             <div className="flex items-center justify-between">
-              <button
-                className={`flex items-center gap-3 px-4 py-2 font-bold text-white rounded focus:outline-none focus:shadow-outline ${
-                  formikBtnIsDisabled({ isSubmitting, errorsObj: errors, debouncedPasswordError: debouncedPwrdError })
-                    ? 'bg-gray-500'
-                    : 'bg-blue-500 hover:bg-blue-700'
-                }`}
-                type="submit"
-                disabled={formikBtnIsDisabled({
+              <FormBtn
+                isDisabled={formikBtnIsDisabled({
                   isSubmitting,
                   errorsObj: errors,
                   debouncedPasswordError: debouncedPwrdError
                 })}
+                isLoading={registerLoading}
               >
-                {registerLoading && <Spinner size="xs" classes="border-violet-400 w-6 h-6" />}
                 Register
-              </button>
+              </FormBtn>
             </div>
           </Form>
         </div>
