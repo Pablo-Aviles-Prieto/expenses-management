@@ -1,3 +1,4 @@
+import { errorMessages } from '@/utils/const'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 const proxyImage = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -12,7 +13,7 @@ const proxyImage = async (req: NextApiRequest, res: NextApiResponse) => {
     res.write(Buffer.from(arrayBuffer)) // Convert ArrayBuffer to Buffer and write it
     res.end() // End the response after writing the image data
   } catch (error) {
-    res.status(500).json({ error: 'Unable to fetch the image' })
+    res.status(500).json({ error: errorMessages.parsingImg })
   }
 }
 

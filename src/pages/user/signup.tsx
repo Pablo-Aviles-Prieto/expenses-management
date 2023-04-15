@@ -6,7 +6,7 @@ import { SignupSchema, PasswordSchema } from '@/validations/auth'
 import { useFetch } from '@/hooks/useFetch'
 import { formikBtnIsDisabled } from '@/utils'
 import { ResponseUserI } from '@/interfaces'
-import { URL_API } from '@/utils/const'
+import { URL_API, errorMessages } from '@/utils/const'
 import { FormBtn } from '@/components/styles'
 import { signIn } from 'next-auth/react'
 import router from 'next/router'
@@ -50,21 +50,20 @@ const SignUp: FC = () => {
           type: 'success'
         })
       } else {
-        setRegisterError('Something went wrong. Try again later!')
+        setRegisterError(errorMessages.generic)
         updateToast({
           toastId: registeringToast,
-          content: 'Something went wrong. Try again later!',
+          content: errorMessages.generic,
           type: 'error',
           otherOpts: { autoClose: 3000 }
         })
       }
     } catch (err) {
-      const errorString = err instanceof Error ? err.message : 'Try again later'
-      const errorMessage = errorString.includes('Email already in use') && 'Email already registered'
-      setRegisterError(errorMessage || errorString)
+      const errorString = err instanceof Error ? err.message : errorMessages.generic
+      setRegisterError(errorString)
       updateToast({
         toastId: registeringToast,
-        content: errorMessage || errorString,
+        content: errorString,
         type: 'error',
         otherOpts: { autoClose: 3000 }
       })

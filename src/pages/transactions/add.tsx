@@ -1,5 +1,5 @@
 const AddTransaction = () => {
-  return <h1>Test</h1>
+  return <h1>Add transactions</h1>
 }
 
 export default AddTransaction
