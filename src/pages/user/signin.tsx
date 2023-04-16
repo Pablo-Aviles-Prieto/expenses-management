@@ -2,14 +2,13 @@
 /* eslint-disable no-void */
 /* eslint-disable max-len */
 import { FC, useEffect, useState } from 'react'
-import { Formik, Form } from 'formik'
-import { FieldText } from '@/components/Form'
+import { Formik } from 'formik'
+import { FieldText, FormBtn, FormContainer } from '@/components/Form'
 import { LoginSchema } from '@/validations/auth'
 import { formikBtnIsDisabled } from '@/utils'
 import { getSession, signIn } from 'next-auth/react'
 import { useCustomSession } from '@/hooks/useCustomSession'
 import { useRouter } from 'next/router'
-import { FormBtn } from '@/components/styles'
 import { GoogleSVG } from '@/components/icons'
 import { useCustomToast } from '@/hooks'
 import { CustomSessionI } from '@/interfaces'
@@ -93,27 +92,24 @@ const Signin: FC = () => {
   return (
     <Formik initialValues={INITIAL_VALUES} validationSchema={LoginSchema} onSubmit={handleSubmit}>
       {({ isSubmitting, errors }) => (
-        <div className="w-full max-w-sm">
-          <Form className="px-8 pt-6 pb-8 mb-4 bg-indigo-700 rounded shadow-md">
-            <h3 className="mb-2 text-3xl font-bold">Login</h3>
-            {credentialsError && <p className="mb-2 text-red-500">{credentialsError}</p>}
-            <FieldText id="email" name="email" type="email" placeholder="user@example.com" label="Email" />
-            <FieldText id="password" name="password" type="password" placeholder="********" label="Password" />
-            <div className="flex items-center justify-between">
-              <FormBtn isLoading={signInLoading} isDisabled={formikBtnIsDisabled({ isSubmitting, errorsObj: errors })}>
-                Login
-              </FormBtn>
-              <FormBtn
-                isDisabled={isSubmitting || signInLoading}
-                onClick={() => handleProviderAuth('google')}
-                type="button"
-              >
-                <GoogleSVG width={18} height={18} />
-                Login w/ Google
-              </FormBtn>
-            </div>
-          </Form>
-        </div>
+        <FormContainer title="Login">
+          {credentialsError && <p className="mb-2 text-red-500">{credentialsError}</p>}
+          <FieldText id="email" name="email" type="email" placeholder="user@example.com" label="Email" />
+          <FieldText id="password" name="password" type="password" placeholder="********" label="Password" />
+          <div className="flex items-center justify-between">
+            <FormBtn isLoading={signInLoading} isDisabled={formikBtnIsDisabled({ isSubmitting, errorsObj: errors })}>
+              Login
+            </FormBtn>
+            <FormBtn
+              isDisabled={isSubmitting || signInLoading}
+              onClick={() => handleProviderAuth('google')}
+              type="button"
+            >
+              <GoogleSVG width={18} height={18} />
+              Login w/ Google
+            </FormBtn>
+          </div>
+        </FormContainer>
       )}
     </Formik>
   )
