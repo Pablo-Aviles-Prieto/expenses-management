@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { FC, ReactNode } from 'react'
-import { Spinner } from './Spinner'
+import { Spinner } from '../styles/Spinner'
 
 type IProps = {
   isLoading?: boolean

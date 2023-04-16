@@ -2,17 +2,17 @@
 /* eslint-disable no-void */
 /* eslint-disable max-len */
 import { FC, useEffect, useState } from 'react'
-import { Formik, Form } from 'formik'
-import { FieldText } from '@/components/Form'
+import { Formik } from 'formik'
+import { FieldText, FormBtn, FormContainer } from '@/components/Form'
 import { LoginSchema } from '@/validations/auth'
 import { formikBtnIsDisabled } from '@/utils'
 import { getSession, signIn } from 'next-auth/react'
 import { useCustomSession } from '@/hooks/useCustomSession'
 import { useRouter } from 'next/router'
-import { FormBtn } from '@/components/styles'
 import { GoogleSVG } from '@/components/icons'
 import { useCustomToast } from '@/hooks'
 import { CustomSessionI } from '@/interfaces'
+import { errorMessages } from '@/utils/const'
 
 const INITIAL_VALUES = {
   email: '',
@@ -26,7 +26,7 @@ type IProvider = 'google'
 const Signin: FC = () => {
   const { data: session, status: statusSession } = useCustomSession()
   const [signInLoading, setSignInLoading] = useState(false)
-  const [credentialsError, setCredentialsError] = useState<string | boolean>(false)
+  const [credentialsError, setCredentialsError] = useState<string | undefined>(undefined)
   const router = useRouter()
   const { showLoadingToast, updateToast } = useCustomToast()
 
@@ -55,23 +55,23 @@ const Signin: FC = () => {
             type: 'success',
             otherOpts: { autoClose: 1500 }
           })
-          setCredentialsError(false)
+          setCredentialsError(undefined)
           setSignInLoading(false)
         }
       } else {
         updateToast({
           toastId: signInToast,
-          content: 'Please, check your credentials',
+          content: errorMessages.credentials,
           type: 'error',
           otherOpts: { autoClose: 1500 }
         })
-        setCredentialsError('Check the credentials provided')
+        setCredentialsError(errorMessages.credentials)
       }
       setSignInLoading(false)
     } catch (error) {
       updateToast({
         toastId: signInToast,
-        content: 'There was an error. Please try again later',
+        content: errorMessages.generic,
         type: 'error'
       })
       setSignInLoading(false)
@@ -92,27 +92,24 @@ const Signin: FC = () => {
   return (
     <Formik initialValues={INITIAL_VALUES} validationSchema={LoginSchema} onSubmit={handleSubmit}>
       {({ isSubmitting, errors }) => (
-        <div className="w-full max-w-sm">
-          <Form className="px-8 pt-6 pb-8 mb-4 bg-indigo-700 rounded shadow-md">
-            <h3 className="mb-2 text-3xl font-bold">Login</h3>
-            {typeof credentialsError === 'string' && <p className="mb-2 text-red-500">{credentialsError}</p>}
-            <FieldText id="email" name="email" type="email" placeholder="user@example.com" label="Email" />
-            <FieldText id="password" name="password" type="password" placeholder="********" label="Password" />
-            <div className="flex items-center justify-between">
-              <FormBtn isLoading={signInLoading} isDisabled={formikBtnIsDisabled({ isSubmitting, errorsObj: errors })}>
-                Login
-              </FormBtn>
-              <FormBtn
-                isDisabled={isSubmitting || signInLoading}
-                onClick={() => handleProviderAuth('google')}
-                type="button"
-              >
-                <GoogleSVG width={18} height={18} />
-                Login w/ Google
-              </FormBtn>
-            </div>
-          </Form>
-        </div>
+        <FormContainer title="Login">
+          {credentialsError && <p className="mb-2 text-red-500">{credentialsError}</p>}
+          <FieldText id="email" name="email" type="email" placeholder="user@example.com" label="Email" />
+          <FieldText id="password" name="password" type="password" placeholder="********" label="Password" />
+          <div className="flex items-center justify-between">
+            <FormBtn isLoading={signInLoading} isDisabled={formikBtnIsDisabled({ isSubmitting, errorsObj: errors })}>
+              Login
+            </FormBtn>
+            <FormBtn
+              isDisabled={isSubmitting || signInLoading}
+              onClick={() => handleProviderAuth('google')}
+              type="button"
+            >
+              <GoogleSVG width={18} height={18} />
+              Login w/ Google
+            </FormBtn>
+          </div>
+        </FormContainer>
       )}
     </Formik>
   )

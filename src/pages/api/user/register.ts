@@ -3,6 +3,7 @@ import { hash } from 'bcrypt'
 import connectDb from '@/config/mongooseDB'
 import UserModel from '@/models/user/UserModel'
 import { bcryptSalt } from '@/utils/genBcryptSalt'
+import { errorMessages } from '@/utils/const'
 
 type ReqObjI = {
   name: string
@@ -14,7 +15,7 @@ type ReqObjI = {
 const endpointController = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST')
-    res.status(405).json({ error: 'Method Not Allowed' })
+    res.status(405).json({ error: errorMessages.methodAllowed })
     return
   }
 
@@ -22,7 +23,7 @@ const endpointController = async (req: NextApiRequest, res: NextApiResponse) => 
 
   // TODO: improve error's
   if (!name || !email || !password) {
-    res.status(400).json({ error: 'Missing data to handle register' })
+    res.status(400).json({ error: errorMessages.missingData })
     return
   }
 
@@ -31,7 +32,7 @@ const endpointController = async (req: NextApiRequest, res: NextApiResponse) => 
 
     const existingUser = await UserModel.findOne({ email })
     if (existingUser) {
-      res.status(400).json({ error: 'Email already in use' })
+      res.status(400).json({ error: errorMessages.emailRegistered })
       return
     }
 
@@ -49,7 +50,7 @@ const endpointController = async (req: NextApiRequest, res: NextApiResponse) => 
     const savedUser = await newUser.save()
     res.status(201).json(savedUser)
   } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : 'Error creating the user'
+    const errorMessage = err instanceof Error ? err.message : errorMessages.createUser
     res.status(500).json({ error: errorMessage })
   }
 }
