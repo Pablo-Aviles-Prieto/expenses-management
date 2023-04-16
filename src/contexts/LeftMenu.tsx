@@ -8,6 +8,7 @@ type LeftMenuProviderI = {
 export const LeftMenuContext = createContext<LeftMenuContextData | undefined>(undefined)
 
 export const LeftMenuProvider: React.FC<LeftMenuProviderI> = ({ children }) => {
+  // TODO: check localStorage and set/change the value
   const [isOpen, setIsOpen] = useState(true)
 
   const switchState = () => {

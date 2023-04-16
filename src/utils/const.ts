@@ -29,3 +29,9 @@ export const textSize = {
 }
 
 export const cssSizes = 'xs' || 'sm' || 'md' || 'lg' || 'xl' || '2xl' || '3xl' || '4xl' || '5xl' || '6xl' || '7xl'
+
+export const dateFormat = {
+  ISO: 'yyyy-MM-dd',
+  US: 'MM-dd-yyyy',
+  EU: 'dd-MM-yyyy'
+} as const
