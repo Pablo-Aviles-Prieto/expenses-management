@@ -6,7 +6,8 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { DateFormatProvider } from '@/contexts'
 import '@/styles/global.css'
-import '@/styles/datePicker.css'
+import '@/styles/globalDatePicker.css'
+import '@/styles/addDatePicker.css'
 
 interface AppPropsI extends NextAppProps {
   pageProps: {

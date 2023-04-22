@@ -1,0 +1,7 @@
+.react-datepicker__input-container input {
+  background-image: url('../../public/calendar.svg');
+  background-repeat: no-repeat;
+  background-position: 10px 7px;
+  background-size: 20px;
+  padding-left: 35px;
+}

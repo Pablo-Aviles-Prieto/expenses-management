@@ -1,13 +1,11 @@
 /* TODO: Improve the styles of the date picker */
-.react-datepicker__input-container input {
+/* .react-datepicker__input-container .add-calendar-input {
   background-color: white;
   color: black;
+  width: 100%;
 }
 
 .react-datepicker-wrapper {
   width: 100%;
-}
-
-.react-datepicker__input-container {
-  width: 100%;
-}
+  position: relative;
+} */
