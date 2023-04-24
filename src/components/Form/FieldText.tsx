@@ -9,6 +9,7 @@ interface FieldTextProps {
   name: string
   type: string
   placeholder: string
+  step?: string
 }
 
 export const FieldText: FC<FieldTextProps> = ({ label, ...props }) => {
@@ -23,4 +24,8 @@ export const FieldText: FC<FieldTextProps> = ({ label, ...props }) => {
       </p>
     </FormInputContainer>
   )
+}
+
+FieldText.defaultProps = {
+  step: ''
 }

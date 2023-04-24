@@ -18,6 +18,9 @@ import * as Yup from 'yup'
 // })
 
 export const AddSchema = Yup.object().shape({
-  // email: EmailSchema,
-  // password: PasswordSchema
+  name: Yup.string().required('Provide a name for the transaction'),
+  amount: Yup.number()
+    .required('Provide an amount for the transaction')
+    .test('non-zero', 'Provide a different amount than 0', value => value !== 0),
+  datePickerAdd: Yup.string().required('Provide a date for the transaction')
 })

@@ -1,63 +1,47 @@
 import { FieldText, FormBtn, FormContainer } from '@/components/Form'
-import { FormInputContainer } from '@/components/styles'
-import { useDateFormat } from '@/hooks/useDateFormat'
 import { formikBtnIsDisabled } from '@/utils'
-import { LoginSchema } from '@/validations/auth'
-import { Formik } from 'formik'
+import { Formik, FormikHelpers } from 'formik'
 import { useState } from 'react'
-import DatePicker from 'react-datepicker'
+import { AddSchema } from '@/validations/transactions'
+import { CalendarField } from '@/components/Form/CalendarField'
 
 import 'react-datepicker/dist/react-datepicker.css'
 
 const INITIAL_VALUES = {
-  email: '',
-  password: '',
-  datePickerAdd: new Date().toString()
+  name: '',
+  amount: '',
+  datePickerAdd: new Date()
 }
 
 type FormValues = typeof INITIAL_VALUES
 
 const AddTransaction = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
   const [isSavingTransaction, setIsSavingTransaction] = useState(false)
-  const { dateFormatSelected } = useDateFormat()
 
-  console.log('dateFormatSelected', dateFormatSelected)
-  console.log('selectedDate', selectedDate)
-
-  const handleSubmit = (values: FormValues) => {
+  const handleSubmit = (values: FormValues, helpers: FormikHelpers<FormValues>) => {
     setIsSavingTransaction(true)
     console.log('values =>', values)
+    // TODO: Remove leading zeroes from the amount input (pareInt?)
     setIsSavingTransaction(false)
+    helpers.setSubmitting(false)
   }
-
-  const errorClass = !selectedDate ? 'border-red-500 border-2' : ''
 
   // TODO: Create 2 btns, one to create the transaction and redirect to the user dashboard
   // and create other btn so the user can create the transaction and after saving it, keep in
   // the same form with the data stored, so it can modify and create a new one
   return (
-    <Formik initialValues={INITIAL_VALUES} validationSchema={LoginSchema} onSubmit={handleSubmit}>
+    <Formik initialValues={INITIAL_VALUES} validationSchema={AddSchema} onSubmit={handleSubmit}>
       {({ isSubmitting, errors }) => (
         <FormContainer title="Add transaction" containerWidth="full">
-          <FieldText id="email" name="email" type="email" placeholder="user@example.com" label="Email" />
-          <FieldText id="password" name="password" type="password" placeholder="********" label="Password" />
-          {/* TODO: create a container for the date picker in the components/Form/CalendarField.tsx */}
-          <FormInputContainer label="Pick a date" id="datePickerAdd">
-            <DatePicker
-              id="datePickerAdd"
-              selected={selectedDate}
-              className={`add-calendar-input ${errorClass}`}
-              highlightDates={[new Date()]}
-              onChange={update => {
-                setSelectedDate(update)
-              }}
-              dateFormat={dateFormatSelected}
-              placeholderText="Select or write a date"
-              isClearable
-            />
-            <p className="min-h-[25px] text-red-500">{!selectedDate && 'You have to select a date'}</p>
-          </FormInputContainer>
+          <FieldText id="name" name="name" type="text" placeholder="Describe your transaction" label="Name" />
+          <FieldText id="amount" name="amount" type="number" placeholder="0.00" step="0.01" label="Amount" />
+          <CalendarField
+            id="datePickerAdd"
+            name="datePickerAdd"
+            label="Pick a date"
+            customClass="add-calendar-input"
+            isClearable
+          />
           <div className="flex items-center justify-between">
             <FormBtn
               isDisabled={formikBtnIsDisabled({

@@ -1,11 +1,9 @@
-import { dateFormat } from '@/utils/const'
 import React, { createContext, useState, useMemo } from 'react'
+import { DateFormatValues } from '@/interfaces'
 
 type LeftMenuProviderI = {
   children: React.ReactNode
 }
-
-type DateFormatValues = (typeof dateFormat)[keyof typeof dateFormat]
 
 type DateFormatContextData = {
   dateFormatSelected: DateFormatValues
