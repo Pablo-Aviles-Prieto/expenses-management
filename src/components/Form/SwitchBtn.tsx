@@ -1,22 +1,31 @@
 /* eslint-disable max-len */
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { Switch } from '@headlessui/react'
 import { switchSizes, switchBg } from '@/utils/const'
+import { useField } from 'formik'
 
 type SizesI = keyof typeof switchSizes
 type BackgroundColorsI = keyof typeof switchBg
 
 type PropsI = {
   label: string
+  name: string
   labelPosition?: 'left' | 'right'
   customClasses?: string
-  enableAsDefault?: boolean
   size?: SizesI
   bgColor?: BackgroundColorsI
 }
 
-export const SwitchBtn: FC<PropsI> = ({ label, labelPosition, customClasses, enableAsDefault, size, bgColor }) => {
-  const [enabled, setEnabled] = useState(enableAsDefault)
+export const SwitchBtn: FC<PropsI> = ({ label, name, labelPosition, customClasses, size, bgColor, ...props }) => {
+  // const [enabled, setEnabled] = useState(enableAsDefault)
+  const [field, meta, helpers] = useField<boolean>({ name, ...props })
+
+  const handleChange = (value: boolean) => {
+    if (!meta.touched) {
+      helpers.setTouched(true)
+    }
+    helpers.setValue(value)
+  }
 
   const selectedSize = size ?? 'small'
   const bgroundColor = bgColor ?? 'purple'
@@ -30,16 +39,17 @@ export const SwitchBtn: FC<PropsI> = ({ label, labelPosition, customClasses, ena
         }`}
       >
         <Switch
-          checked={enabled}
-          onChange={setEnabled}
-          className={`${enabled ? switchBg[bgroundColor].active : switchBg[bgroundColor].inactive}
+          checked={field.value}
+          onChange={handleChange}
+          name={name}
+          className={`${field.value ? switchBg[bgroundColor].active : switchBg[bgroundColor].inactive}
 					${switchSizes[selectedSize].container}
           relative inline-flex shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors 
 					duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
         >
           <span
             aria-hidden="true"
-            className={`${enabled ? switchSizes[selectedSize].translate : 'translate-x-0'}
+            className={`${field.value ? switchSizes[selectedSize].translate : 'translate-x-0'}
 						${switchSizes[selectedSize].circle}
             pointer-events-none inline-block transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
           />
@@ -53,7 +63,6 @@ export const SwitchBtn: FC<PropsI> = ({ label, labelPosition, customClasses, ena
 SwitchBtn.defaultProps = {
   labelPosition: undefined,
   customClasses: '',
-  enableAsDefault: false,
   size: undefined,
   bgColor: undefined
 }

@@ -22,6 +22,9 @@ export const CalendarField: FC<PropsI> = ({ label, id, customClass, ...props }) 
   const [field, meta, helpers] = useField(props)
 
   const handleChange = (value: Date | null) => {
+    if (!meta.touched) {
+      helpers.setTouched(true)
+    }
     helpers.setValue(value)
   }
 

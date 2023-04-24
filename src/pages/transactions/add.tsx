@@ -9,7 +9,10 @@ import 'react-datepicker/dist/react-datepicker.css'
 const INITIAL_VALUES = {
   name: '',
   amount: '',
-  datePickerAdd: ''
+  datePickerAdd: '',
+  recurrent: false,
+  recurrent2: false,
+  recurrent3: false
 }
 
 type FormValues = typeof INITIAL_VALUES
@@ -41,9 +44,21 @@ const AddTransaction = () => {
             customClass="add-calendar-input"
             isClearable
           />
-          <SwitchBtn label="Recurrent transaction" customClasses="my-6" size="small" />
-          <SwitchBtn label="Recurrent transaction" customClasses="my-6" size="medium" bgColor="cyan" />
-          <SwitchBtn label="Recurrent transaction" customClasses="my-6" size="large" labelPosition="left" />
+          <SwitchBtn name="recurrent" label="Recurrent transaction" customClasses="my-6" size="small" />
+          <SwitchBtn
+            name="recurrent2"
+            label="Recurrent transaction"
+            customClasses="my-6"
+            size="medium"
+            bgColor="cyan"
+          />
+          <SwitchBtn
+            name="recurrent3"
+            label="Recurrent transaction"
+            customClasses="my-6"
+            size="large"
+            labelPosition="left"
+          />
           <div className="flex items-center justify-between">
             <FormBtn
               isDisabled={formikBtnIsDisabled({
