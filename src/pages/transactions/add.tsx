@@ -1,16 +1,15 @@
-import { FieldText, FormBtn, FormContainer } from '@/components/Form'
+import { FieldText, FormBtn, FormContainer, CalendarField, SwitchBtn } from '@/components/Form'
 import { formikBtnIsDisabled } from '@/utils'
 import { Formik, FormikHelpers } from 'formik'
 import { useState } from 'react'
 import { AddSchema } from '@/validations/transactions'
-import { CalendarField } from '@/components/Form/CalendarField'
 
 import 'react-datepicker/dist/react-datepicker.css'
 
 const INITIAL_VALUES = {
   name: '',
   amount: '',
-  datePickerAdd: new Date()
+  datePickerAdd: ''
 }
 
 type FormValues = typeof INITIAL_VALUES
@@ -42,6 +41,9 @@ const AddTransaction = () => {
             customClass="add-calendar-input"
             isClearable
           />
+          <SwitchBtn label="Recurrent transaction" customClasses="my-6" size="small" />
+          <SwitchBtn label="Recurrent transaction" customClasses="my-6" size="medium" bgColor="cyan" />
+          <SwitchBtn label="Recurrent transaction" customClasses="my-6" size="large" labelPosition="left" />
           <div className="flex items-center justify-between">
             <FormBtn
               isDisabled={formikBtnIsDisabled({
