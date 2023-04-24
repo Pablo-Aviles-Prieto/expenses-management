@@ -22,17 +22,18 @@ export const DebouncedFieldText = <T,>({
   setErrorMsg,
   ...props
 }: DebouncedFieldTextProps<T>) => {
-  const [field, meta] = useField<string>(props)
+  const [field, meta, helpers] = useField<string>(props)
   const debouncedValue = useDebounce<string>(field.value, 500)
 
   useEffect(() => {
-    if (field.value || meta.touched) {
+    if (debouncedValue || meta.touched) {
+      helpers.setTouched(true)
       validationSchema
         .validate(debouncedValue)
         .then(() => setErrorMsg(undefined))
         .catch((err: Yup.ValidationError) => setErrorMsg(err.message))
     }
-  }, [debouncedValue, validationSchema, setErrorMsg, debouncedValue, meta.touched])
+  }, [debouncedValue, validationSchema, setErrorMsg, meta.touched])
 
   const errorClass = meta.touched && errorMsg ? 'border-red-500 border-2' : ''
 

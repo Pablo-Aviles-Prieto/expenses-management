@@ -93,7 +93,7 @@ const SignUp: FC = () => {
               isDisabled={formikBtnIsDisabled({
                 isSubmitting,
                 errorsObj: errors,
-                debouncedPasswordError: debouncedPwrdError
+                externalError: debouncedPwrdError
               })}
               isLoading={registerLoading}
             >

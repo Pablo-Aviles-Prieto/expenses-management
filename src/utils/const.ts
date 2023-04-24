@@ -29,3 +29,38 @@ export const textSize = {
 }
 
 export const cssSizes = 'xs' || 'sm' || 'md' || 'lg' || 'xl' || '2xl' || '3xl' || '4xl' || '5xl' || '6xl' || '7xl'
+
+export const dateFormat = {
+  ISO: 'yyyy-MM-dd',
+  US: 'MM-dd-yyyy',
+  EU: 'dd-MM-yyyy'
+} as const
+
+export const switchSizes = {
+  small: {
+    container: 'h-[20px] w-[48px]',
+    circle: 'h-[16px] w-[16px]',
+    translate: 'translate-x-7'
+  },
+  medium: {
+    container: 'h-[28px] w-[68px]',
+    circle: 'h-[24px] w-[24px]',
+    translate: 'translate-x-10'
+  },
+  large: {
+    container: 'h-[32px] w-[76px]',
+    circle: 'h-[28px] w-[28px]',
+    translate: 'translate-x-11'
+  }
+}
+
+export const switchBg = {
+  purple: {
+    active: 'bg-purple-500',
+    inactive: 'bg-purple-900'
+  },
+  cyan: {
+    active: 'bg-cyan-400',
+    inactive: 'bg-cyan-700'
+  }
+}

@@ -3,8 +3,8 @@
 /* eslint-disable max-len */
 import { FC, useEffect, useState } from 'react'
 import { Formik } from 'formik'
-import { FieldText, FormBtn, FormContainer } from '@/components/Form'
-import { LoginSchema } from '@/validations/auth'
+import { DebouncedFieldText, FieldText, FormBtn, FormContainer } from '@/components/Form'
+import { LoginSchema, PasswordSchema } from '@/validations/auth'
 import { formikBtnIsDisabled } from '@/utils'
 import { getSession, signIn } from 'next-auth/react'
 import { useCustomSession } from '@/hooks/useCustomSession'
@@ -24,6 +24,7 @@ type FormValues = typeof INITIAL_VALUES
 type IProvider = 'google'
 
 const Signin: FC = () => {
+  const [debouncedPwrdError, setDebouncedPwrdError] = useState<string | undefined>(undefined)
   const { data: session, status: statusSession } = useCustomSession()
   const [signInLoading, setSignInLoading] = useState(false)
   const [credentialsError, setCredentialsError] = useState<string | undefined>(undefined)
@@ -95,7 +96,16 @@ const Signin: FC = () => {
         <FormContainer title="Login">
           {credentialsError && <p className="mb-2 text-red-500">{credentialsError}</p>}
           <FieldText id="email" name="email" type="email" placeholder="user@example.com" label="Email" />
-          <FieldText id="password" name="password" type="password" placeholder="********" label="Password" />
+          <DebouncedFieldText
+            id="password"
+            name="password"
+            type="password"
+            placeholder="********"
+            label="Password"
+            errorMsg={debouncedPwrdError}
+            setErrorMsg={setDebouncedPwrdError}
+            validationSchema={PasswordSchema}
+          />
           <div className="flex items-center justify-between">
             <FormBtn isLoading={signInLoading} isDisabled={formikBtnIsDisabled({ isSubmitting, errorsObj: errors })}>
               Login
@@ -105,6 +115,7 @@ const Signin: FC = () => {
               onClick={() => handleProviderAuth('google')}
               type="button"
             >
+              {/* TODO: Use other Google SVG or change the background color */}
               <GoogleSVG width={18} height={18} />
               Login w/ Google
             </FormBtn>
