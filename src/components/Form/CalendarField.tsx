@@ -34,7 +34,7 @@ export const CalendarField: FC<PropsI> = ({ label, id, customClass, ...props }) 
         {...field}
         {...props}
         id={id}
-        className={`${customClass ?? ''} ${meta.touched && meta.error ? 'errorClass' : ''}`}
+        className={`${customClass ?? ''} ${meta.touched && meta.error ? 'border-red-500 border-2' : ''}`}
         highlightDates={[new Date()]}
         selected={field.value ? new Date(field.value as string) : null}
         onChange={handleChange}
