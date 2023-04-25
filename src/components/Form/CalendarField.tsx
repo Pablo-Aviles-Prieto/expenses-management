@@ -15,15 +15,20 @@ interface PropsI {
   isClearable?: boolean
   placeholderText?: string
   customDateFormat?: DateFormatValues
+  removeErrMsg?: boolean
+  onChange?: (date: Date | null) => void
 }
 
-export const CalendarField: FC<PropsI> = ({ label, id, customClass, ...props }) => {
+export const CalendarField: FC<PropsI> = ({ label, id, customClass, removeErrMsg, onChange, ...props }) => {
   const { dateFormatSelected } = useDateFormat()
   const [field, meta, helpers] = useField(props)
 
   const handleChange = (value: Date | null) => {
     if (!meta.touched) {
       helpers.setTouched(true)
+    }
+    if (onChange) {
+      onChange(value)
     }
     helpers.setValue(value)
   }
@@ -45,9 +50,13 @@ export const CalendarField: FC<PropsI> = ({ label, id, customClass, ...props }) 
         }
         dateFormat={props.customDateFormat || dateFormatSelected}
       />
-      <p className="min-h-[25px] text-red-500">
-        <ErrorMessage name={field.name} />
-      </p>
+      {!removeErrMsg ? (
+        <p className="min-h-[25px] text-red-500">
+          <ErrorMessage name={field.name} />
+        </p>
+      ) : (
+        <></>
+      )}
     </FormInputContainer>
   )
 }
@@ -56,5 +65,7 @@ CalendarField.defaultProps = {
   customClass: '',
   isClearable: true,
   placeholderText: undefined,
-  customDateFormat: undefined
+  customDateFormat: undefined,
+  onChange: undefined,
+  removeErrMsg: false
 }
