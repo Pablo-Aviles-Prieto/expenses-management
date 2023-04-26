@@ -11,13 +11,14 @@ import { dateFormat } from '@/utils/const'
 const INITIAL_VALUES = {
   name: '',
   amount: '',
-  datePickerAdd: '',
+  mainDate: '',
   recurrent: false,
   additionalDate_1: '',
   additionalDate_2: '',
   additionalDate_3: '',
   additionalDate_4: '',
-  additionalDate_5: ''
+  additionalDate_5: '',
+  notes: ''
 }
 
 type FormValues = typeof INITIAL_VALUES
@@ -32,7 +33,8 @@ type AdditionalDateKeys =
 type TransactionObjI = {
   name: string
   amount: number
-  datePickerAdd: string
+  date: string
+  notes?: string
 }
 
 const AddTransaction = () => {
@@ -47,33 +49,34 @@ const AddTransaction = () => {
       return values[keyValue]
     })
 
-    const additionalDatesParsed = dates.filter(date => date)
+    const formattedMainDate = format(new Date(values.mainDate), dateFormat.ISO)
 
-    let formattedAdditionalDates: string[] = []
-
-    if (additionalDatesParsed.length > 0) {
-      formattedAdditionalDates = additionalDatesParsed.map(parsedDate => format(new Date(parsedDate), dateFormat.ISO))
-    }
+    const additionalDatesParsed = dates
+      .filter(date => date && format(new Date(date), dateFormat.ISO) !== formattedMainDate)
+      .map(date => format(new Date(date), dateFormat.ISO))
+    const uniqueDatesSet = new Set(additionalDatesParsed)
+    const notDuplicatedDates = Array.from(uniqueDatesSet)
 
     const newTransaction: TransactionObjI = {
       name: values.name,
       amount: parseFloat(values.amount),
-      datePickerAdd: format(new Date(values.datePickerAdd), dateFormat.ISO)
+      date: formattedMainDate,
+      notes: values.notes ? values.notes : undefined
     }
 
     let additionalNewTransactions: TransactionObjI[] = []
 
-    if (formattedAdditionalDates.length > 0) {
-      additionalNewTransactions = formattedAdditionalDates.map(additionalDate => {
+    if (values.recurrent && notDuplicatedDates.length > 0) {
+      additionalNewTransactions = notDuplicatedDates.map(additionalDate => {
         return {
           name: values.name,
           amount: parseFloat(values.amount),
-          datePickerAdd: format(new Date(additionalDate), dateFormat.ISO)
+          date: format(new Date(additionalDate), dateFormat.ISO),
+          notes: values.notes ? values.notes : undefined
         }
       })
     }
 
-    // TODO: Add the notes textarea in the form and in the object to save
     // Send the array to the backend endpoint and save every obj in it (at least 1 will be in the array)
     const transactionsToSave = [newTransaction, ...additionalNewTransactions]
     console.log('transactionsToSave', transactionsToSave)
@@ -102,7 +105,7 @@ const AddTransaction = () => {
           <FieldText id="amount" name="amount" type="number" placeholder="0.00" step="0.01" label="Amount" />
           <CalendarField
             id="datePickerAdd"
-            name="datePickerAdd"
+            name="mainDate"
             label="Pick a date"
             customClass="add-calendar-input"
             isClearable
@@ -123,6 +126,15 @@ const AddTransaction = () => {
                 removeErrMsg
               />
             ))}
+          <FieldText
+            id="notes"
+            name="notes"
+            type="text"
+            placeholder="Extra comments"
+            label="Notes"
+            component="textarea"
+            rows={5}
+          />
           <div className="flex items-center justify-between">
             <FormBtn
               isDisabled={formikBtnIsDisabled({
