@@ -10,6 +10,8 @@ interface FieldTextProps {
   type: string
   placeholder: string
   step?: string
+  component?: 'input' | 'textarea'
+  rows?: number
 }
 
 export const FieldText: FC<FieldTextProps> = ({ label, ...props }) => {
@@ -18,7 +20,7 @@ export const FieldText: FC<FieldTextProps> = ({ label, ...props }) => {
 
   return (
     <FormInputContainer id={props.id} label={label}>
-      <Field {...field} {...props} className={errorClass} />
+      <Field {...field} {...props} className={errorClass} as={props.component} />
       <p className="min-h-[25px] text-red-500">
         <ErrorMessage name={field.name} />
       </p>
@@ -27,5 +29,7 @@ export const FieldText: FC<FieldTextProps> = ({ label, ...props }) => {
 }
 
 FieldText.defaultProps = {
-  step: ''
+  step: '',
+  component: 'input',
+  rows: 1
 }
