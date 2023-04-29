@@ -7,7 +7,7 @@ import { AddSchema } from '@/validations/transactions'
 import 'react-datepicker/dist/react-datepicker.css'
 import { format } from 'date-fns'
 import { dateFormat } from '@/utils/const'
-import { ComboboxDropdown } from '@/components/Form/Combobox'
+import { MultiPeopleList } from '@/components/Form/ComboboxGitlab'
 
 const INITIAL_VALUES = {
   name: '',
@@ -38,6 +38,20 @@ type TransactionObjI = {
   creationDate: string
   notes?: string
 }
+
+// TODO: Fetch the categories of the user via SSR
+const CAT_ARRAY = [
+  { id: 1, name: 'Food' },
+  { id: 2, name: 'Groceries' },
+  { id: 3, name: 'Bank' },
+  { id: 4, name: 'Drugs' },
+  { id: 5, name: 'Dirty money' },
+  { id: 6, name: 'Work' },
+  { id: 7, name: 'Travels' },
+  { id: 8, name: 'Gaming' },
+  { id: 9, name: 'House repair' },
+  { id: 10, name: 'Hair dryer' }
+]
 
 // TODO: Add the currency selected by the user in the global context, in the amount input
 // maybe indicate to the user that is displaying the global currency selected
@@ -121,7 +135,8 @@ const AddTransaction = () => {
 					with all the categories he has. */}
           <FieldText id="amount" name="amount" type="number" placeholder="0.00" step="0.01" label="Amount" isRequired />
           {/* <MultiSelect /> */}
-          <ComboboxDropdown />
+          {/* <ComboboxDropdown /> */}
+          <MultiPeopleList dataArray={CAT_ARRAY} />
           <CalendarField
             id="datePickerAdd"
             name="mainDate"

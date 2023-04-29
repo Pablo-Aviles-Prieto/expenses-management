@@ -50,6 +50,7 @@ export const CalendarField: FC<PropsI> = ({ label, id, customClass, removeErrMsg
           `Select or introduce a date (i.e ${format(new Date(), props.customDateFormat || dateFormatSelected)})`
         }
         dateFormat={props.customDateFormat || dateFormatSelected}
+        autoComplete="off"
       />
       {!removeErrMsg ? (
         <p className="min-h-[25px] text-red-500">

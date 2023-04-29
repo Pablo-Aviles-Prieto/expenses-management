@@ -64,7 +64,7 @@ export const ComboboxDropdown = () => {
   }
 
   return (
-    <Combobox value={selectedPeople} onChange={values => changeHandler(values)}>
+    <Combobox value={selectedPeople} onChange={values => changeHandler(values)} multiple>
       {({ value }) => {
         return (
           <>
@@ -127,7 +127,7 @@ export const ComboboxDropdown = () => {
                 </Combobox.Options>
               </Transition>
             </div>
-            <div className="flex gap-1">
+            <div className="flex gap-1 mb-5">
               Categories selected:{' '}
               {selectedPeople.length === 0 ? (
                 'No categories selected'
