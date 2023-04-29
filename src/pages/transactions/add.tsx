@@ -7,6 +7,7 @@ import { AddSchema } from '@/validations/transactions'
 import 'react-datepicker/dist/react-datepicker.css'
 import { format } from 'date-fns'
 import { dateFormat } from '@/utils/const'
+import { ComboboxDropdown } from '@/components/Form/Combobox'
 
 const INITIAL_VALUES = {
   name: '',
@@ -34,9 +35,12 @@ type TransactionObjI = {
   name: string
   amount: number
   date: string
+  creationDate: string
   notes?: string
 }
 
+// TODO: Add the currency selected by the user in the global context, in the amount input
+// maybe indicate to the user that is displaying the global currency selected
 const AddTransaction = () => {
   const [isSavingTransaction, setIsSavingTransaction] = useState(false)
   const [additionalDates, setAdditionalDates] = useState<(Date | null)[]>([])
@@ -61,6 +65,7 @@ const AddTransaction = () => {
       name: values.name,
       amount: parseFloat(values.amount),
       date: formattedMainDate,
+      creationDate: new Date().toISOString(),
       notes: values.notes ? values.notes : undefined
     }
 
@@ -72,11 +77,13 @@ const AddTransaction = () => {
           name: values.name,
           amount: parseFloat(values.amount),
           date: format(new Date(additionalDate), dateFormat.ISO),
+          creationDate: new Date().toISOString(),
           notes: values.notes ? values.notes : undefined
         }
       })
     }
 
+    // TODO: send the category for the transactions
     // Send the array to the backend endpoint and save every obj in it (at least 1 will be in the array)
     const transactionsToSave = [newTransaction, ...additionalNewTransactions]
     console.log('transactionsToSave', transactionsToSave)
@@ -101,8 +108,20 @@ const AddTransaction = () => {
     <Formik initialValues={INITIAL_VALUES} validationSchema={AddSchema} onSubmit={handleSubmit}>
       {({ isSubmitting, errors, values }) => (
         <FormContainer title="Add transaction" containerWidth="full">
-          <FieldText id="name" name="name" type="text" placeholder="Describe your transaction" label="Name" />
-          <FieldText id="amount" name="amount" type="number" placeholder="0.00" step="0.01" label="Amount" />
+          <FieldText
+            id="name"
+            name="name"
+            type="text"
+            placeholder="Describe your transaction"
+            label="Name"
+            isRequired
+          />
+          {/* TODO: Create an input where the user can create new categories for this transaction, 
+					and they will be stored like for example in a collection linked to the user, 
+					with all the categories he has. */}
+          <FieldText id="amount" name="amount" type="number" placeholder="0.00" step="0.01" label="Amount" isRequired />
+          {/* <MultiSelect /> */}
+          <ComboboxDropdown />
           <CalendarField
             id="datePickerAdd"
             name="mainDate"
@@ -110,6 +129,7 @@ const AddTransaction = () => {
             customClass="add-calendar-input"
             isClearable
             onChange={date => handleAdditionalDateChange(date, 0)}
+            isRequired
           />
           <SwitchBtn name="recurrent" label="Recurrent transaction (up to 5 more different dates)" size="small" />
           {values.recurrent &&
