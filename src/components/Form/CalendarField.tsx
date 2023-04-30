@@ -17,9 +17,10 @@ interface PropsI {
   customDateFormat?: DateFormatValues
   removeErrMsg?: boolean
   onChange?: (date: Date | null) => void
+  isRequired?: boolean
 }
 
-export const CalendarField: FC<PropsI> = ({ label, id, customClass, removeErrMsg, onChange, ...props }) => {
+export const CalendarField: FC<PropsI> = ({ label, id, customClass, removeErrMsg, onChange, isRequired, ...props }) => {
   const { dateFormatSelected } = useDateFormat()
   const [field, meta, helpers] = useField(props)
 
@@ -34,7 +35,7 @@ export const CalendarField: FC<PropsI> = ({ label, id, customClass, removeErrMsg
   }
 
   return (
-    <FormInputContainer id={id} label={label}>
+    <FormInputContainer id={id} label={isRequired ? `${label}*` : label}>
       <DatePicker
         {...field}
         {...props}
@@ -49,6 +50,7 @@ export const CalendarField: FC<PropsI> = ({ label, id, customClass, removeErrMsg
           `Select or introduce a date (i.e ${format(new Date(), props.customDateFormat || dateFormatSelected)})`
         }
         dateFormat={props.customDateFormat || dateFormatSelected}
+        autoComplete="off"
       />
       {!removeErrMsg ? (
         <p className="min-h-[25px] text-red-500">
@@ -67,5 +69,6 @@ CalendarField.defaultProps = {
   placeholderText: undefined,
   customDateFormat: undefined,
   onChange: undefined,
-  removeErrMsg: false
+  removeErrMsg: false,
+  isRequired: false
 }
