@@ -18,4 +18,7 @@ export const AddSchema = Yup.object().shape({
       return !(value && !mainDate)
     }
   )
+  // categories: Yup.object().shape({
+
+  // })
 })

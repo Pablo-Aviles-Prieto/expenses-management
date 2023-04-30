@@ -30,6 +30,7 @@ export const useCustomToast = () => {
     toast(msg || content, { ...defaultOptions, ...options })
   }
 
+  // TODO: should return a method to update the concrete/created loading toast
   const showLoadingToast = ({ content, msg = '', options = {} }: IToast) => {
     const toastId = toast.loading(msg || content, { ...defaultOptions, ...options })
     return toastId

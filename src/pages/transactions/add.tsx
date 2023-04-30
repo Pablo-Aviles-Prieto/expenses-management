@@ -1,13 +1,12 @@
-import { FieldText, FormBtn, FormContainer, CalendarField, SwitchBtn } from '@/components/Form'
-import { formikBtnIsDisabled } from '@/utils'
+import { FieldText, FormBtn, FormContainer, CalendarField, SwitchBtn, ComboboxField } from '@/components/Form'
 import { Formik, FormikHelpers } from 'formik'
 import { useState } from 'react'
-import { AddSchema } from '@/validations/transactions'
-
-import 'react-datepicker/dist/react-datepicker.css'
 import { format } from 'date-fns'
-import { dateFormat } from '@/utils/const'
-import { MultiPeopleList } from '@/components/Form/ComboboxGitlab'
+import { formikBtnIsDisabled } from '@/utils'
+import { AddSchema } from '@/validations/transactions'
+import { COMMON_CATEGORIES, dateFormat } from '@/utils/const'
+import 'react-datepicker/dist/react-datepicker.css'
+import { CoinsStack } from '@/components/icons'
 
 const INITIAL_VALUES = {
   name: '',
@@ -19,7 +18,8 @@ const INITIAL_VALUES = {
   additionalDate_3: '',
   additionalDate_4: '',
   additionalDate_5: '',
-  notes: ''
+  notes: '',
+  categories: { typeValue: '', dataValues: [] }
 }
 
 type FormValues = typeof INITIAL_VALUES
@@ -36,22 +36,12 @@ type TransactionObjI = {
   amount: number
   date: string
   creationDate: string
+  categories: { id: number; name: string }[]
   notes?: string
 }
 
 // TODO: Fetch the categories of the user via SSR
-const CAT_ARRAY = [
-  { id: 1, name: 'Food' },
-  { id: 2, name: 'Groceries' },
-  { id: 3, name: 'Bank' },
-  { id: 4, name: 'Drugs' },
-  { id: 5, name: 'Dirty money' },
-  { id: 6, name: 'Work' },
-  { id: 7, name: 'Travels' },
-  { id: 8, name: 'Gaming' },
-  { id: 9, name: 'House repair' },
-  { id: 10, name: 'Hair dryer' }
-]
+const CAT_ARRAY = [{ id: 8, name: 'House repair' }]
 
 // TODO: Add the currency selected by the user in the global context, in the amount input
 // maybe indicate to the user that is displaying the global currency selected
@@ -80,7 +70,8 @@ const AddTransaction = () => {
       amount: parseFloat(values.amount),
       date: formattedMainDate,
       creationDate: new Date().toISOString(),
-      notes: values.notes ? values.notes : undefined
+      notes: values.notes ? values.notes : undefined,
+      categories: values.categories.dataValues
     }
 
     let additionalNewTransactions: TransactionObjI[] = []
@@ -92,7 +83,8 @@ const AddTransaction = () => {
           amount: parseFloat(values.amount),
           date: format(new Date(additionalDate), dateFormat.ISO),
           creationDate: new Date().toISOString(),
-          notes: values.notes ? values.notes : undefined
+          notes: values.notes ? values.notes : undefined,
+          categories: values.categories.dataValues
         }
       })
     }
@@ -134,9 +126,15 @@ const AddTransaction = () => {
 					and they will be stored like for example in a collection linked to the user, 
 					with all the categories he has. */}
           <FieldText id="amount" name="amount" type="number" placeholder="0.00" step="0.01" label="Amount" isRequired />
-          {/* <MultiSelect /> */}
-          {/* <ComboboxDropdown /> */}
-          <MultiPeopleList dataArray={CAT_ARRAY} />
+          {/* <>{console.log('values', values)}</> */}
+          <ComboboxField
+            id="categories"
+            name="categories"
+            label="Categories"
+            dataArray={[...COMMON_CATEGORIES, ...CAT_ARRAY]}
+            msgToCreateEntry={{ SVG: CoinsStack, message: 'Create this category' }}
+            isRequired
+          />
           <CalendarField
             id="datePickerAdd"
             name="mainDate"
