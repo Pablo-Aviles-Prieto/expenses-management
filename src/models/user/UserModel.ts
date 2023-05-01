@@ -1,9 +1,6 @@
 /* eslint-disable max-len */
-import { Schema, model, Document, ObjectId, Model, modelNames } from 'mongoose'
-
-function modelExists(modelName: string): boolean {
-  return modelNames().includes(modelName)
-}
+import { Schema, model, Document, ObjectId, Model } from 'mongoose'
+import { modelExists } from '@/utils'
 
 export interface IUser extends Document {
   _id: ObjectId

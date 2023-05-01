@@ -7,6 +7,7 @@ import { AddSchema } from '@/validations/transactions'
 import { COMMON_CATEGORIES, dateFormat } from '@/utils/const'
 import 'react-datepicker/dist/react-datepicker.css'
 import { CoinsStack } from '@/components/icons'
+import { CategoryI } from '@/interfaces'
 
 const INITIAL_VALUES = {
   name: '',
@@ -36,7 +37,7 @@ type TransactionObjI = {
   amount: number
   date: string
   creationDate: string
-  categories: { id: number; name: string }[]
+  categories: CategoryI[]
   notes?: string
 }
 
@@ -90,8 +91,8 @@ const AddTransaction = () => {
     }
 
     // TODO: Use a toast
-    // TODO: send the category for the transactions
-    // Send the array to the backend endpoint and save every obj in it (at least 1 will be in the array)
+    // TODO: Send the userId prop
+    // Send an array to the backend endpoint and save every obj in it
     const transactionsToSave = [newTransaction, ...additionalNewTransactions]
     console.log('transactionsToSave', transactionsToSave)
 
