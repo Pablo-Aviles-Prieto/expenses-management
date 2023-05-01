@@ -17,8 +17,9 @@ export const AddSchema = Yup.object().shape({
       const { mainDate } = this.parent as ParentType
       return !(value && !mainDate)
     }
-  )
-  // categories: Yup.object().shape({
-
-  // })
+  ),
+  categories: Yup.object().shape({
+    typeValue: Yup.string(),
+    dataValues: Yup.array().required().min(1, 'Select/create at least 1 category')
+  })
 })

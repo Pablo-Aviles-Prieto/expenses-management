@@ -89,6 +89,7 @@ const AddTransaction = () => {
       })
     }
 
+    // TODO: Use a toast
     // TODO: send the category for the transactions
     // Send the array to the backend endpoint and save every obj in it (at least 1 will be in the array)
     const transactionsToSave = [newTransaction, ...additionalNewTransactions]
@@ -122,17 +123,14 @@ const AddTransaction = () => {
             label="Name"
             isRequired
           />
-          {/* TODO: Create an input where the user can create new categories for this transaction, 
-					and they will be stored like for example in a collection linked to the user, 
-					with all the categories he has. */}
           <FieldText id="amount" name="amount" type="number" placeholder="0.00" step="0.01" label="Amount" isRequired />
-          {/* <>{console.log('values', values)}</> */}
           <ComboboxField
             id="categories"
             name="categories"
             label="Categories"
             dataArray={[...COMMON_CATEGORIES, ...CAT_ARRAY]}
             msgToCreateEntry={{ SVG: CoinsStack, message: 'Create this category' }}
+            subTitle="Select from the pre-defined or your saved categories, or just create a new one"
             isRequired
           />
           <CalendarField
