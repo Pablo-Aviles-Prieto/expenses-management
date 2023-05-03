@@ -7,10 +7,11 @@ import { FC, ReactElement, cloneElement } from 'react'
 interface PropsI {
   label: string
   id: string
+  subTitle?: string
   children: ReactElement | ReactElement[]
 }
 
-export const FormInputContainer: FC<PropsI> = ({ label, id, children }) => {
+export const FormInputContainer: FC<PropsI> = ({ label, id, subTitle, children }) => {
   const defaultClassName = `w-full px-3 py-2 leading-tight text-gray-600 bg-gray-200 border rounded shadow appearance-none focus:outline-none focus:shadow-outline`
 
   const StyledChildren = Array.isArray(children)
@@ -29,8 +30,13 @@ export const FormInputContainer: FC<PropsI> = ({ label, id, children }) => {
     <div className="mb-2">
       <label className="block mb-2 text-sm font-bold text-gray-200" htmlFor={id}>
         {label}
+        {subTitle && <p className="text-xs leading-3 text-gray-400">{subTitle}</p>}
       </label>
       {StyledChildren}
     </div>
   )
+}
+
+FormInputContainer.defaultProps = {
+  subTitle: undefined
 }
