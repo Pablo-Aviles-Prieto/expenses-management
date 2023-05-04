@@ -5,9 +5,14 @@ import { format } from 'date-fns'
 import { formikBtnIsDisabled } from '@/utils'
 import { AddSchema } from '@/validations/transactions'
 import { COMMON_CATEGORIES, dateFormat } from '@/utils/const'
-import 'react-datepicker/dist/react-datepicker.css'
 import { CoinsStack } from '@/components/icons'
-import { CategoryI } from '@/interfaces'
+import { NextPageContext } from 'next'
+import connectDb from '@/config/mongooseDB'
+import { getSession } from 'next-auth/react'
+import type { CategoryI, CustomSessionI } from '@/interfaces'
+
+import 'react-datepicker/dist/react-datepicker.css'
+import UserModel from '@/models/user/UserModel'
 
 const INITIAL_VALUES = {
   name: '',
@@ -185,3 +190,27 @@ const AddTransaction = () => {
 }
 
 export default AddTransaction
+
+export async function getServerSideProps(context: NextPageContext) {
+  // Connect to the database
+  await connectDb()
+
+  // Get the user session
+  const session = (await getSession(context)) as CustomSessionI | null
+  if (!session) {
+    return {
+      props: {} // Will be passed to the page component as props
+    }
+  }
+  console.log('session', session)
+
+  // Get user categories
+  const user = await UserModel.findById(session?.user?.id)
+  // const categories = user ? user.categories : []
+
+  return {
+    props: {
+      // categories
+    } // Will be passed to the page component as props
+  }
+}

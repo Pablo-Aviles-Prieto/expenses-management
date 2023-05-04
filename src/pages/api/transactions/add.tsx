@@ -53,6 +53,7 @@ const endpointController = async (req: NextApiRequest, res: NextApiResponse) => 
     // to upper case and the rest to lower case
     res.status(201).json({ result: 'TEST OK' })
   } catch (err) {
+    // TODO: Set the error message into the global error obj => errorMessages
     const errorMessage = err instanceof Error ? err.message : 'Error adding the transaction to database'
     res.status(500).json({ error: errorMessage })
   }

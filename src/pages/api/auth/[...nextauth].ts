@@ -1,14 +1,16 @@
-import NextAuth, { User as NextAuthUser, DefaultSession } from 'next-auth'
+import NextAuth, { User as NextAuthUser, DefaultSession, Account, Profile } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter'
 import clientPromise from '@/config/mongoDB'
 import { MongoClient } from 'mongodb'
-import { IUser } from '@/models'
+import { ICategories, IUser } from '@/models'
 import { JWT, encode } from 'next-auth/jwt'
 import { CustomSessionI } from '@/interfaces'
 import { compare } from 'bcrypt'
+import { isAuthProvider } from '@/utils'
 
+// TODO: When a user registers with Oauth, needs the categories prop saved in DB
 export default NextAuth({
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
   adapter: MongoDBAdapter(clientPromise as Promise<MongoClient>),
@@ -83,6 +85,43 @@ export default NextAuth({
         return customSession
       }
       return session
+    },
+    // Called only for signIn with providers (i.e. not at user-pw provider)
+    async signIn({ user, account, profile }: { user: NextAuthUser; account: Account | null; profile?: Profile }) {
+      if (account && isAuthProvider(account.provider)) {
+        const client = await clientPromise
+        const db = client.db()
+
+        const existingUser = await db.collection('users').findOne({ email: user.email })
+        if (!existingUser) {
+          const commonCategoriesCursor = (await db
+            .collection('categories')
+            .find({ common: true })
+            .toArray()) as ICategories[]
+          const commonCategories = commonCategoriesCursor.map(category => category._id)
+
+          const { id, ...dataUser } = user
+          const newUser = {
+            ...dataUser,
+            signupDate: new Date().toISOString(),
+            categories: commonCategories
+          }
+          const createdUser = await db.collection('users').insertOne(newUser)
+
+          const newAccount = {
+            ...account,
+            userId: createdUser.insertedId
+          }
+          await db.collection('accounts').insertOne(newAccount)
+        } else {
+          // If the user exist, it updates the expires_at prop
+          await db
+            .collection('accounts')
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            .updateOne({ userId: existingUser._id }, { $set: { expires_at: account.expires_at } })
+        }
+      }
+      return true // Returning true will continue the sign-in process
     }
   },
   debug: false

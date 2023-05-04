@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 import { Schema, model, Document, ObjectId, Model } from 'mongoose'
 import { modelExists } from '@/utils'
+import { ICategories } from '../transactions/Categories'
 
 export interface IUser extends Document {
   _id: ObjectId
@@ -9,6 +10,7 @@ export interface IUser extends Document {
   email: string
   password: string
   signupDate: string
+  categories: ICategories[]
 }
 
 const UserSchema: Schema = new Schema({
@@ -22,7 +24,8 @@ const UserSchema: Schema = new Schema({
     lowercase: true
   },
   password: { type: String, required: true },
-  signupDate: { type: String, required: true }
+  signupDate: { type: String, required: true },
+  categories: [{ type: Schema.Types.ObjectId, ref: 'categories' }]
 })
 
 UserSchema.set('toJSON', {
