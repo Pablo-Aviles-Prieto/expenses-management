@@ -1,5 +1,7 @@
+import type { ObjectId } from 'mongoose'
+
 export interface CategoryI {
-  id: number
+  id: number | ObjectId
   name: string
   newEntry?: boolean
 }

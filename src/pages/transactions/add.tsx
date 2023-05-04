@@ -1,18 +1,15 @@
 import { FieldText, FormBtn, FormContainer, CalendarField, SwitchBtn, ComboboxField } from '@/components/Form'
 import { Formik, FormikHelpers } from 'formik'
-import { useState } from 'react'
+import { FC, useState } from 'react'
 import { format } from 'date-fns'
 import { formikBtnIsDisabled } from '@/utils'
 import { AddSchema } from '@/validations/transactions'
-import { COMMON_CATEGORIES, dateFormat } from '@/utils/const'
+import { COMMON_CATEGORIES, URL_API, dateFormat } from '@/utils/const'
 import { CoinsStack } from '@/components/icons'
 import { NextPageContext } from 'next'
-import connectDb from '@/config/mongooseDB'
-import { getSession } from 'next-auth/react'
-import type { CategoryI, CustomSessionI } from '@/interfaces'
+import type { CategoryI } from '@/interfaces'
 
 import 'react-datepicker/dist/react-datepicker.css'
-import UserModel from '@/models/user/UserModel'
 
 const INITIAL_VALUES = {
   name: '',
@@ -46,20 +43,49 @@ type TransactionObjI = {
   notes?: string
 }
 
-// TODO: Fetch the categories of the user via SSR
+type PropsI = {
+  categories: ResponseI
+}
+
+type ResponseI = {
+  categories?: CategoryI[]
+  error?: string
+}
+
 const CAT_ARRAY = [{ id: 8, name: 'House repair' }]
+
+const URL = `${URL_API || ''}/api/categories/all`
+
+export async function getServerSideProps(context: NextPageContext) {
+  const cookies = context.req?.headers.cookie || ''
+
+  const res: Response = await fetch(URL, {
+    headers: {
+      cookie: cookies
+    }
+  })
+  const data = (await res.json()) as ResponseI
+
+  return {
+    props: {
+      categories: data
+    }
+  }
+}
 
 // TODO: Add the currency selected by the user in the global context, in the amount input
 // maybe indicate to the user that is displaying the global currency selected
-const AddTransaction = () => {
+const AddTransaction: FC<PropsI> = ({ categories }) => {
   const [isSavingTransaction, setIsSavingTransaction] = useState(false)
   const [additionalDates, setAdditionalDates] = useState<(Date | null)[]>([])
+
+  console.log('categories', categories)
 
   const handleSubmit = (values: FormValues, helpers: FormikHelpers<FormValues>) => {
     setIsSavingTransaction(true)
 
     const dates = Array.from({ length: 5 }, (_, index) => {
-      const keyValue: AdditionalDateKeys = `additionalDate_${index + 1}` as AdditionalDateKeys
+      const keyValue = `additionalDate_${index + 1}` as AdditionalDateKeys
       return values[keyValue]
     })
 
@@ -190,27 +216,3 @@ const AddTransaction = () => {
 }
 
 export default AddTransaction
-
-export async function getServerSideProps(context: NextPageContext) {
-  // Connect to the database
-  await connectDb()
-
-  // Get the user session
-  const session = (await getSession(context)) as CustomSessionI | null
-  if (!session) {
-    return {
-      props: {} // Will be passed to the page component as props
-    }
-  }
-  console.log('session', session)
-
-  // Get user categories
-  const user = await UserModel.findById(session?.user?.id)
-  // const categories = user ? user.categories : []
-
-  return {
-    props: {
-      // categories
-    } // Will be passed to the page component as props
-  }
-}

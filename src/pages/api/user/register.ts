@@ -4,7 +4,7 @@ import connectDb from '@/config/mongooseDB'
 import UserModel from '@/models/user/UserModel'
 import { bcryptSalt } from '@/utils/genBcryptSalt'
 import { errorMessages } from '@/utils/const'
-import CategoriesModel from '@/models/transactions/Categories'
+import CategoriesModel from '@/models/transactions/CategoriesModel'
 
 type ReqObjI = {
   name: string

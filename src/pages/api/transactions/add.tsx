@@ -2,7 +2,7 @@ import connectDb from '@/config/mongooseDB'
 import { CategoryI } from '@/interfaces'
 import { errorMessages } from '@/utils/const'
 import { NextApiRequest, NextApiResponse } from 'next'
-import CategoriesModel from '@/models/transactions/Categories'
+import CategoriesModel from '@/models/transactions/CategoriesModel'
 import { ignoreCapsQuery } from '@/utils'
 
 type ReqObjI = {
@@ -51,6 +51,10 @@ const endpointController = async (req: NextApiRequest, res: NextApiResponse) => 
 
     // TODO: Before creating a category I need to convert the string with the 1st letter
     // to upper case and the rest to lower case
+    // TODO: When the category is created, I need go get the id of it and add it to the categories array
+    // of that user (maybe should be in his own endpoint)
+    // TODO: The category comes from the front with a fake id (check it out), in that case, need to delete
+    // the id and let mongo create the id to that category
     res.status(201).json({ result: 'TEST OK' })
   } catch (err) {
     // TODO: Set the error message into the global error obj => errorMessages

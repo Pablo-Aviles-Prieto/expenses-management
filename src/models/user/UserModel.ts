@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { Schema, model, Document, ObjectId, Model } from 'mongoose'
 import { modelExists } from '@/utils'
-import { ICategories } from '../transactions/Categories'
+import { ICategories } from '../transactions/CategoriesModel'
 
 export interface IUser extends Document {
   _id: ObjectId
