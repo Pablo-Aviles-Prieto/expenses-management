@@ -1,10 +1,10 @@
 import { FieldText, FormBtn, FormContainer, CalendarField, SwitchBtn, ComboboxField } from '@/components/Form'
 import { Formik, FormikHelpers } from 'formik'
-import { FC, useState } from 'react'
+import { FC, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { formikBtnIsDisabled } from '@/utils'
 import { AddSchema } from '@/validations/transactions'
-import { COMMON_CATEGORIES, URL_API, dateFormat } from '@/utils/const'
+import { URL_API, dateFormat } from '@/utils/const'
 import { CoinsStack } from '@/components/icons'
 import { NextPageContext } from 'next'
 import type { CategoryI } from '@/interfaces'
@@ -44,12 +44,11 @@ type TransactionObjI = {
 }
 
 type PropsI = {
-  categories: ResponseI
+  userCategories: ResponseI
 }
 
 type ResponseI = {
-  categories?: CategoryI[]
-  error?: string
+  result: CategoryI[] | string
 }
 
 const CAT_ARRAY = [{ id: 8, name: 'House repair' }]
@@ -65,22 +64,25 @@ export async function getServerSideProps(context: NextPageContext) {
     }
   })
   const data = (await res.json()) as ResponseI
+  console.log('data', data)
 
   return {
     props: {
-      categories: data
+      userCategories: data
     }
   }
 }
 
 // TODO: Add the currency selected by the user in the global context, in the amount input
 // maybe indicate to the user that is displaying the global currency selected
-const AddTransaction: FC<PropsI> = ({ categories }) => {
+const AddTransaction: FC<PropsI> = ({ userCategories }) => {
   const [isSavingTransaction, setIsSavingTransaction] = useState(false)
   const [additionalDates, setAdditionalDates] = useState<(Date | null)[]>([])
 
-  console.log('categories', categories)
-
+  // TODO: pass the categories to the combobox and finish the logic on backend to create
+  // the new categories with correct id
+  // TODO: Check if send the fake id created in the front to the backend or no, atm im sending
+  // the id, the name and the newEntry props. (probably send it and handle in the back?)
   const handleSubmit = (values: FormValues, helpers: FormikHelpers<FormValues>) => {
     setIsSavingTransaction(true)
 
@@ -140,6 +142,11 @@ const AddTransaction: FC<PropsI> = ({ categories }) => {
     })
   }
 
+  const categoriesArray = useMemo(
+    () => (Array.isArray(userCategories.result) ? userCategories.result : []),
+    [userCategories]
+  )
+
   // TODO: Create 2 btns, one to create the transaction and redirect to the user dashboard
   // and create other btn so the user can create the transaction and after saving it, keep in
   // the same form with the data stored, so it can modify and create a new one
@@ -160,7 +167,7 @@ const AddTransaction: FC<PropsI> = ({ categories }) => {
             id="categories"
             name="categories"
             label="Categories"
-            dataArray={[...COMMON_CATEGORIES, ...CAT_ARRAY]}
+            dataArray={[...categoriesArray]}
             msgToCreateEntry={{ SVG: CoinsStack, message: 'Create this category' }}
             subTitle="Select from the pre-defined or your saved categories, or just create a new one"
             isRequired
