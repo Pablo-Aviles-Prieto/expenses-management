@@ -17,11 +17,11 @@ const endpointController = async (req: NextApiRequest, res: NextApiResponse) => 
 
   try {
     await connectDb()
-
+    console.log('req', req)
     const session = (await getSession({ req })) as CustomSessionI | null
 
     if (!session || !session.user?.id) {
-      res.status(401).json({ error: ' There is an error with the user, please relog into your account' })
+      res.status(401).json({ error: ' There is an error fetching the data user, please relog into your account' })
       return
     }
 

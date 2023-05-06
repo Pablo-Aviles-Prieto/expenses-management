@@ -1,7 +1,6 @@
 /* eslint-disable max-len */
 import { Schema, model, Document, ObjectId, Model } from 'mongoose'
 import { modelExists } from '@/utils'
-import { ICategories } from '../transactions/CategoriesModel'
 
 export interface IUser extends Document {
   _id: ObjectId
@@ -10,7 +9,7 @@ export interface IUser extends Document {
   email: string
   password: string
   signupDate: string
-  categories: ICategories[]
+  categories: ObjectId[]
 }
 
 const UserSchema: Schema = new Schema({

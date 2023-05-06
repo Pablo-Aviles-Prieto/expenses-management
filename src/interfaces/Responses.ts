@@ -1,4 +1,4 @@
-export type ResponseUserI = {
+export interface ResponseUserI {
   email: string
   id: string
   name: string

@@ -4,12 +4,14 @@ import { FC, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { formikBtnIsDisabled } from '@/utils'
 import { AddSchema } from '@/validations/transactions'
-import { URL_API, dateFormat } from '@/utils/const'
+import { URL_API, dateFormat, errorMessages } from '@/utils/const'
 import { CoinsStack } from '@/components/icons'
 import { NextPageContext } from 'next'
-import type { CategoryI } from '@/interfaces'
+import type { CategoryI, TransactionObjI, ResponseTransactionI } from '@/interfaces'
 
 import 'react-datepicker/dist/react-datepicker.css'
+import { useFetch } from '@/hooks/useFetch'
+import { useCustomSession } from '@/hooks/useCustomSession'
 
 const INITIAL_VALUES = {
   name: '',
@@ -34,15 +36,6 @@ type AdditionalDateKeys =
   | 'additionalDate_4'
   | 'additionalDate_5'
 
-type TransactionObjI = {
-  name: string
-  amount: number
-  date: string
-  creationDate: string
-  categories: CategoryI[]
-  notes?: string
-}
-
 type PropsI = {
   userCategories: ResponseI
 }
@@ -53,18 +46,18 @@ type ResponseI = {
 
 const CAT_ARRAY = [{ id: 8, name: 'House repair' }]
 
-const URL = `${URL_API || ''}/api/categories/all`
+const URL_FETCH_CAT = `${URL_API || ''}/api/categories/all`
+const URL_POST_TRANSACTION = `${URL_API || ''}/api/transactions/add`
 
 export async function getServerSideProps(context: NextPageContext) {
   const cookies = context.req?.headers.cookie || ''
 
-  const res: Response = await fetch(URL, {
+  const res: Response = await fetch(URL_FETCH_CAT, {
     headers: {
       cookie: cookies
     }
   })
   const data = (await res.json()) as ResponseI
-  console.log('data', data)
 
   return {
     props: {
@@ -78,12 +71,15 @@ export async function getServerSideProps(context: NextPageContext) {
 const AddTransaction: FC<PropsI> = ({ userCategories }) => {
   const [isSavingTransaction, setIsSavingTransaction] = useState(false)
   const [additionalDates, setAdditionalDates] = useState<(Date | null)[]>([])
+  const [addTransactionError, setAddTransactionError] = useState<string | undefined>(undefined)
+  const { fetchPetition } = useFetch()
+  const { data } = useCustomSession()
 
   // TODO: pass the categories to the combobox and finish the logic on backend to create
   // the new categories with correct id
   // TODO: Check if send the fake id created in the front to the backend or no, atm im sending
   // the id, the name and the newEntry props. (probably send it and handle in the back?)
-  const handleSubmit = (values: FormValues, helpers: FormikHelpers<FormValues>) => {
+  const handleSubmit = async (values: FormValues, helpers: FormikHelpers<FormValues>) => {
     setIsSavingTransaction(true)
 
     const dates = Array.from({ length: 5 }, (_, index) => {
@@ -123,14 +119,34 @@ const AddTransaction: FC<PropsI> = ({ userCategories }) => {
       })
     }
 
+    const transactionsToSave = [newTransaction, ...additionalNewTransactions]
+    console.log('transactionsToSave', transactionsToSave)
+    console.log('data', data)
+
+    try {
+      const extraHeaders = {
+        Authorization: `Bearer ${data?.accessToken || ''}`
+      }
+      const addTransaction = await fetchPetition<ResponseTransactionI>(
+        URL_POST_TRANSACTION,
+        {
+          method: 'POST',
+          body: JSON.stringify({ transactions: transactionsToSave })
+        },
+        extraHeaders
+      )
+      console.log('addTransaction', addTransaction)
+    } catch (err) {
+      const errorString = err instanceof Error ? err.message : errorMessages.generic
+      setAddTransactionError(errorString)
+    } finally {
+      setIsSavingTransaction(false)
+      helpers.setSubmitting(false)
+    }
+
     // TODO: Use a toast
     // TODO: Send the userId prop
     // Send an array to the backend endpoint and save every obj in it
-    const transactionsToSave = [newTransaction, ...additionalNewTransactions]
-    console.log('transactionsToSave', transactionsToSave)
-
-    setIsSavingTransaction(false)
-    helpers.setSubmitting(false)
   }
 
   const handleAdditionalDateChange = (date: Date | null, index: number) => {
