@@ -7,17 +7,22 @@ type ErrorI = {
 
 export function useFetch() {
   const fetchPetition = useCallback(
-    async <DataType = any>(url: string, args?: { [x: string]: any }, jsonResponse = true): Promise<DataType> => {
+    async <DataType = any>(
+      url: string,
+      args?: { [x: string]: any },
+      headers?: HeadersInit,
+      jsonResponse = true
+    ): Promise<DataType> => {
       try {
+        console.log('headers', headers)
         const res = await fetch(url, {
           ...args,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json', ...headers }
         })
 
         if (!res.ok) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           const error: ErrorI = JSON.parse(await res.text())
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
 
           // TODO: set toast
           // notify(<ToastContent title="ERROR" type="error" description={error.error} />)

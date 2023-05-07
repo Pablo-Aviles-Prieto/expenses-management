@@ -11,8 +11,8 @@ import { useCustomSession } from '@/hooks/useCustomSession'
 import { useRouter } from 'next/router'
 import { GoogleSVG } from '@/components/icons'
 import { useCustomToast } from '@/hooks'
-import { CustomSessionI } from '@/interfaces'
 import { errorMessages } from '@/utils/const'
+import type { CustomSessionI, IProviders } from '@/interfaces'
 
 const INITIAL_VALUES = {
   email: '',
@@ -20,8 +20,6 @@ const INITIAL_VALUES = {
 }
 
 type FormValues = typeof INITIAL_VALUES
-
-type IProvider = 'google'
 
 const Signin: FC = () => {
   const [debouncedPwrdError, setDebouncedPwrdError] = useState<string | undefined>(undefined)
@@ -80,7 +78,7 @@ const Signin: FC = () => {
     }
   }
 
-  const handleProviderAuth = (provider: IProvider) => {
+  const handleProviderAuth = (provider: IProviders) => {
     void signIn(provider, { redirect: false })
   }
 

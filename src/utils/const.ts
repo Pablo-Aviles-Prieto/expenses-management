@@ -74,3 +74,7 @@ export const COMMON_CATEGORIES = [
   { id: 6, name: 'Shopping' },
   { id: 7, name: 'Gifts' }
 ]
+
+export const authProviders = {
+  google: 'google'
+} as const

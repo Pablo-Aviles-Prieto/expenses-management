@@ -4,6 +4,7 @@ import connectDb from '@/config/mongooseDB'
 import UserModel from '@/models/user/UserModel'
 import { bcryptSalt } from '@/utils/genBcryptSalt'
 import { errorMessages } from '@/utils/const'
+import CategoriesModel from '@/models/transactions/CategoriesModel'
 
 type ReqObjI = {
   name: string
@@ -39,12 +40,16 @@ const endpointController = async (req: NextApiRequest, res: NextApiResponse) => 
     const salt = await bcryptSalt()
     const hashedPassword = await hash(password, salt)
 
+    const getCategories = await CategoriesModel.find({ common: true })
+    const commonCategories = getCategories.map(category => category._id)
+
     const newUser = new UserModel({
       image: image || 'http://localhost:3000/images/default-avatar.jpg',
       name,
       email,
       password: hashedPassword,
-      signupDate: new Date().toISOString()
+      signupDate: new Date().toISOString(),
+      categories: commonCategories
     })
 
     const savedUser = await newUser.save()

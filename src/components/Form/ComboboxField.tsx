@@ -2,15 +2,16 @@
 import React, { FC, SVGProps, useState } from 'react'
 import { useField } from 'formik'
 import { Combobox } from '@headlessui/react'
+import type { ObjectId } from 'mongoose'
 import { FormInputContainer } from '../styles'
 import { Check, ChevronUpDown, Close } from '../icons'
 
 // TODO: remove the ID and filter/find using name?
 // or use uuid
 type PropsT = {
-  id: number
+  id: number | ObjectId
   name: string
-  newEntry?: string
+  newEntry?: boolean
 }
 
 type MsgToCreateEntryI = {
@@ -122,7 +123,7 @@ export const ComboboxField = <T extends PropsT>({
           <FormInputContainer label={isRequired ? `${label}*` : label} id={id} subTitle={subTitle}>
             <span className={`flex flex-wrap gap-2 ${errorClass}`}>
               {field.value.dataValues.map(element => (
-                <span key={element.id} className="flex items-center gap-1 rounded bg-indigo-400 px-2 py-0.5">
+                <span key={element.id.toString()} className="flex items-center gap-1 rounded bg-indigo-400 px-2 py-0.5">
                   <span className="text-gray-200">{element.name}</span>
                   <Close
                     className="cursor-pointer"
@@ -180,7 +181,7 @@ export const ComboboxField = <T extends PropsT>({
           <Combobox.Options className="py-1 overflow-auto text-base leading-6 rounded-md shadow-xs max-h-60 focus:outline-none sm:text-sm sm:leading-5">
             {filteredPeople.map((person, i) => (
               <Combobox.Option
-                key={person.id}
+                key={person.id.toString()}
                 value={person}
                 className={({ active }) => {
                   return classNames(

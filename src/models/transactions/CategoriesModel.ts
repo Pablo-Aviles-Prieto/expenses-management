@@ -5,10 +5,12 @@ import { modelExists } from '@/utils'
 export interface ICategories extends Document {
   _id: ObjectId
   name: string
+  common?: boolean
 }
 
 const CategoriesSchema: Schema = new Schema({
-  name: { type: String, required: true }
+  name: { type: String, required: true },
+  common: Boolean
 })
 
 CategoriesSchema.set('toJSON', {

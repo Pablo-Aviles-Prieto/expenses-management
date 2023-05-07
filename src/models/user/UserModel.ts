@@ -9,6 +9,7 @@ export interface IUser extends Document {
   email: string
   password: string
   signupDate: string
+  categories: ObjectId[]
 }
 
 const UserSchema: Schema = new Schema({
@@ -22,7 +23,8 @@ const UserSchema: Schema = new Schema({
     lowercase: true
   },
   password: { type: String, required: true },
-  signupDate: { type: String, required: true }
+  signupDate: { type: String, required: true },
+  categories: [{ type: Schema.Types.ObjectId, ref: 'categories' }]
 })
 
 UserSchema.set('toJSON', {
