@@ -14,7 +14,6 @@ export function useFetch() {
       jsonResponse = true
     ): Promise<DataType> => {
       try {
-        console.log('headers', headers)
         const res = await fetch(url, {
           ...args,
           headers: { 'Content-Type': 'application/json', ...headers }

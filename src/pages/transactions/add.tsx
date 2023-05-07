@@ -44,7 +44,7 @@ type ResponseI = {
   result: CategoryI[] | string
 }
 
-const CAT_ARRAY = [{ id: 8, name: 'House repair' }]
+// const CAT_ARRAY = [{ id: 8, name: 'House repair' }]
 
 const URL_FETCH_CAT = `${URL_API || ''}/api/categories/all`
 const URL_POST_TRANSACTION = `${URL_API || ''}/api/transactions/add`
@@ -121,7 +121,6 @@ const AddTransaction: FC<PropsI> = ({ userCategories }) => {
 
     const transactionsToSave = [newTransaction, ...additionalNewTransactions]
     console.log('transactionsToSave', transactionsToSave)
-    console.log('data', data)
 
     try {
       const extraHeaders = {
@@ -145,7 +144,7 @@ const AddTransaction: FC<PropsI> = ({ userCategories }) => {
     }
 
     // TODO: Use a toast
-    // TODO: Send the userId prop
+    // TODO: Send the userId prop ??
     // Send an array to the backend endpoint and save every obj in it
   }
 

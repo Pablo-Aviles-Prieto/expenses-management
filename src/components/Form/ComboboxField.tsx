@@ -2,14 +2,13 @@
 import React, { FC, SVGProps, useState } from 'react'
 import { useField } from 'formik'
 import { Combobox } from '@headlessui/react'
-import type { ObjectId } from 'mongoose'
 import { FormInputContainer } from '../styles'
 import { Check, ChevronUpDown, Close } from '../icons'
 
 // TODO: remove the ID and filter/find using name?
 // or use uuid
 type PropsT = {
-  id: number | ObjectId
+  id: number | string
   name: string
   newEntry?: boolean
 }

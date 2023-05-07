@@ -6,7 +6,7 @@ import type { CustomSessionI } from '@/interfaces'
 import UserModel from '@/models/user/UserModel'
 
 // Have to import the categories schema so the user schema can populate the categories array
-import '@/models/transactions/CategoriesModel'
+import '@/models/categories/CategoriesModel'
 
 const endpointController = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'GET') {
