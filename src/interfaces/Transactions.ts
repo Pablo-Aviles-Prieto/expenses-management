@@ -1,7 +1,9 @@
-import type { ObjectId } from 'mongoose'
+// import type { ObjectId } from 'mongoose'
 
+// TODO: The category id is a number (when created) and a string of the ObjectId
+// since it comes populated, and it returns a id as string, not as ObjectId. SHOULD BE CHANGED
 export interface CategoryI {
-  id: number | ObjectId
+  id: number | string
   name: string
   newEntry?: boolean
 }

@@ -1,2 +1,2 @@
 export type { IUser } from './user/UserModel'
-export type { ICategories } from './transactions/CategoriesModel'
+export type { ICategories } from './categories/CategoriesModel'
