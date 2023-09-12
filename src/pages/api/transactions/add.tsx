@@ -59,9 +59,8 @@ const endpointController = async (req: NextApiRequest, res: NextApiResponse) => 
     // All the categories that has to be added to the transaction (after looping through newCategories)
     const addCategoriesToTransaction = [...existingCategories, ...addCategoriesToUser]
 
-    // Follow this approach instead the session!
+    // Separate it into a service to get the user id??
     const tokenNext = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
-
     if (!tokenNext || !tokenNext.id) {
       res.status(400).json({ error: ' There is an error fetching the user data. Try again later' })
       return
