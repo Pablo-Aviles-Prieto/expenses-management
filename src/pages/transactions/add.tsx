@@ -44,8 +44,6 @@ type ResponseI = {
   result: CategoryI[] | string
 }
 
-// const CAT_ARRAY = [{ id: 8, name: 'House repair' }]
-
 const URL_FETCH_CAT = `${URL_API || ''}/api/categories/all`
 const URL_POST_TRANSACTION = `${URL_API || ''}/api/transactions/add`
 
@@ -165,6 +163,7 @@ const AddTransaction: FC<PropsI> = ({ userCategories }) => {
   // TODO: Create 2 btns, one to create the transaction and redirect to the user dashboard
   // and create other btn so the user can create the transaction and after saving it, keep in
   // the same form with the data stored, so it can modify and create a new one
+  // TODO: Use the fetch error => addTransactionError
   return (
     <Formik initialValues={INITIAL_VALUES} validationSchema={AddSchema} onSubmit={handleSubmit}>
       {({ isSubmitting, errors, values }) => (

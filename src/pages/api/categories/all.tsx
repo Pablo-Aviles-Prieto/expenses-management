@@ -17,7 +17,6 @@ const endpointController = async (req: NextApiRequest, res: NextApiResponse) => 
 
   try {
     await connectDb()
-    console.log('req', req)
     const session = (await getSession({ req })) as CustomSessionI | null
 
     if (!session || !session.user?.id) {
