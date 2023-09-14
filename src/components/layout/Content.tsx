@@ -1,9 +1,9 @@
-import type { FC } from 'react'
+import type { FC, ReactNode } from 'react'
 import { useLeftMenu } from '@/hooks'
 import { Header } from './Header'
 
 type Props = {
-  children: JSX.Element
+  children: ReactNode
 }
 
 export const Content: FC<Props> = ({ children }) => {
