@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { Schema, model, Document, ObjectId, Model } from 'mongoose'
-import { modelExists } from '@/utils'
+import { modelExists } from '@/utils/checkModelExist'
 
 export interface ICategories extends Document {
   _id: ObjectId
