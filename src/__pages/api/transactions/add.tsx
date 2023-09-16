@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-await-in-loop */
 import connectDb from '@/config/mongooseDB'
 import { ResponseTransactionI } from '@/interfaces'
@@ -50,7 +51,9 @@ const endpointController = async (req: NextApiRequest, res: NextApiResponse) => 
       if (categoryExist) {
         categoryId = categoryExist._id
       } else {
-        const createdCategory = await new CategoriesModel({ name: capitalizeFirstLetter(category.name) }).save()
+        const createdCategory = await new CategoriesModel({
+          name: capitalizeFirstLetter(category.name)
+        }).save()
         categoryId = createdCategory._id
       }
       addCategoriesToUser.push(categoryId)
@@ -97,7 +100,8 @@ const endpointController = async (req: NextApiRequest, res: NextApiResponse) => 
     res.status(201).json({ result: 'TEST OK' })
   } catch (err) {
     // TODO: Set the error message into the global error obj => errorMessages
-    const errorMessage = err instanceof Error ? err.message : 'Error adding the transaction to database'
+    const errorMessage =
+      err instanceof Error ? err.message : 'Error adding the transaction to database'
     res.status(500).json({ error: errorMessage })
   }
 }
