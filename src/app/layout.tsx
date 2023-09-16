@@ -11,13 +11,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'Pablo Avilés', url: 'https://github.com/Pablo-Aviles-Prieto' }]
 }
 
-const RootLayout = ({
-  // Layouts must accept a children prop.
-  // This will be populated with nested layouts or pages
-  children
-}: {
-  children: React.ReactNode
-}) => {
+const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
       <body>

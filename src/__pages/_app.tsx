@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { Layout } from '@/components/layout/Layout'
 import type { AppProps as NextAppProps } from 'next/app'
 import type { FC } from 'react'

@@ -20,7 +20,10 @@ export default NextAuth({
       name: 'user/password',
       async authorize(credentials, req) {
         const client = await clientPromise
-        const user = (await client.db().collection('users').findOne({ email: credentials?.email })) as IUser | null
+        const user = (await client
+          .db()
+          .collection('users')
+          .findOne({ email: credentials?.email })) as IUser | null
         if (!user) return null
         const passwordMatches = await compare(credentials?.password || '', user.password)
         if (!passwordMatches) return null
@@ -87,7 +90,15 @@ export default NextAuth({
       return session
     },
     // Called only for signIn with providers (i.e. not at user-pw provider)
-    async signIn({ user, account, profile }: { user: NextAuthUser; account: Account | null; profile?: Profile }) {
+    async signIn({
+      user,
+      account,
+      profile
+    }: {
+      user: NextAuthUser
+      account: Account | null
+      profile?: Profile
+    }) {
       if (account && isAuthProvider(account.provider)) {
         const client = await clientPromise
         const db = client.db()

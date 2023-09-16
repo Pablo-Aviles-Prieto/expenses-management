@@ -1,3 +1,5 @@
+'use client'
+
 import React, { createContext, useState, useMemo } from 'react'
 import type { LeftMenuContextData } from '@/interfaces'
 

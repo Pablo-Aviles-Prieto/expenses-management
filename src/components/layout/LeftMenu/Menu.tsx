@@ -1,6 +1,9 @@
 /* eslint-disable no-void */
+
+'use client'
+
 import type { FC } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useCustomSession } from '@/hooks/useCustomSession'
 
 // Order matters for rendering

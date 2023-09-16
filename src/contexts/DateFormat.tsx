@@ -1,3 +1,5 @@
+'use client'
+
 import React, { createContext, useState, useMemo } from 'react'
 import { DateFormatValues } from '@/interfaces'
 

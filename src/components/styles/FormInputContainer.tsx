@@ -11,7 +11,7 @@ interface PropsI {
   children: ReactElement | ReactElement[]
 }
 
-export const FormInputContainer: FC<PropsI> = ({ label, id, subTitle, children }) => {
+export const FormInputContainer: FC<PropsI> = ({ label, id, subTitle = undefined, children }) => {
   const defaultClassName = `w-full px-3 py-2 leading-tight text-gray-600 bg-gray-200 border rounded shadow appearance-none focus:outline-none focus:shadow-outline`
 
   const StyledChildren = Array.isArray(children)
@@ -19,7 +19,10 @@ export const FormInputContainer: FC<PropsI> = ({ label, id, subTitle, children }
         return cloneElement(child, {
           // eslint-disable-next-line react/no-array-index-key
           key: index,
-          className: index === 0 ? `${defaultClassName} ${child.props.className ?? ''}` : child.props.className ?? ''
+          className:
+            index === 0
+              ? `${defaultClassName} ${child.props.className ?? ''}`
+              : child.props.className ?? ''
         })
       })
     : cloneElement(children, {
@@ -35,8 +38,4 @@ export const FormInputContainer: FC<PropsI> = ({ label, id, subTitle, children }
       {StyledChildren}
     </div>
   )
-}
-
-FormInputContainer.defaultProps = {
-  subTitle: undefined
 }

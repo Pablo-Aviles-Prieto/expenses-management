@@ -61,7 +61,10 @@ export const ComboboxField = <T extends PropsT>({
     query === ''
       ? elementList
       : elementList.filter(elemnt =>
-          elemnt.name.toLowerCase().replace(/\s+/g, '').includes(query.toLowerCase().replace(/\s+/g, ''))
+          elemnt.name
+            .toLowerCase()
+            .replace(/\s+/g, '')
+            .includes(query.toLowerCase().replace(/\s+/g, ''))
         )
 
   const onComboboxChange = (dataElmnt: T[]) => {
@@ -97,7 +100,9 @@ export const ComboboxField = <T extends PropsT>({
       return alreadyExists ? prevElements : [...prevElements, newCategoryObj]
     })
 
-    const alreadyActive = field.value.dataValues.find(elm => elm.name.toLowerCase() === query.toLowerCase())
+    const alreadyActive = field.value.dataValues.find(
+      elm => elm.name.toLowerCase() === query.toLowerCase()
+    )
     if (alreadyActive) {
       setQuery('')
       inputDataHandler({ type: '' })
@@ -122,7 +127,10 @@ export const ComboboxField = <T extends PropsT>({
           <FormInputContainer label={isRequired ? `${label}*` : label} id={id} subTitle={subTitle}>
             <span className={`flex flex-wrap gap-2 ${errorClass}`}>
               {field.value.dataValues.map(element => (
-                <span key={element.id.toString()} className="flex items-center gap-1 rounded bg-indigo-400 px-2 py-0.5">
+                <span
+                  key={element.id.toString()}
+                  className="flex items-center gap-1 rounded bg-indigo-400 px-2 py-0.5"
+                >
                   <span className="text-gray-200">{element.name}</span>
                   <Close
                     className="cursor-pointer"
@@ -169,7 +177,9 @@ export const ComboboxField = <T extends PropsT>({
                 typeof meta.error === 'string' ? (
                   <span>{meta.error}</span>
                 ) : (
-                  Object.entries(meta.error).map(([key, value]) => <span key={key}>{value as string}</span>)
+                  Object.entries(meta.error).map(([key, value]) => (
+                    <span key={key}>{value as string}</span>
+                  ))
                 )
               ) : null}
             </div>
@@ -193,7 +203,10 @@ export const ComboboxField = <T extends PropsT>({
                   <>
                     <span
                       onClick={() => console.log('clicked option')}
-                      className={classNames('block truncate', selected ? 'font-semibold' : 'font-normal')}
+                      className={classNames(
+                        'block truncate',
+                        selected ? 'font-semibold' : 'font-normal'
+                      )}
                     >
                       {person.name}
                     </span>
@@ -231,10 +244,4 @@ export const ComboboxField = <T extends PropsT>({
       </div>
     </Combobox>
   )
-}
-
-ComboboxField.defaultProps = {
-  isRequired: false,
-  msgToCreateEntry: undefined,
-  subTitle: undefined
 }
