@@ -11,7 +11,6 @@ import { Logout, Login } from '../../icons'
 import { HeaderProfileImg } from './HeaderProfileImg'
 
 type PropsI = {
-  // eslint-disable-next-line react/require-default-props
   classes?: string
 }
 
