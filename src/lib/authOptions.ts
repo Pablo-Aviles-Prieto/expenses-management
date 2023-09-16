@@ -104,10 +104,10 @@ export const authOptions: NextAuthOptions = {
 
         const existingUser = await db.collection('users').findOne({ email: user.email })
         if (!existingUser) {
-          const commonCategoriesCursor = (await db
-            .collection('categories')
+          const commonCategoriesCursor: ICategories[] = await db
+            .collection<ICategories>('categories')
             .find({ common: true })
-            .toArray()) as ICategories[]
+            .toArray()
           const commonCategories = commonCategoriesCursor.map(category => category._id)
 
           const { id, ...dataUser } = user

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable no-void */
-/* eslint-disable max-len */
 
 'use client'
 
@@ -34,7 +33,7 @@ const Signin: FC = () => {
 
   useEffect(() => {
     if (session?.user) {
-      void router.push(`/user/${session.user.id}/details`)
+      router.push(`/user/${session.user.id}/details`)
     }
   }, [session])
 
@@ -47,7 +46,7 @@ const Signin: FC = () => {
         password: values.password,
         redirect: false
       })
-      if (response?.ok) {
+      if (!response?.error) {
         const updatedSession = (await getSession()) as CustomSessionI | null
         if (updatedSession?.user) {
           router.push(`/user/${updatedSession.user.id}/details`)

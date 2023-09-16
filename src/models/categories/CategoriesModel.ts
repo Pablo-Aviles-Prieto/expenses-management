@@ -16,8 +16,11 @@ const CategoriesSchema: Schema = new Schema({
 CategoriesSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
-  transform(doc: ICategories, ret: Partial<ICategories>) {
-    delete ret._id
+  transform: (doc: Document, ret: Record<string, any>) => {
+    if ('name' in doc && '_id' in doc) {
+      // rudimentary type check
+      delete ret._id
+    }
   }
 })
 
