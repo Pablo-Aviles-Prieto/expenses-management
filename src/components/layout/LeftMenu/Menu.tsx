@@ -31,29 +31,37 @@ export const Menu: FC = () => {
 
   const navigateToProfile = () => {
     if (!session?.user) {
-      void router.push(`/user/signin`)
+      router.push(`/user/signin`)
       return
     }
-    void router.push(`/user/${session.user.id}/details`)
+    router.push(`/user/${session.user.id}/details`)
   }
 
   const navigateToPath = (path: string) => {
-    void router.push(path)
+    router.push(path)
   }
 
   return (
     <div className="flex flex-col h-48 gap-3 my-6">
       <p>Personal Menu</p>
-      <button type="button" onClick={navigateToProfile}>
-        {!session?.user ? 'Login' : 'My profile'}
-      </button>
-      {navPages.map(page => {
-        return (!page.needAuth && !session?.user) || (page.needAuth && session?.user) ? (
-          <button key={page.path} type="button" onClick={() => navigateToPath(page.path)}>
-            {page.label}
+      {session === undefined ? (
+        <div className="text-center">Loading...</div>
+      ) : (
+        <>
+          <button type="button" onClick={navigateToProfile}>
+            {!session?.user ? 'Login' : 'My profile'}
           </button>
-        ) : null
-      })}
+          <>
+            {navPages.map(page => {
+              return (!page.needAuth && !session?.user) || (page.needAuth && session?.user) ? (
+                <button key={page.path} type="button" onClick={() => navigateToPath(page.path)}>
+                  {page.label}
+                </button>
+              ) : null
+            })}
+          </>
+        </>
+      )}
     </div>
   )
 }

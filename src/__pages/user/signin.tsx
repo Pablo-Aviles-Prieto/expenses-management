@@ -8,7 +8,7 @@ import { LoginSchema, PasswordSchema } from '@/validations/auth'
 import { formikBtnIsDisabled } from '@/utils'
 import { getSession, signIn } from 'next-auth/react'
 import { useCustomSession } from '@/hooks/useCustomSession'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { GoogleSVG } from '@/components/icons'
 import { useCustomToast } from '@/hooks'
 import { errorMessages } from '@/utils/const'
@@ -47,7 +47,7 @@ const Signin: FC = () => {
       if (response?.ok) {
         const updatedSession = (await getSession()) as CustomSessionI | null
         if (updatedSession?.user) {
-          await router.push(`/user/${updatedSession.user.id}/details`)
+          router.push(`/user/${updatedSession.user.id}/details`)
           updateToast({
             toastId: signInToast,
             content: 'Signed in successfully',
@@ -93,7 +93,13 @@ const Signin: FC = () => {
       {({ isSubmitting, errors }) => (
         <FormContainer title="Login">
           {credentialsError && <p className="mb-2 text-red-500">{credentialsError}</p>}
-          <FieldText id="email" name="email" type="email" placeholder="user@example.com" label="Email" />
+          <FieldText
+            id="email"
+            name="email"
+            type="email"
+            placeholder="user@example.com"
+            label="Email"
+          />
           <DebouncedFieldText
             id="password"
             name="password"
@@ -105,7 +111,10 @@ const Signin: FC = () => {
             validationSchema={PasswordSchema}
           />
           <div className="flex items-center justify-between">
-            <FormBtn isLoading={signInLoading} isDisabled={formikBtnIsDisabled({ isSubmitting, errorsObj: errors })}>
+            <FormBtn
+              isLoading={signInLoading}
+              isDisabled={formikBtnIsDisabled({ isSubmitting, errorsObj: errors })}
+            >
               Login
             </FormBtn>
             <FormBtn
