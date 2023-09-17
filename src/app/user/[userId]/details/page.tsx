@@ -1,9 +1,10 @@
-import { CustomSessionI, ResponseUserI } from '@/interfaces'
+import { CustomSessionI } from '@/interfaces'
 import { URL_API, errorMessages } from '@/utils/const'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
-import { getUser } from '@/repository/getUser'
+import { getUser } from '@/repository/User'
 import { UserInfo } from '@/features/UserInfo/UserInfo'
+import { UserI } from '@/interfaces/Responses'
 
 const URL = `${URL_API || ''}/api/user`
 
@@ -13,7 +14,7 @@ type IProps = {
 
 type ResponseI = {
   ok: boolean
-  user?: ResponseUserI
+  user?: UserI
   error?: string
 }
 

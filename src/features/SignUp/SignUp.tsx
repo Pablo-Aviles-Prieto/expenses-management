@@ -5,11 +5,11 @@ import { Formik } from 'formik'
 import { DebouncedFieldText, FieldText, FormBtn, FormContainer } from '@/components/Form'
 import { SignupSchema, PasswordSchema } from '@/validations/auth'
 import { useFetch } from '@/hooks/useFetch'
-import { formikBtnIsDisabled } from '@/utils'
+import { formikBtnIsDisabled } from '@/utils/formikBtnDisabled'
 import { ResponseUserI } from '@/interfaces'
 import { URL_API, errorMessages } from '@/utils/const'
 import { signIn } from 'next-auth/react'
-import router from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useCustomToast } from '@/hooks'
 
 const URL = `${URL_API || ''}/api/user/register`
@@ -29,6 +29,8 @@ const SignUp: FC = () => {
   const { fetchPetition } = useFetch()
   const { showLoadingToast, updateToast } = useCustomToast()
 
+  const router = useRouter()
+
   const handleSubmit = async (values: FormValues) => {
     const registeringToast = showLoadingToast({ msg: 'Registering...' })
     setRegisterLoading(true)
@@ -42,11 +44,11 @@ const SignUp: FC = () => {
         password: values.password,
         redirect: false
       })
-      if (loginResponse?.ok) {
-        await router.push(`/user/${registerResponse.id}/details`)
+      if (loginResponse?.ok && registerResponse.ok && registerResponse.createdUser) {
+        router.push(`/user/${registerResponse.createdUser.id}/details`)
         updateToast({
           toastId: registeringToast,
-          content: `Welcome ${registerResponse.name}`,
+          content: `Welcome ${registerResponse.createdUser.name}`,
           type: 'success'
         })
       } else {
@@ -59,6 +61,7 @@ const SignUp: FC = () => {
         })
       }
     } catch (err) {
+      console.log(err)
       const errorString = err instanceof Error ? err.message : errorMessages.generic
       setRegisterError(errorString)
       updateToast({

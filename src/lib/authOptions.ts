@@ -8,7 +8,7 @@ import { ICategories, IUser } from '@/models'
 import { JWT, encode } from 'next-auth/jwt'
 import { CustomSessionI } from '@/interfaces'
 import { compare } from 'bcrypt'
-import { isAuthProvider } from '@/utils'
+import { isAuthProvider } from '@/utils/isAuthProvider'
 
 export const authOptions: NextAuthOptions = {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion

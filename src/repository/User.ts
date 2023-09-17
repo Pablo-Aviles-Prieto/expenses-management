@@ -1,8 +1,8 @@
-import connectDb from '@/config/mongooseDB'
-import { ResponseUserI } from '@/interfaces'
 import UserModel from '@/models/user/UserModel'
+import connectDb from '@/config/mongooseDB'
 import { errorMessages } from '@/utils/const'
 import mongoose from 'mongoose'
+import { UserI } from '@/interfaces/Responses'
 
 export const getUser = async (userId: string) => {
   if (typeof userId !== 'string' || !mongoose.Types.ObjectId.isValid(userId)) {
@@ -13,7 +13,7 @@ export const getUser = async (userId: string) => {
     await connectDb()
 
     const userData = await UserModel.findById(userId)
-    const user = JSON.parse(JSON.stringify(userData)) as ResponseUserI
+    const user = JSON.parse(JSON.stringify(userData)) as UserI
     return { ok: true, user }
   } catch (error) {
     return { ok: false, error: errorMessages.generic }

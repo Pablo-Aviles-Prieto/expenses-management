@@ -2,12 +2,12 @@
 
 import { FC } from 'react'
 import { redirect } from 'next/navigation'
-import { ResponseUserI } from '@/interfaces'
+import { UserI } from '@/interfaces/Responses'
 
 type Props = {
   data: {
     ok: boolean
-    user?: ResponseUserI | null
+    user?: UserI | null
     error?: string
   }
   params: { userId: string }
