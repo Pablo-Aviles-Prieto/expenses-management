@@ -11,11 +11,11 @@ async function getSessionData() {
 
 const Page = async () => {
   const session = await getSessionData()
-  console.log('session', session)
 
   if (session && session.user) {
     redirect(`/user/${session.user.id}/details`)
   }
+
   return <SignUp />
 }
 

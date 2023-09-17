@@ -83,12 +83,6 @@ const SignIn: FC = () => {
     void signIn(provider, { redirect: false })
   }
 
-  // TODO: set spinner
-  // This only happens when a logged user visit this page or redirected by Oauth
-  if (statusSession === 'authenticated' && !signInLoading) {
-    return <h1 className="text-5xl">Loading personal page..</h1>
-  }
-
   return (
     <Formik initialValues={INITIAL_VALUES} validationSchema={LoginSchema} onSubmit={handleSubmit}>
       {({ isSubmitting, errors }) => (
