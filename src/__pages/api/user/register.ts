@@ -43,6 +43,7 @@ const endpointController = async (req: NextApiRequest, res: NextApiResponse) => 
     const getCategories = await CategoriesModel.find({ common: true })
     const commonCategories = getCategories.map(category => category._id)
 
+    // TODO: Change hardcoded path to default avatar
     const newUser = new UserModel({
       image: image || 'http://localhost:3000/images/default-avatar.jpg',
       name,

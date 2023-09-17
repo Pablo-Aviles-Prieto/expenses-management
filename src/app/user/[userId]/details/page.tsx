@@ -3,7 +3,7 @@ import { URL_API, errorMessages } from '@/utils/const'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { getUser } from '@/repository/getUser'
-import { UserInfo } from './UserInfo'
+import { UserInfo } from '@/features/UserInfo/UserInfo'
 
 const URL = `${URL_API || ''}/api/user`
 
@@ -32,7 +32,6 @@ async function getUserData(userId: string) {
 const Page = async ({ params }: IProps) => {
   const { userId } = params
   const data = await getUserData(userId)
-  console.log('data', data)
 
   return (
     <div>

@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
 'use client'
 
 import { FC } from 'react'
-// import { ResponseUserI } from '@/interfaces'
 import { redirect } from 'next/navigation'
 import { ResponseUserI } from '@/interfaces'
 
