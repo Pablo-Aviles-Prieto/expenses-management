@@ -24,7 +24,7 @@ type FormValues = typeof INITIAL_VALUES
 
 const SignIn: FC = () => {
   const [debouncedPwrdError, setDebouncedPwrdError] = useState<string | undefined>(undefined)
-  const { data: session, status: statusSession } = useCustomSession()
+  const { data: session } = useCustomSession()
   const [signInLoading, setSignInLoading] = useState(false)
   const [credentialsError, setCredentialsError] = useState<string | undefined>(undefined)
   const router = useRouter()
