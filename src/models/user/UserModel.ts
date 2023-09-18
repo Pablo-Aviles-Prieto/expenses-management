@@ -30,13 +30,8 @@ const UserSchema: Schema = new Schema({
 UserSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
-  // transform(doc: IUser, ret: Partial<IUser>) {
-  //   delete ret.password
-  //   delete ret._id
-  // }
   transform: (doc: Document, ret: Record<string, any>) => {
     if ('_id' in doc && 'password' in doc) {
-      // rudimentary type check
       delete ret._id
       delete ret.password
     }

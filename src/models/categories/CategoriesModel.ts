@@ -18,7 +18,6 @@ CategoriesSchema.set('toJSON', {
   versionKey: false,
   transform: (doc: Document, ret: Record<string, any>) => {
     if ('name' in doc && '_id' in doc) {
-      // rudimentary type check
       delete ret._id
     }
   }

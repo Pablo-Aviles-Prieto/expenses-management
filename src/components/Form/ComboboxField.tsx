@@ -1,3 +1,4 @@
+/* eslint-disable no-void */
 /* eslint-disable max-len */
 import React, { FC, SVGProps, useState } from 'react'
 import { useField } from 'formik'
@@ -54,10 +55,10 @@ export const ComboboxField = <T extends PropsT>({
   const inputDataHandler = ({ type, data }: { type?: string; data?: T[] }) => {
     const typeValue = type ?? field.value.typeValue
     const dataValues = data ?? field.value.dataValues
-    helpers.setValue({ dataValues, typeValue })
+    void helpers.setValue({ dataValues, typeValue })
   }
 
-  const filteredPeople =
+  const filteredData =
     query === ''
       ? elementList
       : elementList.filter(elemnt =>
@@ -70,7 +71,7 @@ export const ComboboxField = <T extends PropsT>({
   const onComboboxChange = (dataElmnt: T[]) => {
     inputDataHandler({ data: dataElmnt })
     if (!meta.touched) {
-      helpers.setTouched(true)
+      void helpers.setTouched(true)
     }
   }
 
@@ -188,10 +189,10 @@ export const ComboboxField = <T extends PropsT>({
 
         <div className="absolute z-10 w-full bg-gray-200 rounded-md shadow-lg">
           <Combobox.Options className="py-1 overflow-auto text-base leading-6 rounded-md shadow-xs max-h-60 focus:outline-none sm:text-sm sm:leading-5">
-            {filteredPeople.map((person, i) => (
+            {filteredData.map(data => (
               <Combobox.Option
-                key={person.id.toString()}
-                value={person}
+                key={data.id.toString()}
+                value={data}
                 className={({ active }) => {
                   return classNames(
                     'relative cursor-default select-none py-2 pl-10 pr-4 focus:outline-none',
@@ -208,7 +209,7 @@ export const ComboboxField = <T extends PropsT>({
                         selected ? 'font-semibold' : 'font-normal'
                       )}
                     >
-                      {person.name}
+                      {data.name}
                     </span>
                     {selected && (
                       <span
