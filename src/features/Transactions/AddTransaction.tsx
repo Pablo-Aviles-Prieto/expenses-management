@@ -21,6 +21,8 @@ import type { CategoryI, TransactionObjI, ResponseTransactionI } from '@/interfa
 import { useFetch } from '@/hooks/useFetch'
 import { useCustomSession } from '@/hooks/useCustomSession'
 import 'react-datepicker/dist/react-datepicker.css'
+import { useRouter } from 'next/navigation'
+import { useCustomToast } from '@/hooks'
 
 const INITIAL_VALUES = {
   name: '',
@@ -64,7 +66,9 @@ export const AddTransactions: FC<PropsI> = ({ userResponse }) => {
   const [additionalDates, setAdditionalDates] = useState<(Date | null)[]>([])
   const [addTransactionError, setAddTransactionError] = useState<string | undefined>(undefined)
   const { fetchPetition } = useFetch()
-  const { data } = useCustomSession()
+  const { data: dataSession } = useCustomSession()
+  const router = useRouter()
+  const { showToast } = useCustomToast()
 
   // TODO: pass the categories to the combobox and finish the logic on backend to create
   // the new categories with correct id
@@ -111,11 +115,11 @@ export const AddTransactions: FC<PropsI> = ({ userResponse }) => {
     }
 
     const transactionsToSave = [newTransaction, ...additionalNewTransactions]
-    console.log('transactionsToSave', transactionsToSave)
 
+    let transactionOk
     try {
       const extraHeaders = {
-        Authorization: `Bearer ${data?.accessToken || ''}`
+        Authorization: `Bearer ${dataSession?.accessToken || ''}`
       }
       const addTransaction = await fetchPetition<ResponseTransactionI>(
         URL_POST_TRANSACTION,
@@ -126,17 +130,27 @@ export const AddTransactions: FC<PropsI> = ({ userResponse }) => {
         extraHeaders
       )
       console.log('addTransaction', addTransaction)
+      transactionOk = addTransaction.ok
+      if (addTransaction.ok) {
+        showToast({
+          msg: `All transactions (${
+            addTransaction?.insertedTransactions?.length ?? ''
+          }), succesfully saved`,
+          options: { type: 'success' }
+        })
+      } else if (addTransaction.error) {
+        setAddTransactionError(addTransaction.error)
+      }
     } catch (err) {
       const errorString = err instanceof Error ? err.message : errorMessages.generic
       setAddTransactionError(errorString)
     } finally {
       setIsSavingTransaction(false)
       helpers.setSubmitting(false)
+      if (dataSession?.user?.id && transactionOk) {
+        router.push(`/user/${dataSession.user.id}/details`)
+      }
     }
-
-    // TODO: Use a toast
-    // TODO: Send the userId prop ??
-    // Send an array to the backend endpoint and save every obj in it
   }
 
   const handleAdditionalDateChange = (date: Date | null, index: number) => {

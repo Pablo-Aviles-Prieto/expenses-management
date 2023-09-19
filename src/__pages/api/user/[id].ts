@@ -1,5 +1,5 @@
 import type { NextApiResponse, NextApiRequest } from 'next'
-import UserModel from '@/models/user/UserModel'
+import UserModel from '@/models/user/UsersModel'
 import connectDb from '@/config/mongooseDB'
 import mongoose from 'mongoose'
 import { getToken } from 'next-auth/jwt'

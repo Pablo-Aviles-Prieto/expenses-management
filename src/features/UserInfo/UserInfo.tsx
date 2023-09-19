@@ -2,7 +2,7 @@
 
 import { FC } from 'react'
 import { redirect } from 'next/navigation'
-import { UserI } from '@/interfaces/Responses'
+import { UserI } from '@/interfaces/User'
 
 type Props = {
   data: {

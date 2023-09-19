@@ -1,8 +1,8 @@
-import UserModel from '@/models/user/UserModel'
+import UserModel from '@/models/user/UsersModel'
 import connectDb from '@/config/mongooseDB'
 import { errorMessages } from '@/utils/const'
 import mongoose from 'mongoose'
-import { UserI } from '@/interfaces/Responses'
+import { UserI } from '@/interfaces/User'
 
 export const getUser = async (userId: string) => {
   if (typeof userId !== 'string' || !mongoose.Types.ObjectId.isValid(userId)) {

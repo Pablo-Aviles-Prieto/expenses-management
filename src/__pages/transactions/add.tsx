@@ -1,8 +1,16 @@
-import { FieldText, FormBtn, FormContainer, CalendarField, SwitchBtn, ComboboxField } from '@/components/Form'
+/* eslint-disable max-len */
+import {
+  FieldText,
+  FormBtn,
+  FormContainer,
+  CalendarField,
+  SwitchBtn,
+  ComboboxField
+} from '@/components/Form'
 import { Formik, FormikHelpers } from 'formik'
 import { FC, useMemo, useState } from 'react'
 import { format } from 'date-fns'
-import { formikBtnIsDisabled } from '@/utils'
+import { formikBtnIsDisabled } from '@/utils/formikBtnDisabled'
 import { AddSchema } from '@/validations/transactions'
 import { URL_API, dateFormat, errorMessages } from '@/utils/const'
 import { CoinsStack } from '@/components/icons'
@@ -176,7 +184,15 @@ const AddTransaction: FC<PropsI> = ({ userCategories }) => {
             label="Name"
             isRequired
           />
-          <FieldText id="amount" name="amount" type="number" placeholder="0.00" step="0.01" label="Amount" isRequired />
+          <FieldText
+            id="amount"
+            name="amount"
+            type="number"
+            placeholder="0.00"
+            step="0.01"
+            label="Amount"
+            isRequired
+          />
           <ComboboxField
             id="categories"
             name="categories"
@@ -195,7 +211,11 @@ const AddTransaction: FC<PropsI> = ({ userCategories }) => {
             onChange={date => handleAdditionalDateChange(date, 0)}
             isRequired
           />
-          <SwitchBtn name="recurrent" label="Recurrent transaction (up to 5 more different dates)" size="small" />
+          <SwitchBtn
+            name="recurrent"
+            label="Recurrent transaction (up to 5 more different dates)"
+            size="small"
+          />
           {values.recurrent &&
             additionalDates.map((_, index) => (
               <CalendarField

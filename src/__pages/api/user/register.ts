@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { hash } from 'bcrypt'
 import connectDb from '@/config/mongooseDB'
-import UserModel from '@/models/user/UserModel'
+import UserModel from '@/models/user/UsersModel'
 import { bcryptSalt } from '@/utils/genBcryptSalt'
 import { errorMessages } from '@/utils/const'
 import CategoriesModel from '@/models/categories/CategoriesModel'

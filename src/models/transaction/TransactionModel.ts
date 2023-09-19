@@ -9,6 +9,7 @@ export interface ITransaction extends Document {
   creationDate: string
   date: string
   name: string
+  userId: ObjectId
   notes?: string
 }
 
@@ -18,18 +19,15 @@ const TransactionSchema: Schema = new Schema({
   creationDate: { type: String, required: true },
   date: { type: String, required: true },
   name: { type: String, required: true },
+  userId: { type: Schema.Types.ObjectId, ref: 'users' },
   notes: String
 })
 
 TransactionSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
-  // transform(doc: ITransaction, ret: Partial<ITransaction>) {
-  //   delete ret._id
-  // }
   transform: (doc: Document, ret: Record<string, any>) => {
     if ('_id' in doc) {
-      // rudimentary type check
       delete ret._id
     }
   }
@@ -38,10 +36,10 @@ TransactionSchema.set('toJSON', {
 // eslint-disable-next-line import/no-mutable-exports
 let TransactionModel: Model<ITransaction>
 
-if (modelExists('transaction')) {
-  TransactionModel = model<ITransaction>('transaction')
+if (modelExists('transactions')) {
+  TransactionModel = model<ITransaction>('transactions')
 } else {
-  TransactionModel = model<ITransaction>('transaction', TransactionSchema)
+  TransactionModel = model<ITransaction>('transactions', TransactionSchema)
 }
 
 export default TransactionModel

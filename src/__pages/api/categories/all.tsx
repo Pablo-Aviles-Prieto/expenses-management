@@ -3,7 +3,7 @@ import { errorMessages } from '@/utils/const'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
 import type { CustomSessionI } from '@/interfaces'
-import UserModel from '@/models/user/UserModel'
+import UserModel from '@/models/user/UsersModel'
 
 // Have to import the categories schema so the user schema can populate the categories array
 import '@/models/categories/CategoriesModel'
@@ -20,7 +20,11 @@ const endpointController = async (req: NextApiRequest, res: NextApiResponse) => 
     const session = (await getSession({ req })) as CustomSessionI | null
 
     if (!session || !session.user?.id) {
-      res.status(401).json({ error: ' There is an error fetching the data user, please relog into your account' })
+      res
+        .status(401)
+        .json({
+          error: ' There is an error fetching the data user, please relog into your account'
+        })
       return
     }
 

@@ -1,17 +1,19 @@
 /* eslint-disable max-len */
 /* eslint-disable no-await-in-loop */
 import connectDb from '@/config/mongooseDB'
-import { ResponseTransactionI } from '@/interfaces'
+import { TransactionObjI } from '@/interfaces'
 import { errorMessages } from '@/utils/const'
 import { NextApiRequest, NextApiResponse } from 'next'
 import CategoriesModel from '@/models/categories/CategoriesModel'
-import { capitalizeFirstLetter, ignoreCapsQuery, isValidTransaction } from '@/utils'
-import UserModel from '@/models/user/UserModel'
+import UserModel from '@/models/user/UsersModel'
 import { getToken } from 'next-auth/jwt'
 import mongoose from 'mongoose'
+import { capitalizeFirstLetter } from '@/utils/capitalizeFirstLetter'
+import { isValidTransaction } from '@/utils/isValidTransaction'
+import { ignoreCapsQuery } from '@/utils/mongoose'
 
 interface ReqObjI {
-  transactions: ResponseTransactionI
+  transactions: TransactionObjI[]
 }
 
 const endpointController = async (req: NextApiRequest, res: NextApiResponse) => {

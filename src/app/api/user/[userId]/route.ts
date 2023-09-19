@@ -1,5 +1,5 @@
 import connectDb from '@/config/mongooseDB'
-import UserModel from '@/models/user/UserModel'
+import UserModel from '@/models/user/UsersModel'
 import { errorMessages } from '@/utils/const'
 import mongoose from 'mongoose'
 import { NextRequest, NextResponse } from 'next/server'

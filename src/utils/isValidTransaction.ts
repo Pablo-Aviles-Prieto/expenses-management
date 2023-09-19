@@ -5,7 +5,8 @@ export function isValidTransaction(transaction: unknown): transaction is Transac
     return false
   }
 
-  const { name, amount, date, creationDate, categories, notes } = transaction as Partial<TransactionObjI>
+  const { name, amount, date, creationDate, categories, notes } =
+    transaction as Partial<TransactionObjI>
 
   return (
     typeof name === 'string' &&

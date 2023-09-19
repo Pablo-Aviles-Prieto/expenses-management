@@ -5,7 +5,7 @@ import type { CategoryI, CustomSessionI } from '@/interfaces'
 import { AddTransactions } from '@/features/Transactions/AddTransaction'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
-import UserModel from '@/models/user/UserModel'
+import UserModel from '@/models/user/UsersModel'
 
 // Have to import the categories schema so the user schema can populate the categories array
 import '@/models/categories/CategoriesModel'

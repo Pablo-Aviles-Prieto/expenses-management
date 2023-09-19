@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { getUser } from '@/repository/User'
 import { UserInfo } from '@/features/UserInfo/UserInfo'
-import { UserI } from '@/interfaces/Responses'
+import { UserI } from '@/interfaces/User'
 
 const URL = `${URL_API || ''}/api/user`
 
