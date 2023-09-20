@@ -6,22 +6,25 @@ export interface ITransaction extends Document {
   _id: ObjectId
   amount: number
   categories: ObjectId[]
-  creationDate: string
   date: string
   name: string
   userId: ObjectId
+  createdAt: Date
+  updatedAt: Date
   notes?: string
 }
 
-const TransactionSchema: Schema = new Schema({
-  amount: { type: Number, required: true },
-  categories: [{ type: Schema.Types.ObjectId, ref: 'categories' }],
-  creationDate: { type: String, required: true },
-  date: { type: String, required: true },
-  name: { type: String, required: true },
-  userId: { type: Schema.Types.ObjectId, ref: 'users' },
-  notes: String
-})
+const TransactionSchema: Schema = new Schema(
+  {
+    amount: { type: Number, required: true },
+    categories: [{ type: Schema.Types.ObjectId, ref: 'categories' }],
+    date: { type: String, required: true },
+    name: { type: String, required: true },
+    userId: { type: Schema.Types.ObjectId, ref: 'users' },
+    notes: String
+  },
+  { timestamps: true }
+)
 
 TransactionSchema.set('toJSON', {
   virtuals: true,

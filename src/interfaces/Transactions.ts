@@ -15,7 +15,7 @@ export interface TransactionObjI {
   notes?: string
 }
 
-type TransactionObjBack = TransactionObjI & { userId: string }
+type TransactionObjBack = TransactionObjI & { userId: string; createdAt: string; updatedAt: string }
 
 export interface ResponseTransactionI {
   ok: boolean

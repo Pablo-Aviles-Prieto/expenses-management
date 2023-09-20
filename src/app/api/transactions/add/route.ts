@@ -83,15 +83,11 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
-    console.log('user._id ', user._id)
     const transactionDocs = transactions.map(trans => {
       const { categories, ...restTrans } = trans
       return { ...restTrans, categories: addCategoriesToTransaction, userId: user._id }
     })
-    console.log('transactionDocs', transactionDocs)
     const insertedTransactions = await TransactionModel.insertMany(transactionDocs)
-
-    // TODO: Check what happens if notes is not sent
 
     // returning the updatedUser (in case that his categories was updated) if not the user
     return NextResponse.json(
