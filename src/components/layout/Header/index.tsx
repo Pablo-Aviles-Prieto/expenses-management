@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable no-return-await */
+
+'use client'
+
 import type { FC } from 'react'
 import { signOut } from 'next-auth/react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useCustomSession } from '@/hooks/useCustomSession'
 import { Logout, Login } from '../../icons'
 import { HeaderProfileImg } from './HeaderProfileImg'
@@ -17,8 +20,8 @@ export const Header: FC<PropsI> = ({ classes = '' }) => {
 
   const loginClasses = 'transform group-hover:scale-110'
 
-  const loginHandler = async () => {
-    await router.push('/user/signin')
+  const loginHandler = () => {
+    router.push('/user/signin')
   }
 
   const logoutHandler = async () => {
@@ -56,8 +59,4 @@ export const Header: FC<PropsI> = ({ classes = '' }) => {
       </div>
     </div>
   )
-}
-
-Header.defaultProps = {
-  classes: ''
 }

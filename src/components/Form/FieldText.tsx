@@ -15,23 +15,22 @@ interface FieldTextProps {
   isRequired?: boolean
 }
 
-export const FieldText: FC<FieldTextProps> = ({ label, isRequired, ...props }) => {
+export const FieldText: FC<FieldTextProps> = ({
+  label,
+  isRequired,
+  component = 'input',
+  rows = 1,
+  ...props
+}) => {
   const [field, meta] = useField(props)
   const errorClass = meta.touched && meta.error ? 'border-red-500 border-2' : ''
 
   return (
     <FormInputContainer id={props.id} label={isRequired ? `${label}*` : label}>
-      <Field {...field} {...props} className={errorClass} as={props.component} />
+      <Field {...field} {...props} as={component} rows={rows} className={errorClass} />
       <p className="min-h-[25px] text-red-500">
         <ErrorMessage name={field.name} />
       </p>
     </FormInputContainer>
   )
-}
-
-FieldText.defaultProps = {
-  step: '',
-  component: 'input',
-  rows: 1,
-  isRequired: false
 }

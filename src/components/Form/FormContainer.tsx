@@ -10,7 +10,12 @@ type IProps = {
   titleSize?: keyof typeof textSize
 }
 
-export const FormContainer: FC<IProps> = ({ children, title, containerWidth, titleSize }) => {
+export const FormContainer: FC<IProps> = ({
+  children,
+  title,
+  containerWidth = 'sm',
+  titleSize = 'xl3'
+}) => {
   return (
     <div className={`w-full  max-w-${containerWidth || 'sm'}`}>
       <Form className="px-8 pt-6 pb-8 mb-4 bg-indigo-700 rounded shadow-md">
@@ -19,9 +24,4 @@ export const FormContainer: FC<IProps> = ({ children, title, containerWidth, tit
       </Form>
     </div>
   )
-}
-
-FormContainer.defaultProps = {
-  containerWidth: 'sm',
-  titleSize: 'xl3'
 }

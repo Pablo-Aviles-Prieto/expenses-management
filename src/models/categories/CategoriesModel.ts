@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { Schema, model, Document, ObjectId, Model } from 'mongoose'
-import { modelExists } from '@/utils'
+import { modelExists } from '@/utils/checkModelExist'
 
 export interface ICategories extends Document {
   _id: ObjectId
@@ -16,8 +16,10 @@ const CategoriesSchema: Schema = new Schema({
 CategoriesSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
-  transform(doc: ICategories, ret: Partial<ICategories>) {
-    delete ret._id
+  transform: (doc: Document, ret: Record<string, any>) => {
+    if ('name' in doc && '_id' in doc) {
+      delete ret._id
+    }
   }
 })
 

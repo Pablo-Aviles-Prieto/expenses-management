@@ -16,7 +16,15 @@ type PropsI = {
   bgColor?: BackgroundColorsI
 }
 
-export const SwitchBtn: FC<PropsI> = ({ label, name, labelPosition, customClasses, size, bgColor, ...props }) => {
+export const SwitchBtn: FC<PropsI> = ({
+  label,
+  name,
+  labelPosition = undefined,
+  customClasses = '',
+  size = undefined,
+  bgColor = undefined,
+  ...props
+}) => {
   // const [enabled, setEnabled] = useState(enableAsDefault)
   const [field, meta, helpers] = useField<boolean>({ name, ...props })
 
@@ -35,13 +43,17 @@ export const SwitchBtn: FC<PropsI> = ({ label, name, labelPosition, customClasse
     <Switch.Group>
       <div className={customClasses ?? ''}>
         <div
-          className={`flex items-center gap-2 w-fit ${labelPositioning === 'right' ? 'flex-row' : 'flex-row-reverse'}`}
+          className={`flex items-center gap-2 w-fit ${
+            labelPositioning === 'right' ? 'flex-row' : 'flex-row-reverse'
+          }`}
         >
           <Switch
             checked={field.value}
             onChange={handleChange}
             name={name}
-            className={`${field.value ? switchBg[bgroundColor].active : switchBg[bgroundColor].inactive}
+            className={`${
+              field.value ? switchBg[bgroundColor].active : switchBg[bgroundColor].inactive
+            }
 					${switchSizes[selectedSize].container}
           relative inline-flex shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors 
 					duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
@@ -61,11 +73,4 @@ export const SwitchBtn: FC<PropsI> = ({ label, name, labelPosition, customClasse
       </div>
     </Switch.Group>
   )
-}
-
-SwitchBtn.defaultProps = {
-  labelPosition: undefined,
-  customClasses: '',
-  size: undefined,
-  bgColor: undefined
 }

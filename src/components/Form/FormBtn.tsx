@@ -10,7 +10,13 @@ type IProps = {
   children: ReactNode
 }
 
-export const FormBtn: FC<IProps> = ({ isLoading, isDisabled, type, onClick, children }) => {
+export const FormBtn: FC<IProps> = ({
+  isLoading = false,
+  isDisabled,
+  type = 'submit',
+  onClick = undefined,
+  children
+}) => {
   return (
     <button
       className={`flex items-center gap-3 px-4 py-2 font-bold text-white rounded focus:outline-none focus:shadow-outline ${
@@ -25,10 +31,4 @@ export const FormBtn: FC<IProps> = ({ isLoading, isDisabled, type, onClick, chil
       {children}
     </button>
   )
-}
-
-FormBtn.defaultProps = {
-  isLoading: false,
-  type: 'submit',
-  onClick: undefined
 }

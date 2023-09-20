@@ -1,5 +1,5 @@
 import { type MutableRefObject, useCallback, useRef, useState, useEffect } from 'react'
-import { keyIsEmptyArray } from '@/utils'
+import { keyIsEmptyArray } from '@/utils/validations'
 import { useFetch } from './useFetch'
 
 const defaultArgs = {
@@ -31,7 +31,13 @@ const makeIsEmptyToast = () => {
   // )
 }
 
-export const useQuery = <T>({ url, args, fetchOnMount = true, useToken = true, checkOptions }: Args<T>) => {
+export const useQuery = <T>({
+  url,
+  args,
+  fetchOnMount = true,
+  useToken = true,
+  checkOptions
+}: Args<T>) => {
   const { keyToCheck, checkIsEmpty, checkOnMount = true } = checkOptions ?? {}
   const [data, setData] = useState<T | undefined>(undefined)
   const [errorState, setError] = useState<Error | undefined>(undefined)

@@ -9,7 +9,10 @@ export const errorMessages = {
   invalidUserId: 'Invalid user ID',
   methodAllowed: 'Method Not Allowed',
   missingData: 'There is missing data in the request',
-  parsingImg: 'Unable to parse the image'
+  parsingImg: 'Unable to parse the image',
+  relogAcc: 'There is an error fetching the data user, please relog into your account',
+  gettingCategories: 'Error getting the categories',
+  addingTransaction: 'Error adding the transaction to database'
 }
 
 export const textSize = {
@@ -28,7 +31,8 @@ export const textSize = {
   xl9: 'text-9xl'
 }
 
-export const cssSizes = 'xs' || 'sm' || 'md' || 'lg' || 'xl' || '2xl' || '3xl' || '4xl' || '5xl' || '6xl' || '7xl'
+export const cssSizes =
+  'xs' || 'sm' || 'md' || 'lg' || 'xl' || '2xl' || '3xl' || '4xl' || '5xl' || '6xl' || '7xl'
 
 export const dateFormat = {
   ISO: 'yyyy-MM-dd',
