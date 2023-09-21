@@ -4,6 +4,8 @@ import TransactionModel from '@/models/transaction/TransactionModel'
 import { errorMessages } from '@/utils/const'
 import { isInvalidUserId } from '@/utils/isInvalidUserId'
 
+import '@/models/categories/CategoriesModel'
+
 export const getAllTransactionsPerUser = async (userId: string) => {
   if (isInvalidUserId(userId)) {
     throw new Error(errorMessages.invalidUserId)

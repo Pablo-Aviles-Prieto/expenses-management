@@ -7,6 +7,8 @@ import { UserI } from '@/interfaces/User'
 import { CategoryI } from '@/interfaces'
 import { isInvalidUserId } from '@/utils/isInvalidUserId'
 
+import '@/models/categories/CategoriesModel'
+
 type SchemaCategoryI = CategoryI & {
   _id: ObjectId
 }
@@ -27,6 +29,7 @@ export const getUserCategories = async (userId: string) => {
     throw new Error(errorMessages.invalidUserId)
   }
 
+  await connectDb()
   const user = await UserModel.findById(userId).populate('categories').lean()
   if (!user) {
     throw new Error(errorMessages.relogAcc)
