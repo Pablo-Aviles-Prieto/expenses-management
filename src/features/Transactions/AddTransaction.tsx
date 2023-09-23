@@ -145,6 +145,7 @@ export const AddTransactions: FC<PropsI> = ({ userResponse }) => {
     } finally {
       setIsSavingTransaction(false)
       helpers.setSubmitting(false)
+      // TODO: Redirect to the transactions page?
       if (dataSession?.user?.id && transactionOk) {
         router.push(`/user/${dataSession.user.id}/details`)
       }

@@ -18,8 +18,8 @@ export const FormContainer: FC<IProps> = ({
 }) => {
   return (
     <div className={`w-full  max-w-${containerWidth || 'sm'}`}>
-      <Form className="px-8 pt-6 pb-8 mb-4 bg-indigo-700 rounded shadow-md">
-        <h3 className={`mb-2 font-bold ${textSize[titleSize || 'xl3']}`}>{title}</h3>
+      <Form>
+        <h3 className={`mb-2 font-bold text-gray-300 ${textSize[titleSize || 'xl3']}`}>{title}</h3>
         {children}
       </Form>
     </div>

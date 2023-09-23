@@ -7,6 +7,7 @@ import { ObjectId } from 'mongodb'
 import { redirect } from 'next/navigation'
 import { getUserCategories } from '@/repository/user'
 import { useCustomToast } from '@/hooks'
+import { CardContainer } from '@/components/styles/CardContainer'
 
 type SchemaCategoryI = CategoryI & {
   _id: ObjectId
@@ -39,7 +40,11 @@ const Page = async () => {
     redirect(`/`)
   }
 
-  return <AddTransactions userResponse={userCategories} />
+  return (
+    <CardContainer>
+      <AddTransactions userResponse={userCategories} />
+    </CardContainer>
+  )
 }
 
 export default Page
