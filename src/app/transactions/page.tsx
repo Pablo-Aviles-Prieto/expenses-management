@@ -4,7 +4,6 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { redirect } from 'next/navigation'
 import { getAllTransactionsPerUser } from '@/repository/transaction'
-import '@/models/categories/CategoriesModel'
 import { TransactionList } from '@/features/Transactions/TransactionList'
 import { useCustomToast } from '@/hooks'
 
