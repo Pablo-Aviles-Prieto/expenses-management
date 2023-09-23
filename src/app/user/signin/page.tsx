@@ -1,3 +1,4 @@
+import { CardContainer } from '@/components/styles/CardContainer'
 import SignIn from '@/features/SignIn/SignIn'
 import { CustomSessionI } from '@/interfaces'
 import { authOptions } from '@/lib/authOptions'
@@ -16,7 +17,11 @@ const Page = async () => {
     redirect(`/user/${session.user.id}/details`)
   }
 
-  return <SignIn />
+  return (
+    <CardContainer containerWidth="xl">
+      <SignIn />
+    </CardContainer>
+  )
 }
 
 export default Page

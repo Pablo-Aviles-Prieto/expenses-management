@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/authOptions'
 import { getUser } from '@/repository/user'
 import { UserInfo } from '@/features/UserInfo/UserInfo'
 import { UserI } from '@/interfaces/User'
+import { CardContainer } from '@/components/styles/CardContainer'
 
 const URL = `${URL_API || ''}/api/user`
 
@@ -36,9 +37,9 @@ const Page = async ({ params }: IProps) => {
   const data = await getUserData(userId)
 
   return (
-    <div>
+    <CardContainer containerWidth="full">
       <UserInfo data={data} params={params} />
-    </div>
+    </CardContainer>
   )
 }
 

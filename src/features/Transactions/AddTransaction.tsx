@@ -173,7 +173,7 @@ export const AddTransactions: FC<PropsI> = ({ userResponse }) => {
   return (
     <Formik initialValues={INITIAL_VALUES} validationSchema={AddSchema} onSubmit={handleSubmit}>
       {({ isSubmitting, errors, values }) => (
-        <FormContainer title="Add transaction" containerWidth="full">
+        <FormContainer title="Add transaction">
           <FieldText
             id="name"
             name="name"

@@ -41,7 +41,7 @@ const Page = async () => {
   }
 
   return (
-    <CardContainer>
+    <CardContainer containerWidth="full">
       <AddTransactions userResponse={userCategories} />
     </CardContainer>
   )
