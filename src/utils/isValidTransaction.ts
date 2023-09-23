@@ -5,14 +5,12 @@ export function isValidTransaction(transaction: unknown): transaction is Transac
     return false
   }
 
-  const { name, amount, date, creationDate, categories, notes } =
-    transaction as Partial<TransactionObjI>
+  const { name, amount, date, categories, notes } = transaction as Partial<TransactionObjI>
 
   return (
     typeof name === 'string' &&
     typeof amount === 'number' &&
     typeof date === 'string' &&
-    typeof creationDate === 'string' &&
     Array.isArray(categories) &&
     categories.every((category: unknown) => {
       if (typeof category !== 'object' || category === null) {

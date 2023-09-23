@@ -94,7 +94,6 @@ export const AddTransactions: FC<PropsI> = ({ userResponse }) => {
       name: values.name,
       amount: parseFloat(values.amount),
       date: formattedMainDate,
-      creationDate: new Date().toISOString(),
       notes: values.notes ? values.notes : undefined,
       categories: values.categories.dataValues
     }
@@ -129,7 +128,6 @@ export const AddTransactions: FC<PropsI> = ({ userResponse }) => {
         },
         extraHeaders
       )
-      console.log('addTransaction', addTransaction)
       transactionOk = addTransaction.ok
       if (addTransaction.ok) {
         showToast({
@@ -147,6 +145,7 @@ export const AddTransactions: FC<PropsI> = ({ userResponse }) => {
     } finally {
       setIsSavingTransaction(false)
       helpers.setSubmitting(false)
+      // TODO: Redirect to the transactions page?
       if (dataSession?.user?.id && transactionOk) {
         router.push(`/user/${dataSession.user.id}/details`)
       }

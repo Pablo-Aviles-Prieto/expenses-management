@@ -2,7 +2,7 @@ import { CustomSessionI } from '@/interfaces'
 import { URL_API, errorMessages } from '@/utils/const'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
-import { getUser } from '@/repository/User'
+import { getUser } from '@/repository/user'
 import { UserInfo } from '@/features/UserInfo/UserInfo'
 import { UserI } from '@/interfaces/User'
 
@@ -18,16 +18,17 @@ type ResponseI = {
   error?: string
 }
 
-// TODO: Use either the API endpoint or the getUser repo logic
 async function getUserData(userId: string) {
-  const session: CustomSessionI | null = await getServerSession(authOptions)
-  if (!session || session?.user?.id !== userId) {
-    return { ok: false, error: errorMessages.authorizedResource }
+  try {
+    const session: CustomSessionI | null = await getServerSession(authOptions)
+    if (!session || session?.user?.id !== userId) {
+      return { ok: false, error: errorMessages.authorizedResource }
+    }
+    return getUser(userId)
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : errorMessages.gettingCategories
+    return { ok: false, error: errorMessage }
   }
-  const res = await getUser(userId)
-  // const res = await fetch(`${URL}/${userId}`)
-  return res
-  // return res.json() as Promise<ResponseI>
 }
 
 const Page = async ({ params }: IProps) => {
