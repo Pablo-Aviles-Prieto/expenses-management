@@ -6,6 +6,7 @@ import { CardContainer } from '@/components/styles/CardContainer'
 import { CustomPopover } from '@/components/styles/Popover/CustomPopover'
 import { TransactionListActions } from './TransactionListActions'
 import { RenderFormattedDate } from './RenderFormattedDate'
+import { TransactionListPagination } from './TransactionListPagination'
 
 type ResponseI = {
   ok: boolean
@@ -55,15 +56,15 @@ export const TransactionList: FC<PropsI> = ({ transResponse }) => {
           const isLastItem = i === transactions.length - 1
           return (
             <li
-              className={`flex text-lg items-center py-4 hover:bg-indigo-900 ${TABLE_PADDING_X} 
+              className={`flex text-base items-center py-2 hover:bg-indigo-900 ${TABLE_PADDING_X} 
 				  			${isLastItem ? 'border-0 hover:rounded-b-lg' : 'border-b'} ${TABLE_BORDER_COLOR}`}
-              key={`${trans.createdAt} + ${trans.amount}`}
+              key={`${trans.createdAt} + ${trans.date} + ${trans.amount}`}
             >
-              <div className={`${NAME_CELL_CLASSES} text-xl`}>{trans.name}</div>
+              <div className={`${NAME_CELL_CLASSES} text-lg`}>{trans.name}</div>
               <div
                 className={`${AMOUNT_CELL_CLASSES} ${
                   trans.amount > 0 ? 'text-green-500' : 'text-red-500'
-                } font-bold text-xl`}
+                } font-bold text-lg`}
               >
                 {trans.amount}
               </div>
@@ -123,10 +124,7 @@ export const TransactionList: FC<PropsI> = ({ transResponse }) => {
           </div>
           {renderTransactionsList(transResponse.transactions)}
         </div>
-        <div className="flex items-center justify-between mt-6">
-          <div>Displaying X pages of X</div>
-          <div>Pagination itself</div>
-        </div>
+        <TransactionListPagination transactions={transResponse.transactions} />
       </CardContainer>
     </>
   )
