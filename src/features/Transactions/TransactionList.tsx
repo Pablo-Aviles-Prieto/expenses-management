@@ -5,6 +5,7 @@ import { FC } from 'react'
 import { CardContainer } from '@/components/styles/CardContainer'
 import { CustomPopover } from '@/components/styles/Popover/CustomPopover'
 import { TransactionListActions } from './TransactionListActions'
+import { RenderFormattedDate } from './RenderFormattedDate'
 
 type ResponseI = {
   ok: boolean
@@ -44,12 +45,8 @@ export const TransactionList: FC<PropsI> = ({ transResponse }) => {
     }
 
     const renderNotes = (notes?: string) => {
-      return (
-        <div className="text-center min-w-min">
-          {notes ??
-            'There are no comments for this transaction asdad asd as fasfasfasfa sfg ggggsdgsdgeg ew gfasdf asd as dasasdasd'}
-        </div>
-      )
+      // If notes is falsy, the button is disabled, so it shouldnt show the empty string
+      return <div className="text-center text-slate-200 min-w-min">{notes ?? ''}</div>
     }
 
     return (
@@ -59,7 +56,7 @@ export const TransactionList: FC<PropsI> = ({ transResponse }) => {
           return (
             <li
               className={`flex text-lg items-center py-4 hover:bg-indigo-900 ${TABLE_PADDING_X} 
-					${isLastItem ? 'border-0' : 'border-b'} ${TABLE_BORDER_COLOR}`}
+				  			${isLastItem ? 'border-0 hover:rounded-b-lg' : 'border-b'} ${TABLE_BORDER_COLOR}`}
               key={`${trans.createdAt} + ${trans.amount}`}
             >
               <div className={`${NAME_CELL_CLASSES} text-xl`}>{trans.name}</div>
@@ -70,7 +67,9 @@ export const TransactionList: FC<PropsI> = ({ transResponse }) => {
               >
                 {trans.amount}
               </div>
-              <div className={`${DATE_CELL_CLASSES}`}>{trans.date}</div>
+              <div className={`${DATE_CELL_CLASSES}`}>
+                <RenderFormattedDate stringDate={trans.date} />
+              </div>
               <div className={`${CATEGORIES_CELL_CLASSES}`}>
                 <CustomPopover
                   buttonValue="Categories"
@@ -123,6 +122,10 @@ export const TransactionList: FC<PropsI> = ({ transResponse }) => {
             <div className={`${ACTIONS_CELL_CLASSES}`}>Actions</div>
           </div>
           {renderTransactionsList(transResponse.transactions)}
+        </div>
+        <div className="flex items-center justify-between mt-6">
+          <div>Displaying X pages of X</div>
+          <div>Pagination itself</div>
         </div>
       </CardContainer>
     </>
