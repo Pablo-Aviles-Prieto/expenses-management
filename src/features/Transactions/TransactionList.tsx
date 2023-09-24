@@ -25,15 +25,16 @@ const CATEGORIES_CELL_CLASSES = 'w-2/12 text-center'
 const NOTES_CELL_CLASSES = 'w-2/12 text-center'
 const ACTIONS_CELL_CLASSES = 'w-2/12 text-center'
 
+// TODO: Limit the number of chars showed for the name. Use a function showing ellipsis.
+// Also do the same for the notes, limit the length of the characters whogin on the Popover
 export const TransactionList: FC<PropsI> = ({ transResponse }) => {
-  // TODO: Every 3 or 4 categories, render it in a new line
   const renderTransactionsList = (transactions: TransactionObjBack[]) => {
     const renderCategories = (categories: CategoryI[]) => {
       return (
         <div className="flex flex-wrap items-center justify-center gap-2">
           {categories.map(cat => {
             return (
-              <div key={cat.id} className="px-6 py-2 bg-indigo-700 rounded-full">
+              <div key={cat.id} className="px-6 py-1 text-base bg-indigo-700 rounded-full">
                 {cat.name}
               </div>
             )
@@ -43,7 +44,12 @@ export const TransactionList: FC<PropsI> = ({ transResponse }) => {
     }
 
     const renderNotes = (notes?: string) => {
-      return <div className="w-full">{notes ?? 'There are no comments for this transaction'}</div>
+      return (
+        <div className="text-center min-w-min">
+          {notes ??
+            'There are no comments for this transaction asdad asd as fasfasfasfa sfg ggggsdgsdgeg ew gfasdf asd as dasasdasd'}
+        </div>
+      )
     }
 
     return (
@@ -56,7 +62,7 @@ export const TransactionList: FC<PropsI> = ({ transResponse }) => {
 					${isLastItem ? 'border-0' : 'border-b'} ${TABLE_BORDER_COLOR}`}
               key={`${trans.createdAt} + ${trans.amount}`}
             >
-              <div className={`${NAME_CELL_CLASSES}`}>{trans.name}</div>
+              <div className={`${NAME_CELL_CLASSES} text-xl`}>{trans.name}</div>
               <div
                 className={`${AMOUNT_CELL_CLASSES} ${
                   trans.amount > 0 ? 'text-green-500' : 'text-red-500'
@@ -69,14 +75,15 @@ export const TransactionList: FC<PropsI> = ({ transResponse }) => {
                 <CustomPopover
                   buttonValue="Categories"
                   panelContent={renderCategories(trans.categories)}
-                  panelWidth="max-w-xs w-[550px]"
+                  panelWidth="max-w-xs"
                 />
               </div>
               <div className={`${NOTES_CELL_CLASSES} max-auto`}>
                 <CustomPopover
                   buttonValue="Notes"
                   panelContent={renderNotes(trans.notes)}
-                  panelWidth="max-w-xs w-[550x]"
+                  panelWidth="max-w-sm"
+                  isDisabled={!trans.notes}
                 />
               </div>
               <div className={`${ACTIONS_CELL_CLASSES} flex items-center justify-center gap-4`}>
