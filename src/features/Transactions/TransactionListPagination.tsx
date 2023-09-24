@@ -12,6 +12,7 @@ type PropsI = {
 
 const MAX_ITEMS_PER_PAGE = 4
 
+// TODO: Pagination should change a global state with the data to show in the list.
 export const TransactionListPagination: FC<PropsI> = ({ transactions }) => {
   const [data, setData] = useState<TransactionObjBack[]>(transactions)
   const [currentPage, setCurrentPage] = useState(0)
@@ -20,8 +21,8 @@ export const TransactionListPagination: FC<PropsI> = ({ transactions }) => {
   const currentPageData = data.slice(offset, offset + MAX_ITEMS_PER_PAGE)
   const isPrevDisabled = currentPage === 0
   const isNextDisabled = currentPage === totalPages - 1
-  console.log('currentPageData', currentPageData)
-  console.log('currentPage', currentPage)
+  // console.log('currentPageData', currentPageData)
+  // console.log('currentPage', currentPage)
 
   const handlePageChange = ({ selected: selectedPage }: { selected: number }) => {
     setCurrentPage(selectedPage)

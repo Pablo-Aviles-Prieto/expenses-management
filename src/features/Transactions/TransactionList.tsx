@@ -7,6 +7,7 @@ import { CustomPopover } from '@/components/styles/Popover/CustomPopover'
 import { TransactionListActions } from './TransactionListActions'
 import { RenderFormattedDate } from './RenderFormattedDate'
 import { TransactionListPagination } from './TransactionListPagination'
+import LineChart from './LineChart'
 
 type ResponseI = {
   ok: boolean
@@ -103,8 +104,7 @@ export const TransactionList: FC<PropsI> = ({ transResponse }) => {
   return (
     <>
       <CardContainer containerWidth="full">
-        <div className="mb-4">Filters</div>
-        <p>Chart section</p>
+        <LineChart transactions={transResponse.transactions} />
       </CardContainer>
       <CardContainer containerWidth="full">
         <div className="flex items-center justify-between mb-6">
