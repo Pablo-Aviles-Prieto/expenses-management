@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { redirect } from 'next/navigation'
 import { getAllTransactionsPerUser } from '@/repository/transaction'
-import { TransactionList } from '@/features/Transactions/TransactionList'
+import { Transactions } from '@/features/Transactions/Transactions'
 import { useCustomToast } from '@/hooks'
 
 const getTransactions = async () => {
@@ -34,7 +34,7 @@ const Page = async () => {
     redirect(`/`)
   }
 
-  return <TransactionList transResponse={transResponse} />
+  return <Transactions transResponse={transResponse} />
 }
 
 export default Page

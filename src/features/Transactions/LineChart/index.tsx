@@ -19,6 +19,8 @@ import {
   Tooltip
 } from 'chart.js'
 import { Line } from 'react-chartjs-2'
+import DateRangePicker from '@/components/DateRangePicker'
+import { usePersistData } from '@/hooks/usePersistData'
 import { useTransactionsChartData } from './hooks/useTransactionsChartData'
 
 ChartJS.register(
@@ -40,7 +42,19 @@ const CHART_LABEL_COLORS = '#e6e6e6'
 const CHART_GRID_LINES_COLORS = 'rgba(255, 255, 255, 0.1)'
 
 const LineChart: FC<PropsI> = ({ transactions }) => {
+  const {
+    transactionStartDate,
+    transactionEndDate,
+    setTransactionStartDate,
+    setTransactionEndDate
+  } = usePersistData()
   const { transactionsChartData, highestAmount } = useTransactionsChartData({ transactions })
+
+  const datePickerOnChange = (dates: [Date | null, Date | null]) => {
+    const [start, end] = dates
+    setTransactionStartDate(start)
+    setTransactionEndDate(end)
+  }
 
   const config = {
     id: 'TransactionsChart',
@@ -122,7 +136,13 @@ const LineChart: FC<PropsI> = ({ transactions }) => {
 
   return (
     <div className="max-h-[350px]">
-      <div className="mb-4">Filters</div>
+      <div className="mb-4">
+        <DateRangePicker
+          startDate={transactionStartDate}
+          endDate={transactionEndDate}
+          onChange={datePickerOnChange}
+        />
+      </div>
       <Line {...config} />
     </div>
   )

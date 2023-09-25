@@ -20,7 +20,6 @@ import { CoinsStack } from '@/components/icons'
 import type { CategoryI, TransactionObjI, ResponseTransactionI } from '@/interfaces'
 import { useFetch } from '@/hooks/useFetch'
 import { useCustomSession } from '@/hooks/useCustomSession'
-import 'react-datepicker/dist/react-datepicker.css'
 import { useRouter } from 'next/navigation'
 import { useCustomToast } from '@/hooks'
 

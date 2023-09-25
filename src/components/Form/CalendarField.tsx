@@ -1,3 +1,4 @@
+/* eslint-disable no-void */
 /* eslint-disable react/jsx-no-useless-fragment */
 import React, { FC } from 'react'
 import { ErrorMessage, useField } from 'formik'
@@ -6,6 +7,7 @@ import { useDateFormat } from '@/hooks/useDateFormat'
 import { DateFormatValues } from '@/interfaces'
 import { format } from 'date-fns'
 import { FormInputContainer } from '../styles'
+import 'react-datepicker/dist/react-datepicker.css'
 
 interface PropsI {
   label: string
@@ -34,12 +36,12 @@ export const CalendarField: FC<PropsI> = ({
 
   const handleChange = (value: Date | null) => {
     if (!meta.touched) {
-      helpers.setTouched(true)
+      void helpers.setTouched(true)
     }
     if (onChange) {
       onChange(value)
     }
-    helpers.setValue(value)
+    void helpers.setValue(value)
   }
 
   return (
