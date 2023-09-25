@@ -23,12 +23,10 @@ export const usePersistData = create<PersistStoreI>()(
       storage: {
         getItem: name => {
           const str = localStorage.getItem(name)
-          console.log('str', str)
           if (!str) return null
           const { state }: { state: Partial<PersistStoreI> } = JSON.parse(str) as {
             state: Partial<PersistStoreI>
           }
-          console.log('state', state)
 
           // Convert ISO strings to Date objects
           return {

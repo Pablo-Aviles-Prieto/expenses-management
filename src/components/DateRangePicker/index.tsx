@@ -33,6 +33,7 @@ const DateRangePicker: FC<PropsI> = ({
         isClearable={isClearable}
         placeholderText="Filter by range date"
         maxDate={forbidFutureDates ? new Date() : null}
+        className="text-[15px] font-bold text-indigo-600"
       />
     </FormInputContainer>
   )

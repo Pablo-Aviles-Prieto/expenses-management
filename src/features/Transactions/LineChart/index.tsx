@@ -21,6 +21,7 @@ import {
 import { Line } from 'react-chartjs-2'
 import DateRangePicker from '@/components/DateRangePicker'
 import { usePersistData } from '@/hooks/usePersistData'
+import Dropdown from '@/components/Dropdown'
 import { useTransactionsChartData } from './hooks/useTransactionsChartData'
 
 ChartJS.register(
@@ -135,15 +136,16 @@ const LineChart: FC<PropsI> = ({ transactions }) => {
   }
 
   return (
-    <div className="max-h-[350px]">
-      <div className="mb-4">
+    <div className="max-h-[375px]">
+      <div className="flex items-center justify-between mx-8 mb-2">
         <DateRangePicker
           startDate={transactionStartDate}
           endDate={transactionEndDate}
           onChange={datePickerOnChange}
         />
+        <Dropdown />
       </div>
-      <Line {...config} />
+      <Line {...config} className="!h-[340px]" />
     </div>
   )
 }
