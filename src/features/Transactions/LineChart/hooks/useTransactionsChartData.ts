@@ -2,6 +2,8 @@
 
 import { TransactionObjBack } from '@/interfaces/Transactions'
 import { dateFormat } from '@/utils/const'
+import { format } from 'date-fns'
+import { useDateFormat } from '@/hooks/useDateFormat'
 import { getDaysOfInterval } from '../utils/getDaysOfInterval'
 import { getMinMaxDates } from '../utils/getMinMaxDates'
 import { Dataset, LineChartData } from '../interfaces'
@@ -15,7 +17,10 @@ type GenerateDatasetParams = {
   label: string
 }
 
+const RED_COLOR = '#e00000'
+
 export const useTransactionsChartData = ({ transactions }: MainParams) => {
+  const { dateFormatSelected } = useDateFormat()
   const incomesTrans = transactions.filter(trans => trans.amount >= 0)
   const expensesTrans = transactions.filter(trans => trans.amount < 0)
 
@@ -41,8 +46,8 @@ export const useTransactionsChartData = ({ transactions }: MainParams) => {
       label: `${label}`,
       data,
       rawData: [...data],
-      backgroundColor: label === 'Incomes' ? 'green' : 'red',
-      borderColor: label === 'Incomes' ? 'green' : '#e00000'
+      backgroundColor: label === 'Incomes' ? 'green' : RED_COLOR,
+      borderColor: label === 'Incomes' ? 'green' : RED_COLOR
     }
   }
 
@@ -52,7 +57,9 @@ export const useTransactionsChartData = ({ transactions }: MainParams) => {
   const highestAmount = Math.max(...expensesDataset.data, ...incomesDataset.data)
 
   const transactionsChartData: LineChartData = {
-    labels: datesInterval,
+    labels: datesInterval.map(date =>
+      format(new Date(date), dateFormatSelected === 'dd-MM-yyyy' ? 'dd-MM-yy' : 'MM-dd-yy')
+    ),
     datasets: [expensesDataset, incomesDataset]
   }
 
