@@ -5,7 +5,6 @@
 
 'use client'
 
-import { TransactionObjBack } from '@/interfaces/Transactions'
 import { FC } from 'react'
 import {
   CategoryScale,
@@ -22,7 +21,8 @@ import { Line } from 'react-chartjs-2'
 import DateRangePicker from '@/components/DateRangePicker'
 import { usePersistData } from '@/hooks/usePersistData'
 import Dropdown from '@/components/Dropdown'
-import { useTransactionsChartData } from './hooks/useTransactionsChartData'
+import { Spinner } from '@/components/styles'
+import { LineChartData } from './interfaces'
 
 ChartJS.register(
   CategoryScale,
@@ -36,20 +36,21 @@ ChartJS.register(
 )
 
 type PropsI = {
-  transactions: TransactionObjBack[]
+  transactionsChart: LineChartData
+  highestChartNumber: number
+  isFilteringData: boolean
 }
 
 const CHART_LABEL_COLORS = '#e6e6e6'
 const CHART_GRID_LINES_COLORS = 'rgba(255, 255, 255, 0.1)'
 
-const LineChart: FC<PropsI> = ({ transactions }) => {
+const LineChart: FC<PropsI> = ({ transactionsChart, highestChartNumber, isFilteringData }) => {
   const {
     transactionStartDate,
     transactionEndDate,
     setTransactionStartDate,
     setTransactionEndDate
   } = usePersistData()
-  const { transactionsChartData, highestAmount } = useTransactionsChartData({ transactions })
 
   const datePickerOnChange = (dates: [Date | null, Date | null]) => {
     const [start, end] = dates
@@ -60,7 +61,7 @@ const LineChart: FC<PropsI> = ({ transactions }) => {
   const config = {
     id: 'TransactionsChart',
     type: 'line',
-    data: transactionsChartData,
+    data: transactionsChart,
     options: {
       responsive: true,
       maintainAspectRatio: false,
@@ -102,7 +103,7 @@ const LineChart: FC<PropsI> = ({ transactions }) => {
         y: {
           padding: 20,
           min: 0,
-          max: highestAmount * 1.1,
+          max: highestChartNumber * 1.1,
           ticks: {
             stepSize: 30,
             color: CHART_LABEL_COLORS,
@@ -145,7 +146,15 @@ const LineChart: FC<PropsI> = ({ transactions }) => {
         />
         <Dropdown />
       </div>
-      <Line {...config} className="!h-[340px]" />
+      <div className="h-[21.5rem]">
+        {isFilteringData ? (
+          <div className="flex items-center justify-center mt-32">
+            <Spinner size="xl" classes="border-violet-400 w-14 h-14" />
+          </div>
+        ) : (
+          <Line {...config} />
+        )}
+      </div>
     </div>
   )
 }
