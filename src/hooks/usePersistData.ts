@@ -1,5 +1,6 @@
 'use client'
 
+import { sub } from 'date-fns'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -34,10 +35,10 @@ export const usePersistData = create<PersistStoreI>()(
               ...state,
               transactionStartDate: state.transactionStartDate
                 ? new Date(state.transactionStartDate)
-                : null,
+                : sub(new Date(), { days: 30 }),
               transactionEndDate: state.transactionEndDate
                 ? new Date(state.transactionEndDate)
-                : null
+                : new Date()
             }
           }
         },

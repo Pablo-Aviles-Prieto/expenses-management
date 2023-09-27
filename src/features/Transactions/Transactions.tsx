@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-void */
 
 'use client'
@@ -41,6 +42,8 @@ const CATEGORIES_CELL_CLASSES = 'w-2/12 text-center'
 const NOTES_CELL_CLASSES = 'w-2/12 text-center'
 const ACTIONS_CELL_CLASSES = 'w-2/12 text-center'
 
+const DROPDOWN_OPTIONS = ['All transactions', 'Incomes', 'Expenses']
+
 const URL_POST_TRANSACTION = `${URL_API || ''}/api/transactions/filtered`
 
 // TODO: Limit the number of chars showed for the name. Use a function showing ellipsis.
@@ -57,6 +60,7 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
   const { transactionsChartData, highestAmount } = parseChartData(transResponse.transactions ?? [])
   const [transactionsChart, setTransactionsChart] = useState<LineChartData>(transactionsChartData)
   const [highestChartNumber, setHighestChartNumber] = useState(highestAmount)
+  const [transFilteredType, setTransFilteredType] = useState<string>(DROPDOWN_OPTIONS[0])
   const [isFilteringData, setIsFilteringData] = useState(true)
   const { data: dataSession } = useCustomSession()
   const { fetchPetition } = useFetch()
@@ -74,39 +78,57 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
     )
   }
 
-  useEffect(() => {
+  const transTypeQueryParam = () => {
+    return transFilteredType === 'All transactions'
+      ? ''
+      : transFilteredType === 'Incomes'
+      ? '&transType=incomes'
+      : '&transType=expenses'
+  }
+
+  const handleFiltering = async () => {
     if (!transactionStartDate || !transactionEndDate) {
+      // TODO: Set a warning/error message in top of the date picker
+      // informing that a date is necessary
       return
     }
-    void (async () => {
-      setIsFilteringData(true)
-      const formatedStartDate = format(new Date(transactionStartDate), dateFormat.ISO)
-      const formatedEndDate = format(new Date(transactionEndDate), dateFormat.ISO)
-      try {
-        const transFiltered = await fetchFilteredTransactions(
-          `${URL_POST_TRANSACTION}?startDate=${formatedStartDate}&endDate=${formatedEndDate}`
-        )
+    setIsFilteringData(true)
+    const formatedStartDate = format(new Date(transactionStartDate), dateFormat.ISO)
+    const formatedEndDate = format(new Date(transactionEndDate), dateFormat.ISO)
+    const transTypeParams = transTypeQueryParam()
 
-        if (transFiltered.ok && transFiltered.transactions) {
-          const { transactionsChartData: transChartData, highestAmount: highestChartData } =
-            parseChartData(transFiltered.transactions)
-          setTransactionsChart(transChartData)
-          setHighestChartNumber(highestChartData)
-          setTransResponseRaw(transFiltered.transactions)
-        } else {
-          // TODO: Display warning toast asking to select different dates (no data)
-        }
-      } catch (err) {
-        // TODO: Display error toast
-      } finally {
-        setIsFilteringData(false)
+    try {
+      const transFiltered = await fetchFilteredTransactions(
+        `${URL_POST_TRANSACTION}?startDate=${formatedStartDate}&endDate=${formatedEndDate}${transTypeParams}`
+      )
+
+      if (transFiltered.ok && transFiltered.transactions) {
+        const { transactionsChartData: transChartData, highestAmount: highestChartData } =
+          parseChartData(transFiltered.transactions)
+        setTransactionsChart(transChartData)
+        setHighestChartNumber(highestChartData)
+        setTransResponseRaw(transFiltered.transactions)
+      } else {
+        // TODO: Display warning toast asking to select different dates (no data)
       }
-    })()
-  }, [transactionStartDate, transactionEndDate])
+    } catch (err) {
+      // TODO: Display error toast
+    } finally {
+      setIsFilteringData(false)
+    }
+  }
+
+  useEffect(() => {
+    void handleFiltering()
+  }, [transactionStartDate, transactionEndDate, transFilteredType])
 
   if (!transResponseRaw || transResponseRaw?.length === 0) {
     // TODO: Improve message
     return <div>There are no transactions yet! Lets make some investments</div>
+  }
+
+  const handleTransFilter = (value: string) => {
+    setTransFilteredType(value)
   }
 
   return (
@@ -116,6 +138,8 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
           transactionsChart={transactionsChart}
           highestChartNumber={highestChartNumber}
           isFilteringData={isFilteringData}
+          dropdownOptions={DROPDOWN_OPTIONS}
+          handleTransFilter={handleTransFilter}
         />
       </CardContainer>
       <CardContainer containerWidth="full">

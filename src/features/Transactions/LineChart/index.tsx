@@ -39,12 +39,20 @@ type PropsI = {
   transactionsChart: LineChartData
   highestChartNumber: number
   isFilteringData: boolean
+  dropdownOptions: string[]
+  handleTransFilter: (e: string) => void
 }
 
 const CHART_LABEL_COLORS = '#e6e6e6'
 const CHART_GRID_LINES_COLORS = 'rgba(255, 255, 255, 0.1)'
 
-const LineChart: FC<PropsI> = ({ transactionsChart, highestChartNumber, isFilteringData }) => {
+const LineChart: FC<PropsI> = ({
+  transactionsChart,
+  highestChartNumber,
+  isFilteringData,
+  dropdownOptions,
+  handleTransFilter
+}) => {
   const {
     transactionStartDate,
     transactionEndDate,
@@ -144,7 +152,7 @@ const LineChart: FC<PropsI> = ({ transactionsChart, highestChartNumber, isFilter
           endDate={transactionEndDate}
           onChange={datePickerOnChange}
         />
-        <Dropdown />
+        <Dropdown dropdownOptions={dropdownOptions} onChange={handleTransFilter} />
       </div>
       <div className="h-[21.5rem]">
         {isFilteringData ? (

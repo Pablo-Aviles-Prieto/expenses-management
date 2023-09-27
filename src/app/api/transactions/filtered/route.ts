@@ -21,12 +21,14 @@ export const GET = async (req: NextRequest) => {
     const { searchParams } = new URL(req.url)
     const startDate = searchParams.get('startDate')
     const endDate = searchParams.get('endDate')
+    const transType = searchParams.get('transType')
 
     return NextResponse.json(
       await getTransactionsByDate({
         userId: tokenNext.id,
         startDate: startDate ?? '',
-        endDate: endDate ?? ''
+        endDate: endDate ?? '',
+        transType
       }),
       { status: 200 }
     )

@@ -2,19 +2,28 @@
 
 'use client'
 
-import { useState } from 'react'
+import { FC, useState } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 
-const DROPDOWN_OPTIONS = ['All transactions', 'Incomes', 'Expenses']
 const BGROUND_GRAY = 'bg-gray-200'
 
-const Dropdown = () => {
-  const [selectedOption, setSelectedOption] = useState(DROPDOWN_OPTIONS[0])
+type Props = {
+  dropdownOptions: string[]
+  onChange: (e: string) => void
+}
+
+const Dropdown: FC<Props> = ({ dropdownOptions, onChange }) => {
+  const [selectedOption, setSelectedOption] = useState(dropdownOptions[0])
+
+  const handleChange = (value: string) => {
+    setSelectedOption(value)
+    onChange(value)
+  }
 
   return (
     <div className="flex items-center justify-center">
       <div className="min-w-[200px] max-w-lg mx-auto">
-        <Listbox as="div" className="space-y-1" value={selectedOption} onChange={setSelectedOption}>
+        <Listbox as="div" className="space-y-1" value={selectedOption} onChange={handleChange}>
           {({ open }) => (
             <div className="relative">
               <span className="inline-block w-full shadow-sm rounded-xl">
@@ -55,7 +64,7 @@ const Dropdown = () => {
                   static
                   className="py-1 overflow-auto text-base leading-6 rounded-md shadow-xs max-h-60 focus:outline-none sm:text-sm sm:leading-5"
                 >
-                  {DROPDOWN_OPTIONS.map(option => (
+                  {dropdownOptions.map(option => (
                     <Listbox.Option key={option} value={option}>
                       {({ selected, active }) => (
                         <div
