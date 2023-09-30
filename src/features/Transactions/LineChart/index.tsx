@@ -72,8 +72,7 @@ const LineChart: FC<PropsI> = ({
     }
   }
 
-  // TODO: Change the styles of the tooltip. Set circles or triangle for the
-  // legend and tooltip icons
+  // TODO: Change the callback of labels to display MM/dd/yy
   const config = {
     id: 'TransactionsChart',
     type: 'line',
@@ -83,12 +82,16 @@ const LineChart: FC<PropsI> = ({
       maintainAspectRatio: false,
       elements: {
         point: {
-          radius: 2
+          radius: 0
         }
       },
       plugins: {
         legend: {
           labels: {
+            usePointStyle: true,
+            pointStyle: 'circle',
+            boxHeight: 9,
+            font: { size: 15 },
             color: CHART_LABEL_COLORS
           }
         },
@@ -105,9 +108,12 @@ const LineChart: FC<PropsI> = ({
             x: 32,
             y: 24
           },
-          bodyColor: '#006BB3',
+          bodyColor: '#02337c',
           bodySpacing: 5,
-          bodyFont: { size: 14 },
+          bodyFont: { size: 15 },
+          usePointStyle: true,
+          pointStyle: 'circle',
+          boxHeight: 10,
           callbacks: {
             label: (context: any) => {
               return `${context.dataset.label}: ${context.dataset.rawData.at(context.dataIndex)}`
@@ -133,14 +139,15 @@ const LineChart: FC<PropsI> = ({
         },
         x: {
           ticks: {
-            maxRotation: 60,
-            minRotation: 60,
+            maxRotation: 45,
+            minRotation: 45,
             beginAtZero: true,
             setpSize: 5,
             padding: 15,
             color: CHART_LABEL_COLORS,
             indexAxis: 'x',
-            autoSkip: false
+            autoSkip: false,
+            font: { size: 13 }
           },
           grid: {
             drawTicks: false,

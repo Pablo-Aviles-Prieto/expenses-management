@@ -25,6 +25,8 @@ export const useTransactionsChartData = () => {
     // display a monthly view instead of daily
     // TODO: Accept a param to know if its parsing expenses/incs or boths. DO NOT DISPLAY
     // THE OTHER LINE IF ITS expenses or incomes.
+    // TODO: In case that its an income or expense, should display the stacked data of
+    // the categories
     const incomesTrans = transactions.filter(trans => trans.amount >= 0)
     const expensesTrans = transactions.filter(trans => trans.amount < 0)
 
