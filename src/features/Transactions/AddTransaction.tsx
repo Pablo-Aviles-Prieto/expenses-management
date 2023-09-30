@@ -188,6 +188,7 @@ export const AddTransactions: FC<PropsI> = ({ userResponse }) => {
             placeholder="0.00"
             step="0.01"
             label="Amount"
+            subtitle="Use negative numbers for expenses"
             isRequired
           />
           <ComboboxField

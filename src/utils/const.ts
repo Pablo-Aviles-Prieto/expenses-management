@@ -56,8 +56,8 @@ export const cssSizes =
 
 export const dateFormat = {
   ISO: 'yyyy-MM-dd',
-  US: 'MM-dd-yyyy',
-  EU: 'dd-MM-yyyy'
+  US: 'MM/dd/yyyy',
+  EU: 'dd/MM/yyyy'
 } as const
 
 export const switchSizes = {

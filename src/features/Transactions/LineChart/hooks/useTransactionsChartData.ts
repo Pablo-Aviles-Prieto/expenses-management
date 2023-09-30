@@ -15,14 +15,16 @@ type GenerateDatasetParams = {
 
 const RED_COLOR = '#e00000'
 
-// TODO: Check the length of datesInterval since the user could ask
-// for a long period of time, but it doesnt have much data.
-// In case that it has several dates and in different months (min and max date)
-// display a monthly view instead of daily
 export const useTransactionsChartData = () => {
   const { dateFormatSelected } = useDateFormat()
 
   const parseChartData = (transactions: TransactionObjBack[]) => {
+    // TODO: Check the length of datesInterval since the user could ask
+    // for a long period of time, but it doesnt have much data.
+    // In case that it has several dates and in different months (min and max date)
+    // display a monthly view instead of daily
+    // TODO: Accept a param to know if its parsing expenses/incs or boths. DO NOT DISPLAY
+    // THE OTHER LINE IF ITS expenses or incomes.
     const incomesTrans = transactions.filter(trans => trans.amount >= 0)
     const expensesTrans = transactions.filter(trans => trans.amount < 0)
 
@@ -59,9 +61,7 @@ export const useTransactionsChartData = () => {
     const highestAmount = Math.max(...expensesDataset.data, ...incomesDataset.data)
 
     const transactionsChartData: LineChartData = {
-      labels: datesInterval.map(date =>
-        format(new Date(date), dateFormatSelected === 'dd-MM-yyyy' ? 'dd-MM-yy' : 'MM-dd-yy')
-      ),
+      labels: datesInterval.map(date => format(new Date(date), dateFormatSelected)),
       datasets: [expensesDataset, incomesDataset]
     }
 

@@ -3,6 +3,7 @@
 import React, { FC } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+import { useDateFormat } from '@/hooks/useDateFormat'
 import { FormInputContainer } from '../styles'
 
 type DateRange = [Date | null, Date | null]
@@ -22,6 +23,8 @@ const DateRangePicker: FC<PropsI> = ({
   isClearable = true,
   forbidFutureDates = true
 }) => {
+  const { dateFormatSelected } = useDateFormat()
+
   return (
     <FormInputContainer id="" label="" removeMargins removeLabel>
       <DatePicker
@@ -34,6 +37,7 @@ const DateRangePicker: FC<PropsI> = ({
         placeholderText="Filter by range date"
         maxDate={forbidFutureDates ? new Date() : null}
         className="text-[15px] font-bold text-indigo-600"
+        dateFormat={dateFormatSelected}
       />
     </FormInputContainer>
   )

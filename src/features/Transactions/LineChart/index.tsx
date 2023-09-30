@@ -72,6 +72,8 @@ const LineChart: FC<PropsI> = ({
     }
   }
 
+  // TODO: Change the styles of the tooltip. Set circles or triangle for the
+  // legend and tooltip icons
   const config = {
     id: 'TransactionsChart',
     type: 'line',
@@ -95,9 +97,9 @@ const LineChart: FC<PropsI> = ({
             intersect: false,
             mode: 'index'
           },
-          titleColor: '#006BB3',
+          titleColor: '#4a41bd',
           titleMarginBottom: 8,
-          titleFont: { size: 15 },
+          titleFont: { size: 16 },
           backgroundColor: 'rgba(236, 244, 249, 0.7)',
           padding: {
             x: 32,
@@ -105,7 +107,7 @@ const LineChart: FC<PropsI> = ({
           },
           bodyColor: '#006BB3',
           bodySpacing: 5,
-          bodyFont: { size: 13 },
+          bodyFont: { size: 14 },
           callbacks: {
             label: (context: any) => {
               return `${context.dataset.label}: ${context.dataset.rawData.at(context.dataIndex)}`

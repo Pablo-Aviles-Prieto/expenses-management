@@ -13,6 +13,7 @@ interface FieldTextProps {
   component?: 'input' | 'textarea'
   rows?: number
   isRequired?: boolean
+  subtitle?: string
 }
 
 export const FieldText: FC<FieldTextProps> = ({
@@ -26,7 +27,11 @@ export const FieldText: FC<FieldTextProps> = ({
   const errorClass = meta.touched && meta.error ? 'border-red-500 border-2' : ''
 
   return (
-    <FormInputContainer id={props.id} label={isRequired ? `${label}*` : label}>
+    <FormInputContainer
+      id={props.id}
+      label={isRequired ? `${label}*` : label}
+      subTitle={props.subtitle}
+    >
       <Field {...field} {...props} as={component} rows={rows} className={errorClass} />
       <p className="min-h-[25px] text-red-500">
         <ErrorMessage name={field.name} />
