@@ -16,6 +16,7 @@ import LineChart from './LineChart'
 import { TransactionListPagination } from './TransactionListPagination'
 import { useTransactionsChartData } from './LineChart/hooks/useTransactionsChartData'
 import { LineChartData } from './LineChart/interfaces'
+import { TransactionListFilter } from './TransactionListFilter'
 
 type ResponseI = {
   ok: boolean
@@ -128,6 +129,7 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
   }
 
   const handleTransFilter = (value: string) => {
+    // TODO: It should clean the filters of the list whenever this main filters get updated
     setTransFilteredType(value)
   }
 
@@ -143,10 +145,7 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
         />
       </CardContainer>
       <CardContainer containerWidth="full">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold">Transactions:</h3>
-          <div>Filter inputs</div>
-        </div>
+        <TransactionListFilter />
         <div className={`border rounded-lg ${TABLE_BORDER_COLOR}`}>
           <div
             className={`font-bold text-xl flex items-center py-2 bg-indigo-700 
