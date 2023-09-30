@@ -23,7 +23,7 @@ const DateRangePicker: FC<PropsI> = ({
   forbidFutureDates = true
 }) => {
   return (
-    <FormInputContainer id="" label="">
+    <FormInputContainer id="" label="" removeMargins removeLabel>
       <DatePicker
         selected={startDate}
         onChange={onChange}

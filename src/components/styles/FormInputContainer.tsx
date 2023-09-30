@@ -7,10 +7,19 @@ interface PropsI {
   label: string
   id: string
   subTitle?: string
+  removeMargins?: boolean
+  removeLabel?: boolean
   children: ReactElement | ReactElement[]
 }
 
-export const FormInputContainer: FC<PropsI> = ({ label, id, subTitle = undefined, children }) => {
+export const FormInputContainer: FC<PropsI> = ({
+  label,
+  id,
+  subTitle = undefined,
+  removeMargins = false,
+  removeLabel = false,
+  children
+}) => {
   const defaultClassName = `w-full px-3 py-2 leading-tight text-gray-600 bg-gray-200 
 	border rounded shadow appearance-none focus:outline-none focus:shadow-outline`
 
@@ -30,11 +39,13 @@ export const FormInputContainer: FC<PropsI> = ({ label, id, subTitle = undefined
       })
 
   return (
-    <div className="mb-2">
-      <label className="block mb-2 text-sm font-bold text-gray-300" htmlFor={id}>
-        {label}
-        {subTitle && <p className="text-xs leading-3 text-gray-400">{subTitle}</p>}
-      </label>
+    <div className={removeMargins ? '' : 'mb-2'}>
+      {!removeLabel && (
+        <label className="block mb-2 text-sm font-bold text-gray-300" htmlFor={id}>
+          {label}
+          {subTitle && <p className="text-xs leading-3 text-gray-400">{subTitle}</p>}
+        </label>
+      )}
       {StyledChildren}
     </div>
   )

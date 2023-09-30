@@ -5,7 +5,7 @@
 
 'use client'
 
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -53,6 +53,7 @@ const LineChart: FC<PropsI> = ({
   dropdownOptions,
   handleTransFilter
 }) => {
+  const [hasDateRangeError, setHasDateRangeError] = useState(false)
   const {
     transactionStartDate,
     transactionEndDate,
@@ -64,6 +65,11 @@ const LineChart: FC<PropsI> = ({
     const [start, end] = dates
     setTransactionStartDate(start)
     setTransactionEndDate(end)
+    if (!start || !end) {
+      setHasDateRangeError(true)
+    } else {
+      setHasDateRangeError(false)
+    }
   }
 
   const config = {
@@ -146,13 +152,23 @@ const LineChart: FC<PropsI> = ({
 
   return (
     <div className="max-h-[375px]">
-      <div className="flex items-center justify-between mx-8 mb-2">
-        <DateRangePicker
-          startDate={transactionStartDate}
-          endDate={transactionEndDate}
-          onChange={datePickerOnChange}
-        />
-        <Dropdown dropdownOptions={dropdownOptions} onChange={handleTransFilter} />
+      <div className="flex items-center justify-between mx-8">
+        <div className="flex flex-col">
+          {hasDateRangeError ? (
+            <p className="text-xs text-red-400">Provide a date range</p>
+          ) : (
+            <div className="h-[1rem]" />
+          )}
+          <DateRangePicker
+            startDate={transactionStartDate}
+            endDate={transactionEndDate}
+            onChange={datePickerOnChange}
+          />
+        </div>
+        <div>
+          <div className="h-[1rem]" />
+          <Dropdown dropdownOptions={dropdownOptions} onChange={handleTransFilter} />
+        </div>
       </div>
       <div className="h-[21.5rem]">
         {isFilteringData ? (
