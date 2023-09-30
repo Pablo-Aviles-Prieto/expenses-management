@@ -89,8 +89,7 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
 
   const handleFiltering = async () => {
     if (!transactionStartDate || !transactionEndDate) {
-      // TODO: Set a warning/error message in top of the date picker
-      // informing that a date is necessary
+      // TODO: Display toast? (already displayingh msg in top of the input)
       return
     }
     setIsFilteringData(true)

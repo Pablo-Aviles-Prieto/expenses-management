@@ -185,7 +185,7 @@ export const AddTransactions: FC<PropsI> = ({ userResponse }) => {
             id="amount"
             name="amount"
             type="number"
-            placeholder="0.00"
+            placeholder="-50.00"
             step="0.01"
             label="Amount"
             subtitle="Use negative numbers for expenses"

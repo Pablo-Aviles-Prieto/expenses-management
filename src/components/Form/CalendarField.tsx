@@ -59,10 +59,7 @@ export const CalendarField: FC<PropsI> = ({
         isClearable={props.isClearable}
         placeholderText={
           props.placeholderText ||
-          `Select or introduce a date (i.e ${format(
-            new Date(),
-            props.customDateFormat || dateFormatSelected
-          )})`
+          `Pick/type a date '${format(new Date(), props.customDateFormat || dateFormatSelected)}'`
         }
         dateFormat={props.customDateFormat || dateFormatSelected}
         autoComplete="off"

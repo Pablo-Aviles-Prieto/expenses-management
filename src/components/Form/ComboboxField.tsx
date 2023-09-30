@@ -122,7 +122,12 @@ export const ComboboxField = <T extends PropsT>({
 
   // TODO: Need to put the label border in red when a meta.error exists
   return (
-    <Combobox value={field.value.dataValues} onChange={onComboboxChange} name="people" multiple>
+    <Combobox
+      value={field.value.dataValues}
+      onChange={onComboboxChange}
+      name={props.name ?? id}
+      multiple
+    >
       <div className="relative">
         <span className="inline-block w-full rounded-md shadow-sm">
           <FormInputContainer label={isRequired ? `${label}*` : label} id={id} subTitle={subTitle}>
@@ -203,7 +208,6 @@ export const ComboboxField = <T extends PropsT>({
                 {({ active, selected }) => (
                   <>
                     <span
-                      onClick={() => console.log('clicked option')}
                       className={classNames(
                         'block truncate',
                         selected ? 'font-semibold' : 'font-normal'
