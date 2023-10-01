@@ -25,15 +25,15 @@ export const CustomPopover: FC<PropsI> = ({
         <>
           <Popover.Button
             disabled={isDisabled}
-            className={`
-                ${open ? '' : 'text-opacity-80'}
-                group inline-flex items-center rounded-md ${
-                  isDisabled ? 'bg-gray-500' : 'bg-blue-700'
-                } px-3 py-2 text-slate-100 font-bold 
-								text-base ${!isDisabled ? 'hover:text-opacity-100' : ''} focus:outline-none focus-visible:ring-2 
-								focus-visible:ring-blue-500 focus-visible:ring-opacity-75 ${
-                  !isDisabled ? 'hover:bg-blue-800' : ''
-                }`}
+            className={`${
+              open ? '' : 'text-opacity-80'
+            } group inline-flex items-center rounded-md ${
+              isDisabled ? 'bg-gray-500' : 'bg-blue-700'
+            } px-3 py-2 text-slate-100 font-bold text-base ${
+              !isDisabled ? 'hover:text-opacity-100' : ''
+            } focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-opacity-75 ${
+              !isDisabled ? 'hover:bg-blue-800' : ''
+            }`}
           >
             <span>{buttonValue}</span>
             {!isDisabled ? (

@@ -9,21 +9,48 @@ const BGROUND_GRAY = 'bg-gray-200'
 
 type Props = {
   dropdownOptions: string[]
-  onChange: (e: string) => void
+  onChange: (e: string | string[]) => void
+  setMinWidth?: string
+  multiple?: boolean
+  multipleTypeName?: string
 }
 
-const Dropdown: FC<Props> = ({ dropdownOptions, onChange }) => {
+const Dropdown: FC<Props> = ({
+  dropdownOptions,
+  onChange,
+  setMinWidth = undefined,
+  multiple = false,
+  multipleTypeName = undefined
+}) => {
   const [selectedOption, setSelectedOption] = useState(dropdownOptions[0])
+  const [multipleOptions, setMultipleOptions] = useState<string[]>([])
 
-  const handleChange = (value: string) => {
-    setSelectedOption(value)
-    onChange(value)
+  const handleChange = (value: string | string[]) => {
+    if (Array.isArray(value)) {
+      setMultipleOptions(value)
+      onChange(value)
+    } else {
+      setSelectedOption(value)
+      onChange(value)
+    }
   }
+
+  const optionsSelected = !multiple
+    ? selectedOption
+    : multipleOptions.length === 0
+    ? `Select multiple ${multipleTypeName ?? 'options'}`
+    : `Selected ${multipleOptions.length} ${multipleTypeName ?? 'options'}`
 
   return (
     <div className="flex items-center justify-center">
-      <div className="min-w-[200px] max-w-lg mx-auto">
-        <Listbox as="div" className="space-y-1" value={selectedOption} onChange={handleChange}>
+      <div className={`${setMinWidth ?? 'min-w-[200px]'} max-w-lg mx-auto`}>
+        <Listbox
+          as="div"
+          className="space-y-1"
+          value={multiple ? multipleOptions : selectedOption}
+          onChange={handleChange}
+          multiple={multiple}
+        >
           {({ open }) => (
             <div className="relative">
               <span className="inline-block w-full shadow-sm rounded-xl">
@@ -33,7 +60,7 @@ const Dropdown: FC<Props> = ({ dropdownOptions, onChange }) => {
 									  rounded-md cursor-default focus:outline-none focus:shadow-outline-blue
 										 focus:border-indigo-200 sm:text-sm sm:leading-5`}
                 >
-                  <span className="block text-[15px] truncate">{selectedOption}</span>
+                  <span className="block text-[15px] truncate">{optionsSelected}</span>
                   <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                     {/* TODO: Extract the SVG */}
                     <svg
@@ -58,7 +85,7 @@ const Dropdown: FC<Props> = ({ dropdownOptions, onChange }) => {
                 leave="transition ease-in duration-100"
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
-                className={`absolute w-full mt-1 ${BGROUND_GRAY} rounded-md shadow-lg`}
+                className={`absolute w-full z-20 mt-1 ${BGROUND_GRAY} rounded-md shadow-lg`}
               >
                 <Listbox.Options
                   static

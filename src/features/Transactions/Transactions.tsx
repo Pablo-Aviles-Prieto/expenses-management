@@ -127,7 +127,10 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
     return <div>There are no transactions yet! Lets make some investments</div>
   }
 
-  const handleTransFilter = (value: string) => {
+  const handleTransFilter = (value: string | string[]) => {
+    if (Array.isArray(value)) {
+      return
+    }
     // TODO: It should clean the filters of the list whenever this main filters get updated
     setTransFilteredType(value)
   }

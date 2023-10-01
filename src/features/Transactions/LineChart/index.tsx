@@ -40,7 +40,7 @@ type PropsI = {
   highestChartNumber: number
   isFilteringData: boolean
   dropdownOptions: string[]
-  handleTransFilter: (e: string) => void
+  handleTransFilter: (e: string | string[]) => void
 }
 
 const CHART_LABEL_COLORS = '#e6e6e6'
