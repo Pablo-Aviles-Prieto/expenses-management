@@ -3,7 +3,8 @@
 import Dropdown from '@/components/Dropdown'
 import { FormBtn } from '@/components/Form'
 import { SimpleFieldText } from '@/components/SimpleFieldText'
-import { useState } from 'react'
+import { TransactionObjBack } from '@/interfaces/Transactions'
+import { FC, useState } from 'react'
 
 const DROPDOWN_FILTER_BY_OPTIONS = ['Name', 'Amount']
 const DROPDOWN_FILTER_BY_AMOUNT = ['>', '<']
@@ -24,9 +25,13 @@ const DROPDOWN_CATEGORIES = [
 type InputFilterOptions = 'Name' | 'Amount'
 type InputFilterAmount = '>' | '<'
 
+type Props = {
+  transResponseRaw: TransactionObjBack[]
+}
+
 // TODO: Create a custom hook who calls an endpoint to get all the categories
 // given a userId!
-export const TransactionListFilter = () => {
+export const TransactionListFilter: FC<Props> = ({ transResponseRaw }) => {
   // TODO: Lift the state so it can be resetted whenever the general filters
   // get updated
   const [fieldTextValue, setFieldTextValue] = useState('')
@@ -42,6 +47,12 @@ export const TransactionListFilter = () => {
     console.log('inputAmountFilter', inputAmountFilter)
     console.log('categoriesSelected', categoriesSelected)
   }
+
+  const categoryNamesSet = transResponseRaw.reduce<Set<string>>((acc, transaction) => {
+    transaction.categories.forEach(cat => acc.add(cat.name))
+    return acc
+  }, new Set())
+  const categoryNamesArray = Array.from(categoryNamesSet)
 
   const handleFilterByOptions = (e: string | string[]) => {
     setInputOptionFilter(e as InputFilterOptions)
@@ -82,7 +93,7 @@ export const TransactionListFilter = () => {
           setMinWidth="min-w-[7rem]"
         />
         <Dropdown
-          dropdownOptions={DROPDOWN_CATEGORIES}
+          dropdownOptions={categoryNamesArray}
           onChange={handleCategoriesSelecteds}
           multiple
           multipleTypeName="categories"

@@ -122,17 +122,17 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
     void handleFiltering()
   }, [transactionStartDate, transactionEndDate, transFilteredType])
 
-  if (!transResponseRaw || transResponseRaw?.length === 0) {
-    // TODO: Improve message
-    return <div>There are no transactions yet! Lets make some investments</div>
-  }
-
   const handleTransFilter = (value: string | string[]) => {
     if (Array.isArray(value)) {
       return
     }
     // TODO: It should clean the filters of the list whenever this main filters get updated
     setTransFilteredType(value)
+  }
+
+  if (!transResponseRaw || transResponseRaw?.length === 0) {
+    // TODO: Improve message
+    return <div>There are no transactions yet! Lets make some investments</div>
   }
 
   return (
@@ -147,7 +147,7 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
         />
       </CardContainer>
       <CardContainer containerWidth="full">
-        <TransactionListFilter />
+        <TransactionListFilter transResponseRaw={transResponseRaw} />
         <div className={`border rounded-lg ${TABLE_BORDER_COLOR}`}>
           <div
             className={`font-bold text-xl flex items-center py-2 bg-indigo-700 
