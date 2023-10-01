@@ -52,6 +52,7 @@ export const TransactionListFilter = forwardRef((props: Props, ref: React.Ref<an
 
   const handleFilterByOptions = (e: string | string[]) => {
     setInputOptionFilter(e as InputFilterOptions)
+    setFieldTextValue('')
   }
 
   const handleFilterByAmount = (e: string | string[]) => {
