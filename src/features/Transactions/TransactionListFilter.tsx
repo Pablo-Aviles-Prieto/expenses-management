@@ -6,6 +6,7 @@ import { SimpleFieldText } from '@/components/SimpleFieldText'
 import { useState } from 'react'
 
 const DROPDOWN_FILTER_BY_OPTIONS = ['Name', 'Amount']
+const DROPDOWN_FILTER_BY_AMOUNT = ['>', '<']
 const DROPDOWN_CATEGORIES = [
   'Category1',
   'Category2',
@@ -20,27 +21,34 @@ const DROPDOWN_CATEGORIES = [
   'Category11'
 ]
 
-type InputOptions = 'Name' | 'Amount'
+type InputFilterOptions = 'Name' | 'Amount'
+type InputFilterAmount = '>' | '<'
 
 // TODO: Create a custom hook who calls an endpoint to get all the categories
-// given a userId
+// given a userId!
 export const TransactionListFilter = () => {
-  // TODO: Elevate the state so it can be resetted whenever the general filters
+  // TODO: Lift the state so it can be resetted whenever the general filters
   // get updated
   const [fieldTextValue, setFieldTextValue] = useState('')
-  const [inputOptionFilter, setInputOptionFilter] = useState<InputOptions>('Name')
+  const [inputOptionFilter, setInputOptionFilter] = useState<InputFilterOptions>('Name')
+  const [inputAmountFilter, setInputAmountFilter] = useState<InputFilterAmount>('>')
   const [categoriesSelected, setCategoriesSelected] = useState<string[]>([])
 
   const handleSubmit = () => {
     // TODO: Check which option (name or amount) is selected and parse the data
-    // and call to the correctly endpoint
+    // and call to the correctly endpoint!
     console.log('fieldTextValue', fieldTextValue)
     console.log('inputOptionFilter', inputOptionFilter)
+    console.log('inputAmountFilter', inputAmountFilter)
     console.log('categoriesSelected', categoriesSelected)
   }
 
   const handleFilterByOptions = (e: string | string[]) => {
-    setInputOptionFilter(e as InputOptions)
+    setInputOptionFilter(e as InputFilterOptions)
+  }
+
+  const handleFilterByAmount = (e: string | string[]) => {
+    setInputAmountFilter(e as InputFilterAmount)
   }
 
   const handleCategoriesSelecteds = (e: string | string[]) => {
@@ -51,6 +59,13 @@ export const TransactionListFilter = () => {
     <div className="flex items-center justify-between mb-6">
       <h3 className="text-lg font-bold">Transactions:</h3>
       <div className="flex items-center justify-center gap-2">
+        {inputOptionFilter === 'Amount' && (
+          <Dropdown
+            dropdownOptions={DROPDOWN_FILTER_BY_AMOUNT}
+            onChange={handleFilterByAmount}
+            setMinWidth="min-w-[3.9rem]"
+          />
+        )}
         <SimpleFieldText
           id="name-or-value"
           onChange={setFieldTextValue}
@@ -58,6 +73,8 @@ export const TransactionListFilter = () => {
             inputOptionFilter === 'Name' ? 'Type a name to filter' : 'Type an amount to filter'
           }
           classes="w-[13rem]"
+          type={inputOptionFilter === 'Name' ? 'text' : 'number'}
+          step={inputOptionFilter === 'Name' ? undefined : '0.01'}
         />
         <Dropdown
           dropdownOptions={DROPDOWN_FILTER_BY_OPTIONS}
