@@ -4,7 +4,7 @@
 'use client'
 
 import { TransactionObjBack } from '@/interfaces/Transactions'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { CardContainer } from '@/components/styles/CardContainer'
 import { usePersistData } from '@/hooks/usePersistData'
 import { useFetch } from '@/hooks/useFetch'
@@ -32,6 +32,10 @@ type ResponseFilteredDataI = {
   ok: boolean
   transactions?: TransactionObjBack[]
   error?: string
+}
+
+type TransactionListFilterRef = {
+  resetFilters: () => void
 }
 
 const TABLE_BORDER_COLOR = 'border-gray-500'
@@ -63,6 +67,7 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
   const [highestChartNumber, setHighestChartNumber] = useState(highestAmount)
   const [transFilteredType, setTransFilteredType] = useState<string>(DROPDOWN_OPTIONS[0])
   const [isFilteringData, setIsFilteringData] = useState(true)
+  const transactionListFilterRef = useRef<TransactionListFilterRef>(null)
   const { data: dataSession } = useCustomSession()
   const { fetchPetition } = useFetch()
 
@@ -89,7 +94,7 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
 
   const handleFiltering = async () => {
     if (!transactionStartDate || !transactionEndDate) {
-      // TODO: Display toast? (already displayingh msg in top of the input)
+      // TODO: Display toast? (already displayingh msg in top of the input when no dates)
       return
     }
     setIsFilteringData(true)
@@ -108,6 +113,8 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
         setTransactionsChart(transChartData)
         setHighestChartNumber(highestChartData)
         setTransResponseRaw(transFiltered.transactions)
+        // Reset list filters in child component
+        transactionListFilterRef.current?.resetFilters()
       } else {
         // TODO: Display warning toast asking to select different dates (no data)
       }
@@ -126,7 +133,6 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
     if (Array.isArray(value)) {
       return
     }
-    // TODO: It should clean the filters of the list whenever this main filters get updated
     setTransFilteredType(value)
   }
 
@@ -143,11 +149,12 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
           highestChartNumber={highestChartNumber}
           isFilteringData={isFilteringData}
           dropdownOptions={DROPDOWN_OPTIONS}
+          transFilteredType={transFilteredType}
           handleTransFilter={handleTransFilter}
         />
       </CardContainer>
       <CardContainer containerWidth="full">
-        <TransactionListFilter transResponseRaw={transResponseRaw} />
+        <TransactionListFilter ref={transactionListFilterRef} transResponseRaw={transResponseRaw} />
         <div className={`border rounded-lg ${TABLE_BORDER_COLOR}`}>
           <div
             className={`font-bold text-xl flex items-center py-2 bg-indigo-700 
@@ -160,8 +167,6 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
             <div className={`${NOTES_CELL_CLASSES}`}>Notes</div>
             <div className={`${ACTIONS_CELL_CLASSES}`}>Actions</div>
           </div>
-          {/* TODO: Create filters that would modify the data only for the list, so it should
-					be handled inside TransactionList */}
           <TransactionList transactions={transPaginated} isFilteringData={isFilteringData} />
         </div>
         <TransactionListPagination

@@ -2,13 +2,14 @@
 
 'use client'
 
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 
 const BGROUND_GRAY = 'bg-gray-200'
 
 type Props = {
   dropdownOptions: string[]
+  value: string | string[]
   onChange: (e: string | string[]) => void
   setMinWidth?: string
   multiple?: boolean
@@ -17,29 +18,26 @@ type Props = {
 
 const Dropdown: FC<Props> = ({
   dropdownOptions,
+  value,
   onChange,
   setMinWidth = undefined,
   multiple = false,
   multipleTypeName = undefined
 }) => {
-  const [selectedOption, setSelectedOption] = useState(dropdownOptions[0])
-  const [multipleOptions, setMultipleOptions] = useState<string[]>([])
-
-  const handleChange = (value: string | string[]) => {
-    if (Array.isArray(value)) {
-      setMultipleOptions(value)
-      onChange(value)
+  const handleChange = (e: string | string[]) => {
+    if (Array.isArray(e)) {
+      onChange(e)
     } else {
-      setSelectedOption(value)
-      onChange(value)
+      onChange(e)
     }
   }
 
+  // value can be a string or string[] if multiple
   const optionsSelected = !multiple
-    ? selectedOption
-    : multipleOptions.length === 0
+    ? value
+    : value?.length === 0
     ? `Select multiple ${multipleTypeName ?? 'options'}`
-    : `Selected ${multipleOptions.length} ${multipleTypeName ?? 'options'}`
+    : `Selected ${value.length ?? 0} ${multipleTypeName ?? 'options'}`
 
   return (
     <div className="flex items-center justify-center">
@@ -47,7 +45,7 @@ const Dropdown: FC<Props> = ({
         <Listbox
           as="div"
           className="space-y-1"
-          value={multiple ? multipleOptions : selectedOption}
+          value={value}
           onChange={handleChange}
           multiple={multiple}
         >

@@ -5,6 +5,7 @@ import { FormInputContainer } from '../styles'
 
 interface FieldTextProps {
   id: string
+  value: string
   onChange: React.Dispatch<React.SetStateAction<string>>
   placeholder?: string
   classes?: string
@@ -14,6 +15,7 @@ interface FieldTextProps {
 
 export const SimpleFieldText: FC<FieldTextProps> = ({
   id,
+  value,
   onChange,
   placeholder = '',
   classes = '',
@@ -24,6 +26,7 @@ export const SimpleFieldText: FC<FieldTextProps> = ({
     <FormInputContainer id="" label="" removeLabel removeMargins>
       <input
         className={classes}
+        value={value}
         onChange={e => onChange(e.target.value)}
         type={type}
         id={id}

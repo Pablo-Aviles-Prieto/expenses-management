@@ -40,6 +40,7 @@ type PropsI = {
   highestChartNumber: number
   isFilteringData: boolean
   dropdownOptions: string[]
+  transFilteredType: string
   handleTransFilter: (e: string | string[]) => void
 }
 
@@ -51,6 +52,7 @@ const LineChart: FC<PropsI> = ({
   highestChartNumber,
   isFilteringData,
   dropdownOptions,
+  transFilteredType,
   handleTransFilter
 }) => {
   const [hasDateRangeError, setHasDateRangeError] = useState(false)
@@ -176,7 +178,11 @@ const LineChart: FC<PropsI> = ({
         </div>
         <div>
           <div className="h-[1rem]" />
-          <Dropdown dropdownOptions={dropdownOptions} onChange={handleTransFilter} />
+          <Dropdown
+            dropdownOptions={dropdownOptions}
+            onChange={handleTransFilter}
+            value={transFilteredType}
+          />
         </div>
       </div>
       <div className="h-[21.5rem]">

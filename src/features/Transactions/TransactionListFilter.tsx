@@ -4,23 +4,10 @@ import Dropdown from '@/components/Dropdown'
 import { FormBtn } from '@/components/Form'
 import { SimpleFieldText } from '@/components/SimpleFieldText'
 import { TransactionObjBack } from '@/interfaces/Transactions'
-import { FC, useState } from 'react'
+import { forwardRef, useImperativeHandle, useState } from 'react'
 
 const DROPDOWN_FILTER_BY_OPTIONS = ['Name', 'Amount']
 const DROPDOWN_FILTER_BY_AMOUNT = ['>', '<']
-const DROPDOWN_CATEGORIES = [
-  'Category1',
-  'Category2',
-  'Category3',
-  'Category4',
-  'Category5',
-  'Category6',
-  'Category7',
-  'Category8',
-  'Category9',
-  'Category10',
-  'Category11'
-]
 
 type InputFilterOptions = 'Name' | 'Amount'
 type InputFilterAmount = '>' | '<'
@@ -29,15 +16,24 @@ type Props = {
   transResponseRaw: TransactionObjBack[]
 }
 
-// TODO: Create a custom hook who calls an endpoint to get all the categories
-// given a userId!
-export const TransactionListFilter: FC<Props> = ({ transResponseRaw }) => {
-  // TODO: Lift the state so it can be resetted whenever the general filters
-  // get updated
-  const [fieldTextValue, setFieldTextValue] = useState('')
-  const [inputOptionFilter, setInputOptionFilter] = useState<InputFilterOptions>('Name')
-  const [inputAmountFilter, setInputAmountFilter] = useState<InputFilterAmount>('>')
-  const [categoriesSelected, setCategoriesSelected] = useState<string[]>([])
+const INIT_FILTER_VALUES = {
+  fieldText: '',
+  optionsFilter: 'Name' as InputFilterOptions,
+  amountFilter: '>' as InputFilterAmount,
+  categories: []
+}
+
+export const TransactionListFilter = forwardRef((props: Props, ref: React.Ref<any>) => {
+  const [fieldTextValue, setFieldTextValue] = useState(INIT_FILTER_VALUES.fieldText)
+  const [inputOptionFilter, setInputOptionFilter] = useState<InputFilterOptions>(
+    INIT_FILTER_VALUES.optionsFilter
+  )
+  const [inputAmountFilter, setInputAmountFilter] = useState<InputFilterAmount>(
+    INIT_FILTER_VALUES.amountFilter
+  )
+  const [categoriesSelected, setCategoriesSelected] = useState<string[]>(
+    INIT_FILTER_VALUES.categories
+  )
 
   const handleSubmit = () => {
     // TODO: Check which option (name or amount) is selected and parse the data
@@ -48,7 +44,7 @@ export const TransactionListFilter: FC<Props> = ({ transResponseRaw }) => {
     console.log('categoriesSelected', categoriesSelected)
   }
 
-  const categoryNamesSet = transResponseRaw.reduce<Set<string>>((acc, transaction) => {
+  const categoryNamesSet = props.transResponseRaw.reduce<Set<string>>((acc, transaction) => {
     transaction.categories.forEach(cat => acc.add(cat.name))
     return acc
   }, new Set())
@@ -66,6 +62,17 @@ export const TransactionListFilter: FC<Props> = ({ transResponseRaw }) => {
     setCategoriesSelected(e as string[])
   }
 
+  const resetFilters = () => {
+    setFieldTextValue(INIT_FILTER_VALUES.fieldText)
+    setInputOptionFilter(INIT_FILTER_VALUES.optionsFilter)
+    setInputAmountFilter(INIT_FILTER_VALUES.amountFilter)
+    setCategoriesSelected(INIT_FILTER_VALUES.categories)
+  }
+
+  useImperativeHandle(ref, () => ({
+    resetFilters
+  }))
+
   return (
     <div className="flex items-center justify-between mb-6">
       <h3 className="text-lg font-bold">Transactions:</h3>
@@ -73,12 +80,14 @@ export const TransactionListFilter: FC<Props> = ({ transResponseRaw }) => {
         {inputOptionFilter === 'Amount' && (
           <Dropdown
             dropdownOptions={DROPDOWN_FILTER_BY_AMOUNT}
+            value={inputAmountFilter}
             onChange={handleFilterByAmount}
             setMinWidth="min-w-[3.9rem]"
           />
         )}
         <SimpleFieldText
           id="name-or-value"
+          value={fieldTextValue}
           onChange={setFieldTextValue}
           placeholder={
             inputOptionFilter === 'Name' ? 'Type a name to filter' : 'Type an amount to filter'
@@ -89,22 +98,25 @@ export const TransactionListFilter: FC<Props> = ({ transResponseRaw }) => {
         />
         <Dropdown
           dropdownOptions={DROPDOWN_FILTER_BY_OPTIONS}
+          value={inputOptionFilter}
           onChange={handleFilterByOptions}
           setMinWidth="min-w-[7rem]"
         />
         <Dropdown
           dropdownOptions={categoryNamesArray}
+          value={categoriesSelected}
           onChange={handleCategoriesSelecteds}
           multiple
           multipleTypeName="categories"
           setMinWidth="w-[15rem]"
         />
-        {/* TODO: Update disable option, whenever there is nothign typed on fieldTextValue
-				or if there arent selected categories */}
-        <FormBtn isDisabled={false} onClick={handleSubmit}>
+        <FormBtn
+          isDisabled={!fieldTextValue && categoriesSelected.length === 0}
+          onClick={handleSubmit}
+        >
           Apply
         </FormBtn>
       </div>
     </div>
   )
-}
+})
