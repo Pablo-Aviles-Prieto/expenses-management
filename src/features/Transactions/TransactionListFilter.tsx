@@ -30,6 +30,7 @@ type Props = {
   setIsFilteringTransList: React.Dispatch<React.SetStateAction<boolean>>
   setFilteredTransList: React.Dispatch<React.SetStateAction<TransactionObjBack[] | undefined>>
   transTypeQueryParam: () => string
+  resetPagination: () => void
 }
 
 const DROPDOWN_FILTER_BY_OPTIONS = ['Name', 'Amount']
@@ -85,13 +86,15 @@ export const TransactionListFilter = forwardRef((props: Props, ref: React.Ref<an
 
   useEffect(() => {
     if (!paramsToFetch) {
-      // whenever the queryParams are undefined, restart this state to undefined
+      // Whenever the queryParams are undefined, restart this state to undefined
       props.setFilteredTransList(undefined)
       return
     }
 
     const fetchData = async () => {
       if (!props.transactionStartDate || !props.transactionEndDate) return
+      // Whenever it filters the list, reset pagination
+      props.resetPagination()
       try {
         props.setIsFilteringTransList(true)
 
@@ -125,8 +128,6 @@ export const TransactionListFilter = forwardRef((props: Props, ref: React.Ref<an
   }, [paramsToFetch])
 
   const handleSubmit = () => {
-    // TODO: Check which option (name or amount) is selected and parse the data
-    // and call to the correctly endpoint!
     if (categoriesSelected.length === 0 && !fieldTextValue) {
       return
     }

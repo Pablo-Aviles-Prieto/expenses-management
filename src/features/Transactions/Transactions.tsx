@@ -39,6 +39,10 @@ type TransactionListFilterRef = {
   resetFilters: () => void
 }
 
+type ResetPagination = {
+  resetPage: () => void
+}
+
 const TABLE_BORDER_COLOR = 'border-gray-500'
 const TABLE_PADDING_X = 'px-2'
 const NAME_CELL_CLASSES = 'w-4/12'
@@ -73,6 +77,7 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
     undefined
   )
   const transactionListFilterRef = useRef<TransactionListFilterRef>(null)
+  const resetPageRef = useRef<ResetPagination>(null)
   const { data: dataSession } = useCustomSession()
   const { fetchPetition } = useFetch()
   const { showToast } = useCustomToast()
@@ -119,8 +124,9 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
         setTransactionsChart(transChartData)
         setHighestChartNumber(highestChartData)
         setTransResponseRaw(transFiltered.transactions)
-        // Reset list filters in child component
+        // Reset list filters and pagination in child components
         transactionListFilterRef.current?.resetFilters()
+        resetPageRef.current?.resetPage()
       } else {
         // If no data display warning msg
         showToast({
@@ -150,6 +156,10 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
     setTransFilteredType(value)
   }
 
+  const resetPagination = () => {
+    resetPageRef.current?.resetPage()
+  }
+
   if (!transResponseRaw || transResponseRaw?.length === 0) {
     // TODO: Improve message
     return <div>There are no transactions yet! Lets make some investments</div>
@@ -176,6 +186,8 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
           transactionStartDate={transactionStartDate}
           transactionEndDate={transactionEndDate}
           setFilteredTransList={setFilteredTransList}
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          resetPagination={resetPagination}
         />
         <div className={`border rounded-lg ${TABLE_BORDER_COLOR}`}>
           <div
@@ -196,6 +208,7 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
           />
         </div>
         <TransactionListPagination
+          ref={resetPageRef}
           rawTransactions={transResponseRaw}
           filteredTransList={filteredTransList}
           setTransPaginated={setTransPaginated}
