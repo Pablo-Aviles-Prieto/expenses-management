@@ -223,6 +223,7 @@ export const TransactionListFilter = forwardRef((props: Props, ref: React.Ref<an
         >
           Apply
         </FormBtn>
+        {/* TODO: Style this reset button properly */}
         <FormBtn
           isDisabled={false}
           onClick={() => {

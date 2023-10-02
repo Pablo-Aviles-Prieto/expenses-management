@@ -1,17 +1,12 @@
 import { errorMessages } from '@/utils/const'
-import type { CategoryI, CustomSessionI } from '@/interfaces'
+import type { CustomSessionI } from '@/interfaces'
 import { AddTransactions } from '@/features/Transactions/AddTransaction'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
-import { ObjectId } from 'mongodb'
 import { redirect } from 'next/navigation'
 import { getUserCategories } from '@/repository/user'
 import { useCustomToast } from '@/hooks'
 import { CardContainer } from '@/components/styles/CardContainer'
-
-type SchemaCategoryI = CategoryI & {
-  _id: ObjectId
-}
 
 const getCategories = async () => {
   try {
@@ -29,6 +24,8 @@ const getCategories = async () => {
 
 const Page = async () => {
   const userCategories = await getCategories()
+  // TODO: IMPORTANT The toast from toastify has to be used on the client.
+  // MOVE IT OR IT THROWS AN ERROR
   const { showToast } = useCustomToast()
 
   if (!userCategories.ok && 'error' in userCategories) {

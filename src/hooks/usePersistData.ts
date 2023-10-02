@@ -24,7 +24,15 @@ export const usePersistData = create<PersistStoreI>()(
       storage: {
         getItem: name => {
           const str = localStorage.getItem(name)
-          if (!str) return null
+          if (!str) {
+            return {
+              state: {
+                transactionStartDate: sub(new Date(), { days: 30 }),
+                transactionEndDate: new Date()
+              }
+            }
+          }
+
           const { state }: { state: Partial<PersistStoreI> } = JSON.parse(str) as {
             state: Partial<PersistStoreI>
           }
