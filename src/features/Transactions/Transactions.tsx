@@ -130,7 +130,7 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
       } else {
         // If no data display warning msg
         showToast({
-          msg: 'No data for the selected date range. Try a different one!',
+          msg: 'No data for the selected date range. Try with a different range!',
           options: { type: 'warning' }
         })
       }

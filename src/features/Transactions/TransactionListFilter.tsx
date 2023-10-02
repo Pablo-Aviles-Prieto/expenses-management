@@ -73,20 +73,9 @@ export const TransactionListFilter = forwardRef((props: Props, ref: React.Ref<an
   }
 
   useEffect(() => {
-    if (!paramsToFetch || !props.transactionStartDate || !props.transactionEndDate) {
-      return
-    }
-    props.setIsFilteringTransList(true)
-    const generalQueryParams = props.transTypeQueryParam()
-    const formatedStartDate = format(new Date(props.transactionStartDate), dateFormat.ISO)
-    const formatedEndDate = format(new Date(props.transactionEndDate), dateFormat.ISO)
-    const URL = `${URL_POST_TRANSACTION}?startDate=${formatedStartDate}&endDate=${formatedEndDate}${generalQueryParams}${paramsToFetch}`
-    props.setIsFilteringTransList(false)
-  }, [paramsToFetch])
-
-  useEffect(() => {
-    if (!paramsToFetch) {
+    if (paramsToFetch === undefined) {
       // Whenever the queryParams are undefined, restart this state to undefined
+      // not falsy value checking since I want to passthrough empty string to reset the data filtered
       props.setFilteredTransList(undefined)
       return
     }
@@ -172,12 +161,19 @@ export const TransactionListFilter = forwardRef((props: Props, ref: React.Ref<an
     setCategoriesSelected(e as string[])
   }
 
-  const resetFilters = () => {
+  const unAssignFetchParams = () => {
+    // Assigning an empty string, so it make the request without the trans list filters
+    setParamsToFetch('')
+  }
+
+  const resetFilters = (resetFetchParams = true) => {
     setFieldTextValue(INIT_FILTER_VALUES.fieldText)
     setInputOptionFilter(INIT_FILTER_VALUES.optionsFilter)
     setInputAmountFilter(INIT_FILTER_VALUES.amountFilter)
     setCategoriesSelected(INIT_FILTER_VALUES.categories)
-    setParamsToFetch(undefined) // Resets the params of this filters
+    if (resetFetchParams) {
+      setParamsToFetch(undefined) // Resets the params of the trans list filters
+    }
   }
 
   useImperativeHandle(ref, () => ({
@@ -226,6 +222,15 @@ export const TransactionListFilter = forwardRef((props: Props, ref: React.Ref<an
           onClick={handleSubmit}
         >
           Apply
+        </FormBtn>
+        <FormBtn
+          isDisabled={false}
+          onClick={() => {
+            unAssignFetchParams()
+            resetFilters(false)
+          }}
+        >
+          Reset
         </FormBtn>
       </div>
     </div>
