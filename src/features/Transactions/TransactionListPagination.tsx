@@ -3,28 +3,37 @@
 'use client'
 
 import { TransactionObjBack } from '@/interfaces/Transactions'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import ReactPaginate from 'react-paginate'
 
 type PropsI = {
   rawTransactions: TransactionObjBack[]
+  filteredTransList: TransactionObjBack[] | undefined
   setTransPaginated: React.Dispatch<React.SetStateAction<TransactionObjBack[]>>
 }
 
 const MAX_ITEMS_PER_PAGE = 10
 
 // TODO: Pagination should change a global state with the data to show in the list.
-export const TransactionListPagination: FC<PropsI> = ({ rawTransactions, setTransPaginated }) => {
+export const TransactionListPagination: FC<PropsI> = ({
+  rawTransactions,
+  filteredTransList,
+  setTransPaginated
+}) => {
+  const transListToDisplay = useMemo(
+    () => filteredTransList ?? rawTransactions,
+    [filteredTransList, rawTransactions]
+  )
   const [currentPage, setCurrentPage] = useState(0)
   const offset = currentPage * MAX_ITEMS_PER_PAGE
-  const totalPages = Math.ceil((rawTransactions.length - 1) / MAX_ITEMS_PER_PAGE)
+  const totalPages = Math.ceil((transListToDisplay.length - 1) / MAX_ITEMS_PER_PAGE)
   const isPrevDisabled = currentPage === 0
   const isNextDisabled = currentPage === totalPages - 1
 
   useEffect(() => {
-    const currentPageData = rawTransactions.slice(offset, offset + MAX_ITEMS_PER_PAGE)
+    const currentPageData = transListToDisplay.slice(offset, offset + MAX_ITEMS_PER_PAGE)
     setTransPaginated(currentPageData)
-  }, [offset, rawTransactions])
+  }, [offset, transListToDisplay])
 
   const handlePageChange = ({ selected: selectedPage }: { selected: number }) => {
     setCurrentPage(selectedPage)

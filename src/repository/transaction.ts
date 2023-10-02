@@ -6,18 +6,25 @@ import { isInvalidUserId } from '@/utils/isInvalidUserId'
 import { cache } from 'react'
 
 import '@/models/categories/CategoriesModel'
+import mongoose from 'mongoose'
 
-type TransactionsByDate = {
+type FilteredTransactions = {
   userId: string
   startDate: string
   endDate: string
   transType: string | null
+  filterType: string | null
+  filterOperator: string | null
+  filterValue: string | null
+  filteredCategories: string[] | undefined
 }
 
 type QueryTransType = {
   userId: string
   date: { $gte: string; $lte: string }
-  amount?: { $gte: number } | { $lt: number }
+  amount?: Partial<{ $gte: number; $lt: number; $gt: number }>
+  $or?: Array<{ name?: { $regex: RegExp }; notes?: { $regex: RegExp } }>
+  categories?: { $in: (string | mongoose.Types.ObjectId)[] }
 }
 
 export const revalidate = 3600 // revalidate the data at most every hour
@@ -34,12 +41,16 @@ export const getAllTransactionsPerUser = cache(async (userId: string) => {
   return { ok: true, transactions: parsedTransactions }
 })
 
-export const getTransactionsByDate = async ({
+export const getFilteredTransactions = async ({
   userId,
   startDate,
   endDate,
-  transType
-}: TransactionsByDate) => {
+  transType,
+  filterType,
+  filterOperator,
+  filterValue,
+  filteredCategories
+}: FilteredTransactions) => {
   if (isInvalidUserId(userId)) {
     throw new Error(errorMessages.invalidUserId)
   }
@@ -56,6 +67,24 @@ export const getTransactionsByDate = async ({
   } else if (transType === 'expenses') {
     query.amount = { $lt: 0 }
   }
+
+  if (filteredCategories) {
+    query.categories = {
+      $in: filteredCategories.map((id: string) => new mongoose.Types.ObjectId(id))
+    }
+  }
+
+  if (filterType === 'Amount' && Number(filterValue)) {
+    query.amount = {
+      [filterOperator === 'gt' ? '$gt' : '$lt']: Number(filterValue)
+    }
+  } else if (filterType === 'Name' && filterValue) {
+    query.$or = [
+      { name: { $regex: new RegExp(filterValue, 'i') } },
+      { notes: { $regex: new RegExp(filterValue, 'i') } }
+    ]
+  }
+
   const transactions = await TransactionModel.find(query).sort({ date: -1 }).populate('categories')
 
   const parsedTransactions = JSON.parse(JSON.stringify(transactions)) as TransactionObjBack[]

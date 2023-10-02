@@ -1,29 +1,49 @@
+/* eslint-disable no-void */
+/* eslint-disable max-len */
+
 'use client'
 
 import Dropdown from '@/components/Dropdown'
 import { FormBtn } from '@/components/Form'
 import { SimpleFieldText } from '@/components/SimpleFieldText'
+import { useCustomToast } from '@/hooks'
+import { useCustomSession } from '@/hooks/useCustomSession'
+import { useFetch } from '@/hooks/useFetch'
 import { TransactionObjBack } from '@/interfaces/Transactions'
-import { forwardRef, useImperativeHandle, useState } from 'react'
-
-const DROPDOWN_FILTER_BY_OPTIONS = ['Name', 'Amount']
-const DROPDOWN_FILTER_BY_AMOUNT = ['>', '<']
+import { URL_API, dateFormat, errorMessages } from '@/utils/const'
+import { format } from 'date-fns'
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
 type InputFilterOptions = 'Name' | 'Amount'
 type InputFilterAmount = '>' | '<'
 
-type Props = {
-  transResponseRaw: TransactionObjBack[]
+type ResponseFilteredDataI = {
+  ok: boolean
+  transactions?: TransactionObjBack[]
+  error?: string
 }
 
+type Props = {
+  transResponseRaw: TransactionObjBack[]
+  transactionStartDate: Date | null
+  transactionEndDate: Date | null
+  setIsFilteringTransList: React.Dispatch<React.SetStateAction<boolean>>
+  setFilteredTransList: React.Dispatch<React.SetStateAction<TransactionObjBack[] | undefined>>
+  transTypeQueryParam: () => string
+}
+
+const DROPDOWN_FILTER_BY_OPTIONS = ['Name', 'Amount']
+const DROPDOWN_FILTER_BY_AMOUNT = ['>', '<']
 const INIT_FILTER_VALUES = {
   fieldText: '',
   optionsFilter: 'Name' as InputFilterOptions,
   amountFilter: '>' as InputFilterAmount,
   categories: []
 }
+const URL_POST_TRANSACTION = `${URL_API || ''}/api/transactions/filtered`
 
 export const TransactionListFilter = forwardRef((props: Props, ref: React.Ref<any>) => {
+  const [paramsToFetch, setParamsToFetch] = useState<string | undefined>(undefined)
   const [fieldTextValue, setFieldTextValue] = useState(INIT_FILTER_VALUES.fieldText)
   const [inputOptionFilter, setInputOptionFilter] = useState<InputFilterOptions>(
     INIT_FILTER_VALUES.optionsFilter
@@ -34,14 +54,102 @@ export const TransactionListFilter = forwardRef((props: Props, ref: React.Ref<an
   const [categoriesSelected, setCategoriesSelected] = useState<string[]>(
     INIT_FILTER_VALUES.categories
   )
+  const { data: dataSession } = useCustomSession()
+  const { fetchPetition } = useFetch()
+  const { showToast } = useCustomToast()
+
+  const fetchFilteredTransactions = async (url: string) => {
+    const extraHeaders = {
+      Authorization: `Bearer ${dataSession?.accessToken || ''}`
+    }
+    return fetchPetition<ResponseFilteredDataI>(
+      url,
+      {
+        method: 'GET'
+      },
+      extraHeaders
+    )
+  }
+
+  useEffect(() => {
+    if (!paramsToFetch || !props.transactionStartDate || !props.transactionEndDate) {
+      return
+    }
+    props.setIsFilteringTransList(true)
+    const generalQueryParams = props.transTypeQueryParam()
+    const formatedStartDate = format(new Date(props.transactionStartDate), dateFormat.ISO)
+    const formatedEndDate = format(new Date(props.transactionEndDate), dateFormat.ISO)
+    const URL = `${URL_POST_TRANSACTION}?startDate=${formatedStartDate}&endDate=${formatedEndDate}${generalQueryParams}${paramsToFetch}`
+    props.setIsFilteringTransList(false)
+  }, [paramsToFetch])
+
+  useEffect(() => {
+    if (!paramsToFetch) {
+      // whenever the queryParams are undefined, restart this state to undefined
+      props.setFilteredTransList(undefined)
+      return
+    }
+
+    const fetchData = async () => {
+      if (!props.transactionStartDate || !props.transactionEndDate) return
+      try {
+        props.setIsFilteringTransList(true)
+
+        const generalQueryParams = props.transTypeQueryParam()
+        const formatedStartDate = format(new Date(props.transactionStartDate ?? ''), dateFormat.ISO)
+        const formatedEndDate = format(new Date(props.transactionEndDate ?? ''), dateFormat.ISO)
+
+        const URL = `${URL_POST_TRANSACTION}?startDate=${formatedStartDate}&endDate=${formatedEndDate}${generalQueryParams}&${paramsToFetch}`
+        const response = await fetchFilteredTransactions(URL)
+        if (response.ok) {
+          props.setFilteredTransList(response.transactions)
+        } else {
+          const errorString = response.error ? response.error : errorMessages.generic
+          showToast({
+            msg: errorString,
+            options: { type: 'error' }
+          })
+        }
+      } catch (err) {
+        const errorString = err instanceof Error ? err.message : errorMessages.generic
+        showToast({
+          msg: errorString,
+          options: { type: 'error' }
+        })
+      } finally {
+        props.setIsFilteringTransList(false)
+      }
+    }
+
+    void fetchData()
+  }, [paramsToFetch])
 
   const handleSubmit = () => {
     // TODO: Check which option (name or amount) is selected and parse the data
     // and call to the correctly endpoint!
-    console.log('fieldTextValue', fieldTextValue)
-    console.log('inputOptionFilter', inputOptionFilter)
-    console.log('inputAmountFilter', inputAmountFilter)
-    console.log('categoriesSelected', categoriesSelected)
+    if (categoriesSelected.length === 0 && !fieldTextValue) {
+      return
+    }
+    if (inputOptionFilter === 'Amount' && Number.isNaN(Number(fieldTextValue))) {
+      return
+    }
+    const params = new URLSearchParams()
+
+    if (categoriesSelected.length > 0) {
+      params.append('categories', categoriesSelected.join(','))
+    }
+
+    if (fieldTextValue) {
+      if (inputOptionFilter === 'Amount') {
+        params.append('filterType', 'Amount')
+        params.append('filterOperator', inputAmountFilter === '>' ? 'gt' : 'lt')
+        params.append('filterValue', fieldTextValue)
+      } else if (inputOptionFilter === 'Name') {
+        params.append('filterType', 'Name')
+        params.append('filterValue', fieldTextValue)
+      }
+    }
+    setParamsToFetch(params.toString())
   }
 
   const categoryNamesSet = props.transResponseRaw.reduce<Set<string>>((acc, transaction) => {
@@ -68,6 +176,7 @@ export const TransactionListFilter = forwardRef((props: Props, ref: React.Ref<an
     setInputOptionFilter(INIT_FILTER_VALUES.optionsFilter)
     setInputAmountFilter(INIT_FILTER_VALUES.amountFilter)
     setCategoriesSelected(INIT_FILTER_VALUES.categories)
+    setParamsToFetch(undefined) // Resets the params of this filters
   }
 
   useImperativeHandle(ref, () => ({

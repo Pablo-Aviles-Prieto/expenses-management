@@ -1,4 +1,5 @@
-import { getTransactionsByDate } from '@/repository/transaction'
+import { getCategoriesId } from '@/repository/categories'
+import { getFilteredTransactions } from '@/repository/transaction'
 import { errorMessages } from '@/utils/const'
 import mongoose from 'mongoose'
 import { getToken } from 'next-auth/jwt'
@@ -22,13 +23,29 @@ export const GET = async (req: NextRequest) => {
     const startDate = searchParams.get('startDate')
     const endDate = searchParams.get('endDate')
     const transType = searchParams.get('transType')
+    const filterType = searchParams.get('filterType')
+    const filterOperator = searchParams.get('filterOperator')
+    const filterValue = searchParams.get('filterValue')
+    const filteredCategories = searchParams.get('categories')?.split(',')
+
+    const categoriesId =
+      filteredCategories && filteredCategories.length > 0
+        ? await getCategoriesId({
+            userId: tokenNext.id,
+            categoriesNames: filteredCategories ?? []
+          })
+        : undefined
 
     return NextResponse.json(
-      await getTransactionsByDate({
+      await getFilteredTransactions({
         userId: tokenNext.id,
         startDate: startDate ?? '',
         endDate: endDate ?? '',
-        transType
+        transType,
+        filterType,
+        filterOperator,
+        filterValue,
+        filteredCategories: categoriesId?.categories
       }),
       { status: 200 }
     )

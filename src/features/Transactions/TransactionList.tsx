@@ -10,6 +10,7 @@ import { RenderFormattedDate } from './RenderFormattedDate'
 type PropsI = {
   transactions: TransactionObjBack[]
   isFilteringData: boolean
+  isFilteringTransList: boolean
 }
 
 const TABLE_BORDER_COLOR = 'border-gray-500'
@@ -23,7 +24,11 @@ const ACTIONS_CELL_CLASSES = 'w-2/12 text-center'
 
 // TODO: Limit the number of chars showed for the name. Use a function showing ellipsis.
 // Also do the same for the notes, limit the length of the characters whogin on the Popover
-export const TransactionList: FC<PropsI> = ({ transactions, isFilteringData }) => {
+export const TransactionList: FC<PropsI> = ({
+  transactions,
+  isFilteringData,
+  isFilteringTransList
+}) => {
   const renderCategories = (categories: CategoryI[]) => {
     return (
       <div className="flex flex-wrap items-center justify-center gap-2">
@@ -45,7 +50,7 @@ export const TransactionList: FC<PropsI> = ({ transactions, isFilteringData }) =
 
   return (
     <div>
-      {isFilteringData ? (
+      {isFilteringData || isFilteringTransList ? (
         <div className="flex items-center justify-center my-16">
           <Spinner size="xl" classes="border-violet-400 w-14 h-14" />
         </div>

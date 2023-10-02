@@ -10,7 +10,8 @@ import { usePersistData } from '@/hooks/usePersistData'
 import { useFetch } from '@/hooks/useFetch'
 import { useCustomSession } from '@/hooks/useCustomSession'
 import { format } from 'date-fns'
-import { URL_API, dateFormat } from '@/utils/const'
+import { URL_API, dateFormat, errorMessages } from '@/utils/const'
+import { useCustomToast } from '@/hooks'
 import { TransactionList } from './TransactionList'
 import LineChart from './LineChart'
 import { TransactionListPagination } from './TransactionListPagination'
@@ -67,9 +68,14 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
   const [highestChartNumber, setHighestChartNumber] = useState(highestAmount)
   const [transFilteredType, setTransFilteredType] = useState<string>(DROPDOWN_OPTIONS[0])
   const [isFilteringData, setIsFilteringData] = useState(true)
+  const [isFilteringTransList, setIsFilteringTransList] = useState(false)
+  const [filteredTransList, setFilteredTransList] = useState<TransactionObjBack[] | undefined>(
+    undefined
+  )
   const transactionListFilterRef = useRef<TransactionListFilterRef>(null)
   const { data: dataSession } = useCustomSession()
   const { fetchPetition } = useFetch()
+  const { showToast } = useCustomToast()
 
   const fetchFilteredTransactions = async (url: string) => {
     const extraHeaders = {
@@ -116,10 +122,18 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
         // Reset list filters in child component
         transactionListFilterRef.current?.resetFilters()
       } else {
-        // TODO: Display warning toast asking to select different dates (no data)
+        // If no data display warning msg
+        showToast({
+          msg: 'No data for the selected date range. Try a different one!',
+          options: { type: 'warning' }
+        })
       }
     } catch (err) {
-      // TODO: Display error toast
+      const errorString = err instanceof Error ? err.message : errorMessages.generic
+      showToast({
+        msg: errorString,
+        options: { type: 'error' }
+      })
     } finally {
       setIsFilteringData(false)
     }
@@ -154,7 +168,15 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
         />
       </CardContainer>
       <CardContainer containerWidth="full">
-        <TransactionListFilter ref={transactionListFilterRef} transResponseRaw={transResponseRaw} />
+        <TransactionListFilter
+          ref={transactionListFilterRef}
+          transResponseRaw={transResponseRaw}
+          setIsFilteringTransList={setIsFilteringTransList}
+          transTypeQueryParam={transTypeQueryParam}
+          transactionStartDate={transactionStartDate}
+          transactionEndDate={transactionEndDate}
+          setFilteredTransList={setFilteredTransList}
+        />
         <div className={`border rounded-lg ${TABLE_BORDER_COLOR}`}>
           <div
             className={`font-bold text-xl flex items-center py-2 bg-indigo-700 
@@ -167,10 +189,15 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
             <div className={`${NOTES_CELL_CLASSES}`}>Notes</div>
             <div className={`${ACTIONS_CELL_CLASSES}`}>Actions</div>
           </div>
-          <TransactionList transactions={transPaginated} isFilteringData={isFilteringData} />
+          <TransactionList
+            transactions={transPaginated}
+            isFilteringData={isFilteringData}
+            isFilteringTransList={isFilteringTransList}
+          />
         </div>
         <TransactionListPagination
           rawTransactions={transResponseRaw}
+          filteredTransList={filteredTransList}
           setTransPaginated={setTransPaginated}
         />
       </CardContainer>
