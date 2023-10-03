@@ -218,14 +218,16 @@ export const TransactionListFilter = forwardRef((props: Props, ref: React.Ref<an
           setMinWidth="w-[15rem]"
         />
         <FormBtn
+          type="button"
           isDisabled={!fieldTextValue && categoriesSelected.length === 0}
           onClick={handleSubmit}
         >
           Apply
         </FormBtn>
-        {/* TODO: Style this reset button properly */}
         <FormBtn
+          type="button"
           isDisabled={false}
+          colorType="secondary"
           onClick={() => {
             unAssignFetchParams()
             resetFilters(false)

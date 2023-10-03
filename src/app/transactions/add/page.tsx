@@ -25,7 +25,7 @@ const getCategories = async () => {
 const Page = async () => {
   const userCategories = await getCategories()
   // TODO: IMPORTANT The toast from toastify has to be used on the client.
-  // MOVE IT OR IT THROWS AN ERROR
+  // MOVE IT OR IT THROWS AN ERROR!
   const { showToast } = useCustomToast()
 
   if (!userCategories.ok && 'error' in userCategories) {
