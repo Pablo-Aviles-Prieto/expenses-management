@@ -22,6 +22,7 @@ const INITIAL_VALUES = {
 
 type FormValues = typeof INITIAL_VALUES
 
+// TODO: Put a sentence to redirect in case of not registered user.
 const SignIn: FC = () => {
   const [debouncedPwrdError, setDebouncedPwrdError] = useState<string | undefined>(undefined)
   const { data: session } = useCustomSession()

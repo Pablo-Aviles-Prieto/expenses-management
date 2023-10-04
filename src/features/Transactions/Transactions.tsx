@@ -105,7 +105,6 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
 
   const handleFiltering = async () => {
     if (!transactionStartDate || !transactionEndDate) {
-      // TODO: Display toast? (already displayingh msg in top of the input when no dates)
       return
     }
     setIsFilteringData(true)
@@ -160,7 +159,7 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
     resetPageRef.current?.resetPage()
   }
 
-  if (!transResponseRaw || transResponseRaw?.length === 0) {
+  if (!transResponseRaw || transResponseRaw.length === 0) {
     // TODO: Improve message
     return <div>There are no transactions yet! Lets make some investments</div>
   }

@@ -5,7 +5,6 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { redirect } from 'next/navigation'
 import { getUserCategories } from '@/repository/user'
-import { useCustomToast } from '@/hooks'
 import { CardContainer } from '@/components/styles/CardContainer'
 
 const getCategories = async () => {
@@ -24,16 +23,10 @@ const getCategories = async () => {
 
 const Page = async () => {
   const userCategories = await getCategories()
-  // TODO: IMPORTANT The toast from toastify has to be used on the client.
-  // MOVE IT OR IT THROWS AN ERROR!
-  const { showToast } = useCustomToast()
 
+  // TODO: Set a redirect middleware in case user not logged. (redirect to login?)
+  // https://nextjs.org/docs/pages/building-your-application/routing/middleware
   if (!userCategories.ok && 'error' in userCategories) {
-    showToast({
-      msg: userCategories.error,
-      options: { type: 'error' }
-    })
-    // TODO:? Maybe just pass some data to the state (like react router)
     redirect(`/`)
   }
 
