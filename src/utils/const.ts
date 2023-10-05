@@ -10,7 +10,7 @@ export const errorMessages = {
   methodAllowed: 'Method Not Allowed',
   missingData: 'There is missing data in the request',
   parsingImg: 'Unable to parse the image',
-  relogAcc: 'There is an error fetching the data user, please relog into your account',
+  relogAcc: 'Something happened, please relog into your account',
   gettingCategories: 'Error getting the categories',
   addingTransaction: 'Error adding the transaction to database'
 }

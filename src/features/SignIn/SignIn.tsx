@@ -8,7 +8,6 @@ import { DebouncedFieldText, FieldText, FormBtn, FormContainer } from '@/compone
 import { LoginSchema, PasswordSchema } from '@/validations/auth'
 import { formikBtnIsDisabled } from '@/utils/formikBtnDisabled'
 import { getSession, signIn } from 'next-auth/react'
-import { useCustomSession } from '@/hooks/useCustomSession'
 import { useRouter } from 'next/navigation'
 import { GoogleSVG } from '@/components/icons'
 import { useCustomToast } from '@/hooks'
@@ -22,20 +21,25 @@ const INITIAL_VALUES = {
 
 type FormValues = typeof INITIAL_VALUES
 
-// TODO: Put a sentence to redirect in case of not registered user.
-const SignIn: FC = () => {
+type Props = {
+  hasError: string | null
+}
+
+const SignIn: FC<Props> = ({ hasError }) => {
   const [debouncedPwrdError, setDebouncedPwrdError] = useState<string | undefined>(undefined)
-  const { data: session } = useCustomSession()
   const [signInLoading, setSignInLoading] = useState(false)
   const [credentialsError, setCredentialsError] = useState<string | undefined>(undefined)
   const router = useRouter()
-  const { showLoadingToast, updateToast } = useCustomToast()
+  const { showLoadingToast, updateToast, showToast } = useCustomToast()
 
   useEffect(() => {
-    if (session?.user) {
-      router.push(`/user/${session.user.id}/details`)
+    if (hasError) {
+      showToast({
+        msg: hasError,
+        options: { type: 'error' }
+      })
     }
-  }, [session])
+  }, [hasError])
 
   const handleSubmit = async (values: FormValues) => {
     const signInToast = showLoadingToast({ msg: 'Signing in...' })
