@@ -81,7 +81,6 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
   const { data: dataSession } = useCustomSession()
   const { fetchPetition } = useFetch()
   const { showToast } = useCustomToast()
-
   const fetchFilteredTransactions = async (url: string) => {
     const extraHeaders = {
       Authorization: `Bearer ${dataSession?.accessToken || ''}`
@@ -117,7 +116,7 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
         `${URL_POST_TRANSACTION}?startDate=${formatedStartDate}&endDate=${formatedEndDate}${transTypeParams}`
       )
 
-      if (transFiltered.ok && transFiltered.transactions) {
+      if (transFiltered.ok && transFiltered.transactions && transFiltered.transactions.length > 0) {
         const { transactionsChartData: transChartData, highestAmount: highestChartData } =
           parseChartData(transFiltered.transactions)
         setTransactionsChart(transChartData)
@@ -127,7 +126,7 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
         transactionListFilterRef.current?.resetFilters()
         resetPageRef.current?.resetPage()
       } else {
-        // If no data display warning msg
+        // TODO?: Set the dates to the previous one if possible
         showToast({
           msg: 'No data for the selected date range. Try with a different range!',
           options: { type: 'warning' }

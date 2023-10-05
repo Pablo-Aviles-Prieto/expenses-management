@@ -1,20 +1,20 @@
 import { errorMessages } from '@/utils/const'
-import type { CustomSessionI } from '@/interfaces'
 import { AddTransactions } from '@/features/Transactions/AddTransaction'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/authOptions'
 import { redirect } from 'next/navigation'
 import { getUserCategories } from '@/repository/user'
 import { CardContainer } from '@/components/styles/CardContainer'
+import { headers } from 'next/headers'
+import { JWT } from 'next-auth/jwt'
 
 const getCategories = async () => {
-  try {
-    const session: CustomSessionI | null = await getServerSession(authOptions)
-    if (!session || !session.user?.id) {
-      return { ok: false, error: errorMessages.relogAcc }
-    }
+  const headersList = headers().get('session')
+  const session = JSON.parse(headersList ?? '') as JWT
+  if (!headersList || !session || !session.id) {
+    return { ok: false, error: errorMessages.relogAcc }
+  }
 
-    return getUserCategories(session.user.id)
+  try {
+    return getUserCategories(session.id as string)
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : errorMessages.gettingCategories
     return { ok: false, error: errorMessage }
@@ -24,7 +24,7 @@ const getCategories = async () => {
 const Page = async () => {
   const userCategories = await getCategories()
 
-  // TODO: Set a redirect middleware in case user not logged. (redirect to login?)
+  // TODO: Set a redirect middleware in case user not logged. (redirect to login?)!
   // https://nextjs.org/docs/pages/building-your-application/routing/middleware
   if (!userCategories.ok && 'error' in userCategories) {
     redirect(`/`)

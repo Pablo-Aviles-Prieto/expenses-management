@@ -23,7 +23,7 @@ const INITIAL_VALUES = {
 type FormValues = typeof INITIAL_VALUES
 
 // TODO: Create a password that matches the other password
-// Check how to do it with yup, to match both passwords or throw an error
+// Check how to do it with yup, to match both passwords or throw an error!
 const SignUp: FC = () => {
   const [debouncedPwrdError, setDebouncedPwrdError] = useState<string | undefined>(undefined)
   const [registerError, setRegisterError] = useState<string | undefined>(undefined)
