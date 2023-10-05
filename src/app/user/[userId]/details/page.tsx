@@ -1,28 +1,20 @@
-import { CustomSessionI } from '@/interfaces'
-import { URL_API, errorMessages } from '@/utils/const'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/authOptions'
+import { errorMessages } from '@/utils/const'
 import { getUser } from '@/repository/user'
 import { UserInfo } from '@/features/UserInfo/UserInfo'
-import { UserI } from '@/interfaces/User'
 import { CardContainer } from '@/components/styles/CardContainer'
-
-const URL = `${URL_API || ''}/api/user`
+import { headers } from 'next/headers'
+import { JWT } from 'next-auth/jwt'
 
 type IProps = {
   params: { userId: string }
 }
 
-type ResponseI = {
-  ok: boolean
-  user?: UserI
-  error?: string
-}
-
 async function getUserData(userId: string) {
+  const headersList = headers().get('session')
+  const session = JSON.parse(headersList ?? '') as JWT
+
   try {
-    const session: CustomSessionI | null = await getServerSession(authOptions)
-    if (!session || session?.user?.id !== userId) {
+    if (session?.id !== userId) {
       return { ok: false, error: errorMessages.authorizedResource }
     }
     return getUser(userId)

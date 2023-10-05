@@ -8,7 +8,7 @@ const getTransactions = async () => {
   const headersList = headers().get('session')
   const session = JSON.parse(headersList ?? '') as JWT
   try {
-    return getAllTransactionsPerUser(session.id as string)
+    return getAllTransactionsPerUser(session?.id as string)
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : errorMessages.gettingCategories
     return { ok: false, error: errorMessage }

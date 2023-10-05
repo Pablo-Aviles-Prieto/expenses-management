@@ -10,7 +10,7 @@ const getCategories = async () => {
   const session = JSON.parse(headersList ?? '') as JWT
 
   try {
-    return getUserCategories(session.id as string)
+    return getUserCategories(session?.id as string)
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : errorMessages.gettingCategories
     return { ok: false, error: errorMessage }
