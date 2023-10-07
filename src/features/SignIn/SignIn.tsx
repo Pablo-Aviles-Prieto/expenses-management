@@ -2,7 +2,7 @@
 
 'use client'
 
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { Formik } from 'formik'
 import { DebouncedFieldText, FieldText, FormBtn, FormContainer } from '@/components/Form'
 import { LoginSchema, PasswordSchema } from '@/validations/auth'
@@ -21,25 +21,12 @@ const INITIAL_VALUES = {
 
 type FormValues = typeof INITIAL_VALUES
 
-type Props = {
-  hasError: string | null
-}
-
-const SignIn: FC<Props> = ({ hasError }) => {
+const SignIn: FC = () => {
   const [debouncedPwrdError, setDebouncedPwrdError] = useState<string | undefined>(undefined)
   const [signInLoading, setSignInLoading] = useState(false)
   const [credentialsError, setCredentialsError] = useState<string | undefined>(undefined)
   const router = useRouter()
   const { showLoadingToast, updateToast, showToast } = useCustomToast()
-
-  useEffect(() => {
-    if (hasError) {
-      showToast({
-        msg: hasError,
-        options: { type: 'error' }
-      })
-    }
-  }, [hasError])
 
   const handleSubmit = async (values: FormValues) => {
     const signInToast = showLoadingToast({ msg: 'Signing in...' })
