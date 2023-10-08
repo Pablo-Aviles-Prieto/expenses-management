@@ -7,7 +7,7 @@ import type { FC } from 'react'
 import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useCustomSession } from '@/hooks/useCustomSession'
-import { Logout, Login } from '../../icons'
+import { Logout, Login } from '../../../components/icons'
 import { HeaderProfileImg } from './HeaderProfileImg'
 
 type PropsI = {

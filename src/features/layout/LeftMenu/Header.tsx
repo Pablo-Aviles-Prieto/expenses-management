@@ -1,6 +1,6 @@
 import type { FC } from 'react'
 import { useLeftMenu } from '@/hooks'
-import { Maximize, Minimize } from '../../icons'
+import { Maximize, Minimize } from '../../../components/icons'
 
 type ButtonsI = {
   width: number
