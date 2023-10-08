@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import '@/styles/global.css'
 import '@/styles/globalDatePicker.css'
 import '@/styles/addDatePicker.css'
+import '@/styles/filePonder.css'
 
 type Props = {
   children: ReactNode

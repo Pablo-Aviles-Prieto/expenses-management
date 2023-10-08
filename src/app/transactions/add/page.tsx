@@ -1,9 +1,10 @@
 import { errorMessages } from '@/utils/const'
-import { AddTransactions } from '@/features/Transactions/AddTransaction'
+import { AddTransactions } from '@/features/Transactions/AddTransactions/AddTransaction'
 import { getUserCategories } from '@/repository/user'
 import { CardContainer } from '@/components/styles/CardContainer'
 import { headers } from 'next/headers'
 import { JWT } from 'next-auth/jwt'
+import { UploadTransFile } from '@/features/Transactions/AddTransactions/UploadTransFile'
 
 const getCategories = async () => {
   const headersList = headers().get('session')
@@ -22,9 +23,14 @@ const Page = async () => {
 
   // TODO: check in the child if userResponse.error exist and work accordingly
   return (
-    <CardContainer containerWidth="full">
-      <AddTransactions userResponse={userResponse} />
-    </CardContainer>
+    <>
+      <CardContainer containerWidth="full">
+        <UploadTransFile />
+      </CardContainer>
+      <CardContainer containerWidth="full">
+        <AddTransactions userResponse={userResponse} />
+      </CardContainer>
+    </>
   )
 }
 
