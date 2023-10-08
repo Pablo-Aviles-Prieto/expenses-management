@@ -3,18 +3,15 @@
 }
 
 .file-wrapper {
-  width: 18rem;
-  height: 9rem;
-  margin: 0 auto;
   opacity: 0;
   transition: opacity 1s 0.25s;
 }
 
 .file-wrapper .filepond--panel-root {
   background-color: transparent;
-  border: 2px solid #2c3340;
+  border: 2px solid #3b83f681;
 }
 
 .file-wrapper .filepond--drop-label {
-  color: #c7ccd8;
+  color: #e0dfdf;
 }

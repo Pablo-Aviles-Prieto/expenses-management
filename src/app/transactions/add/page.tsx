@@ -1,10 +1,10 @@
 import { errorMessages } from '@/utils/const'
-import { AddTransactions } from '@/features/Transactions/AddTransactions/AddTransaction'
+import { AddTransactions } from '@/features/Transactions/AddTransactions/components/AddTransaction'
 import { getUserCategories } from '@/repository/user'
 import { CardContainer } from '@/components/styles/CardContainer'
 import { headers } from 'next/headers'
 import { JWT } from 'next-auth/jwt'
-import { UploadTransFile } from '@/features/Transactions/AddTransactions/UploadTransFile'
+import { UploadTransFile } from '@/features/Transactions/AddTransactions/components/UploadTransFile'
 
 const getCategories = async () => {
   const headersList = headers().get('session')
