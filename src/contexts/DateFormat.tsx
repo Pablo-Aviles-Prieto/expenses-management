@@ -16,9 +16,12 @@ export const DateFormatContext = createContext<DateFormatContextData | undefined
 
 export const DateFormatProvider: React.FC<LeftMenuProviderI> = ({ children }) => {
   // TODO: check localStorage and set/change the value
-  const [dateFormatSelected, setDateFormatSelected] = useState<DateFormatValues>('dd-MM-yyyy')
+  const [dateFormatSelected, setDateFormatSelected] = useState<DateFormatValues>('MM/dd/yyyy')
 
-  const contextValue = useMemo(() => ({ dateFormatSelected, setDateFormatSelected }), [dateFormatSelected])
+  const contextValue = useMemo(
+    () => ({ dateFormatSelected, setDateFormatSelected }),
+    [dateFormatSelected]
+  )
 
   return <DateFormatContext.Provider value={contextValue}>{children}</DateFormatContext.Provider>
 }

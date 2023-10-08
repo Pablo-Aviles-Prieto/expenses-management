@@ -1,3 +1,4 @@
+import { CardContainer } from '@/components/styles/CardContainer'
 import SignIn from '@/features/SignIn/SignIn'
 import { CustomSessionI } from '@/interfaces'
 import { authOptions } from '@/lib/authOptions'
@@ -6,17 +7,21 @@ import { redirect } from 'next/navigation'
 
 async function getSessionData() {
   const session: CustomSessionI | null = await getServerSession(authOptions)
-  return session
+  return { session }
 }
 
 const Page = async () => {
-  const session = await getSessionData()
+  const { session } = await getSessionData()
 
   if (session && session.user) {
     redirect(`/user/${session.user.id}/details`)
   }
 
-  return <SignIn />
+  return (
+    <CardContainer containerWidth="xl">
+      <SignIn />
+    </CardContainer>
+  )
 }
 
 export default Page

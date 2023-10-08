@@ -3,6 +3,7 @@
 import { FC } from 'react'
 import { redirect } from 'next/navigation'
 import { UserI } from '@/interfaces/User'
+import { useCustomToast } from '@/hooks'
 
 type Props = {
   data: {
@@ -14,8 +15,13 @@ type Props = {
 }
 
 export const UserInfo: FC<Props> = ({ data, params }) => {
+  const { showToast } = useCustomToast()
+
   if (data.error) {
-    // TODO: Seat a toast ?
+    showToast({
+      msg: data.error,
+      options: { type: 'error' }
+    })
     redirect('/')
   }
 

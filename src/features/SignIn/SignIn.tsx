@@ -2,13 +2,12 @@
 
 'use client'
 
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { Formik } from 'formik'
 import { DebouncedFieldText, FieldText, FormBtn, FormContainer } from '@/components/Form'
 import { LoginSchema, PasswordSchema } from '@/validations/auth'
 import { formikBtnIsDisabled } from '@/utils/formikBtnDisabled'
 import { getSession, signIn } from 'next-auth/react'
-import { useCustomSession } from '@/hooks/useCustomSession'
 import { useRouter } from 'next/navigation'
 import { GoogleSVG } from '@/components/icons'
 import { useCustomToast } from '@/hooks'
@@ -24,17 +23,10 @@ type FormValues = typeof INITIAL_VALUES
 
 const SignIn: FC = () => {
   const [debouncedPwrdError, setDebouncedPwrdError] = useState<string | undefined>(undefined)
-  const { data: session } = useCustomSession()
   const [signInLoading, setSignInLoading] = useState(false)
   const [credentialsError, setCredentialsError] = useState<string | undefined>(undefined)
   const router = useRouter()
-  const { showLoadingToast, updateToast } = useCustomToast()
-
-  useEffect(() => {
-    if (session?.user) {
-      router.push(`/user/${session.user.id}/details`)
-    }
-  }, [session])
+  const { showLoadingToast, updateToast, showToast } = useCustomToast()
 
   const handleSubmit = async (values: FormValues) => {
     const signInToast = showLoadingToast({ msg: 'Signing in...' })

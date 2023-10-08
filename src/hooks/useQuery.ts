@@ -23,6 +23,7 @@ export type MakeRequestParams = {
   checkIsEmpty?: boolean
 }
 
+// TODO: DELETE THIS COMPONENT IF NOT REWORKED
 const makeIsEmptyToast = () => {
   // TODO: set toast
   console.log('EMPTY search')

@@ -20,7 +20,6 @@ import { CoinsStack } from '@/components/icons'
 import type { CategoryI, TransactionObjI, ResponseTransactionI } from '@/interfaces'
 import { useFetch } from '@/hooks/useFetch'
 import { useCustomSession } from '@/hooks/useCustomSession'
-import 'react-datepicker/dist/react-datepicker.css'
 import { useRouter } from 'next/navigation'
 import { useCustomToast } from '@/hooks'
 
@@ -173,7 +172,7 @@ export const AddTransactions: FC<PropsI> = ({ userResponse }) => {
   return (
     <Formik initialValues={INITIAL_VALUES} validationSchema={AddSchema} onSubmit={handleSubmit}>
       {({ isSubmitting, errors, values }) => (
-        <FormContainer title="Add transaction" containerWidth="full">
+        <FormContainer title="Add transaction">
           <FieldText
             id="name"
             name="name"
@@ -186,9 +185,10 @@ export const AddTransactions: FC<PropsI> = ({ userResponse }) => {
             id="amount"
             name="amount"
             type="number"
-            placeholder="0.00"
+            placeholder="-50.00"
             step="0.01"
             label="Amount"
+            subtitle="Use negative numbers for expenses"
             isRequired
           />
           <ComboboxField

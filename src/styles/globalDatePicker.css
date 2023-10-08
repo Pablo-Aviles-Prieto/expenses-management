@@ -5,3 +5,7 @@
   background-size: 20px;
   padding-left: 35px;
 }
+
+.react-datepicker__close-icon::after {
+  background-color: rgb(79, 74, 206) !important;
+}
