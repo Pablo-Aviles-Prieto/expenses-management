@@ -1,48 +1,51 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable max-len */
 
 'use client'
 
 import { FilePond } from 'react-filepond'
-import { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 
-import 'filepond/dist/filepond.min.css'
 import { FilePondFile, FilePondInitialFile } from 'filepond'
-import { UploadFileInfo } from '../interfaces/UploadFileInfo'
+import { useCustomToast } from '@/hooks'
 import { ResponseFile } from '../interfaces/ResponseFile'
 
-export const UploadTransFile = () => {
+import 'filepond/dist/filepond.min.css'
+import { TransactionBulk } from '../interfaces/TransactionBulk'
+
+type Props = {
+  setIsManualTransExpanded: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export const UploadTransFile: FC<Props> = ({ setIsManualTransExpanded }) => {
   const [files, setFiles] = useState<Array<FilePondInitialFile | File | Blob>>([])
-  const [uploadFilesInfo, setUploadFilesInfo] = useState<UploadFileInfo[]>([])
+  const [parsedData, setParsedData] = useState<TransactionBulk[]>([])
   const [isReady, setIsReady] = useState(false)
+  const { showToast } = useCustomToast()
 
   useEffect(() => {
     setIsReady(true)
   }, [])
 
   const handleUpdateFiles = (fileItems: FilePondFile[]) => {
-    console.log('fileItems', fileItems)
-    // const formData = new FormData()
-    // fileItems.forEach(file => formData.append('file', file as unknown as Blob))
     const updatedFiles: Array<FilePondInitialFile | File | Blob> = fileItems.map(
       fileItem => fileItem.file
     )
-    // console.log('CHECK EXECUTION 2', formData)
     setFiles(updatedFiles)
   }
 
   const handleFileProcessed = (response: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
-    const parsedResponse: ResponseFile = JSON.parse(response)
-    console.log('response parse', parsedResponse)
-    if (parsedResponse.ok && parsedResponse.data) {
-      setUploadFilesInfo(prevState => [parsedResponse.data as UploadFileInfo, ...prevState])
+    const { ok: responseOk, data }: ResponseFile = JSON.parse(response)
+    if (responseOk && data) {
+      setIsManualTransExpanded(false) // Close the manual transaction block
+      setParsedData(prevState => [data, ...prevState])
       return 'success'
     }
     return 'failure'
   }
 
-  console.log('files', files)
-  console.log('uploadFilesInfo', uploadFilesInfo)
+  console.log('parsedData', parsedData)
 
   return (
     <>
@@ -54,10 +57,14 @@ export const UploadTransFile = () => {
         <FilePond
           files={files}
           allowMultiple
-          maxFiles={5}
+          maxFiles={3}
           onupdatefiles={handleUpdateFiles}
           credits={false}
           labelIdle='Drag & Drop your CSV files or <span class="filepond--label-action"> Browse </span>'
+          labelFileProcessing="Parsing"
+          labelFileProcessingComplete="Parse completed"
+          labelTapToUndo="Displaying results..."
+          labelTapToCancel="Please wait..."
           server={{
             process: {
               url: '/api/transactions/upload',
@@ -65,11 +72,13 @@ export const UploadTransFile = () => {
               withCredentials: false,
               onload: handleFileProcessed,
               onerror: response => {
-                console.error('Error uploading:', response)
-              },
-              ondata: formData => {
-                console.log('formData onData method', formData)
-                return formData
+                const parsedResponse: ResponseFile = JSON.parse(response)
+                if (!parsedResponse.ok && parsedResponse.error) {
+                  showToast({
+                    msg: parsedResponse.error,
+                    options: { type: 'error' }
+                  })
+                }
               }
             }
           }}

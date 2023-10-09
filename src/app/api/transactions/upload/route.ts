@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Readable } from 'stream'
 import csv from 'csv-parser'
+import { FIELDS_FROM_CSV, errorMessages } from '@/utils/const'
+import { TransactionBulk } from '@/features/Transactions/AddTransactions/interfaces/TransactionBulk'
 
 export const POST = async (req: NextRequest) => {
   const formData = await req.formData()
@@ -8,10 +10,10 @@ export const POST = async (req: NextRequest) => {
   const csvFile: File = objFile.filepond as File
 
   if (!csvFile || csvFile.type !== 'text/csv') {
-    return NextResponse.json({ ok: false, message: 'Wrong file type' }, { status: 400 })
+    return NextResponse.json({ ok: false, error: errorMessages.fileType }, { status: 400 })
   }
 
-  const results: any[] = []
+  const results: TransactionBulk[] = []
 
   return new Promise<NextResponse>(resolve => {
     const csvReadableStream = new Readable()
@@ -25,17 +27,22 @@ export const POST = async (req: NextRequest) => {
 
         csvReadableStream
           .pipe(csv({ separator: ';' }))
-          .on('data', data => results.push(data))
+          .on('data', data => results.push(data as TransactionBulk))
           .on('end', () => {
-            console.log('results', results)
-            // const parsedResult = results.map(row => ({ date: row.date }))
-            resolve(NextResponse.json({ ok: true, data: results }, { status: 200 }))
+            const parsedResults = results.map(originalObject => {
+              return (FIELDS_FROM_CSV as (keyof TransactionBulk)[]).reduce(
+                (acc: Partial<TransactionBulk>, field: keyof TransactionBulk) => {
+                  acc[field] = originalObject[field]
+                  return acc
+                },
+                {}
+              )
+            })
+            resolve(NextResponse.json({ ok: true, data: parsedResults }, { status: 200 }))
           })
       })
       .catch(err => {
-        resolve(
-          NextResponse.json({ ok: false, message: 'File processing failed' }, { status: 500 })
-        )
+        resolve(NextResponse.json({ ok: false, error: errorMessages.fileParsing }, { status: 500 }))
       })
   })
 }

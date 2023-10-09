@@ -12,7 +12,9 @@ export const errorMessages = {
   parsingImg: 'Unable to parse the image',
   relogAcc: 'Something happened, please relog into your account',
   gettingCategories: 'Error getting the categories',
-  addingTransaction: 'Error adding the transaction to database'
+  addingTransaction: 'Error adding the transaction to database',
+  fileParsing: 'File processing failed. Try again later',
+  fileType: 'Wrong file type. Only CSV is allowed'
 }
 
 export const textSize = {
@@ -102,3 +104,5 @@ export const COMMON_CATEGORIES = [
 export const authProviders = {
   google: 'google'
 } as const
+
+export const FIELDS_FROM_CSV = ['Date', 'Concept', 'Amount', 'Notes']

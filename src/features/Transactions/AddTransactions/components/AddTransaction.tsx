@@ -16,7 +16,7 @@ import { format } from 'date-fns'
 import { formikBtnIsDisabled } from '@/utils/formikBtnDisabled'
 import { AddSchema } from '@/validations/transactions'
 import { URL_API, dateFormat, errorMessages } from '@/utils/const'
-import { CoinsStack } from '@/components/icons'
+import { ChevronDown, CoinsStack } from '@/components/icons'
 import type { CategoryI, TransactionObjI, ResponseTransactionI } from '@/interfaces'
 import { useFetch } from '@/hooks/useFetch'
 import { useCustomSession } from '@/hooks/useCustomSession'
@@ -48,6 +48,8 @@ type AdditionalDateKeys =
 
 type PropsI = {
   userResponse: ResponseI
+  isManualTransExpanded: boolean
+  setIsManualTransExpanded: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 type ResponseI = {
@@ -57,10 +59,15 @@ type ResponseI = {
 }
 
 const URL_POST_TRANSACTION = `${URL_API || ''}/api/transactions/add`
+const TRANSITION_CLASSES = 'transition-all duration-500 ease-in-out'
 
 // TODO: Add the currency selected by the user in the global context, in the amount input
 // maybe indicate to the user that is displaying the global currency selected
-export const AddTransactions: FC<PropsI> = ({ userResponse }) => {
+export const AddTransactions: FC<PropsI> = ({
+  userResponse,
+  isManualTransExpanded,
+  setIsManualTransExpanded
+}) => {
   const [isSavingTransaction, setIsSavingTransaction] = useState(false)
   const [additionalDates, setAdditionalDates] = useState<(Date | null)[]>([])
   const [addTransactionError, setAddTransactionError] = useState<string | undefined>(undefined)
@@ -170,86 +177,103 @@ export const AddTransactions: FC<PropsI> = ({ userResponse }) => {
   // the same form with the data stored, so it can modify and create a new one
   // TODO: Use the fetch error => addTransactionError
   return (
-    <Formik initialValues={INITIAL_VALUES} validationSchema={AddSchema} onSubmit={handleSubmit}>
-      {({ isSubmitting, errors, values }) => (
-        <FormContainer title="Add manual transaction">
-          <FieldText
-            id="name"
-            name="name"
-            type="text"
-            placeholder="Describe your transaction"
-            label="Name"
-            isRequired
-          />
-          <FieldText
-            id="amount"
-            name="amount"
-            type="number"
-            placeholder="-50.00"
-            step="0.01"
-            label="Amount"
-            subtitle="Use negative numbers for expenses"
-            isRequired
-          />
-          <ComboboxField
-            id="categories"
-            name="categories"
-            label="Categories"
-            dataArray={[...categoriesArray]}
-            msgToCreateEntry={{ SVG: CoinsStack, message: 'Create this category' }}
-            subTitle="Select from the pre-defined or your saved categories, or just create a new one"
-            isRequired
-          />
-          <CalendarField
-            id="datePickerAdd"
-            name="mainDate"
-            label="Pick a date"
-            customClass="add-calendar-input"
-            isClearable
-            onChange={date => handleAdditionalDateChange(date, 0)}
-            isRequired
-          />
-          <SwitchBtn
-            name="recurrent"
-            label="Recurrent transaction (up to 5 more different dates)"
-            size="small"
-          />
-          {values.recurrent &&
-            additionalDates.map((_, index) => (
-              <CalendarField
-                // eslint-disable-next-line react/no-array-index-key
-                key={index}
-                id={`additionalDate_${index + 1}`}
-                name={`additionalDate_${index + 1}`}
-                label={`Additional Date ${index + 1}`}
-                customClass="add-calendar-input"
-                onChange={date => handleAdditionalDateChange(date, index + 1)}
-                isClearable
-                removeErrMsg
-              />
-            ))}
-          <FieldText
-            id="notes"
-            name="notes"
-            type="text"
-            placeholder="Extra comments"
-            label="Notes"
-            component="textarea"
-            rows={5}
-          />
-          <div className="flex items-center justify-between">
-            <FormBtn
-              isDisabled={formikBtnIsDisabled({
-                isSubmitting,
-                errorsObj: errors
-              })}
-              isLoading={isSavingTransaction}
-            >
-              Add transaction
-            </FormBtn>
-          </div>
-        </FormContainer>
-      )}
-    </Formik>
+    <div
+      className={`${TRANSITION_CLASSES} overflow-hidden ${
+        isManualTransExpanded ? 'h-[739px]' : 'h-[35px]'
+      }`}
+    >
+      <div
+        className="flex items-center justify-between cursor-pointer"
+        onClick={() => setIsManualTransExpanded(prevState => !prevState)}
+      >
+        <h3 className="mb-2 text-3xl font-bold text-gray-300">Add manual transaction</h3>
+        <ChevronDown
+          className={`${TRANSITION_CLASSES} ${isManualTransExpanded ? '-rotate-180' : 'rotate-0'}`}
+          width={25}
+          height={25}
+        />
+      </div>
+      <Formik initialValues={INITIAL_VALUES} validationSchema={AddSchema} onSubmit={handleSubmit}>
+        {({ isSubmitting, errors, values }) => (
+          <FormContainer title="">
+            <FieldText
+              id="name"
+              name="name"
+              type="text"
+              placeholder="Describe your transaction"
+              label="Name"
+              isRequired
+            />
+            <FieldText
+              id="amount"
+              name="amount"
+              type="number"
+              placeholder="-50.00"
+              step="0.01"
+              label="Amount"
+              subtitle="Use negative numbers for expenses"
+              isRequired
+            />
+            <ComboboxField
+              id="categories"
+              name="categories"
+              label="Categories"
+              dataArray={[...categoriesArray]}
+              msgToCreateEntry={{ SVG: CoinsStack, message: 'Create this category' }}
+              subTitle="Select from the pre-defined or your saved categories, or just create a new one"
+              isRequired
+            />
+            <CalendarField
+              id="datePickerAdd"
+              name="mainDate"
+              label="Pick a date"
+              customClass="add-calendar-input"
+              isClearable
+              onChange={date => handleAdditionalDateChange(date, 0)}
+              isRequired
+            />
+            <SwitchBtn
+              name="recurrent"
+              label="Recurrent transaction (up to 5 more different dates)"
+              size="small"
+            />
+            {values.recurrent &&
+              additionalDates.map((_, index) => (
+                <CalendarField
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={index}
+                  id={`additionalDate_${index + 1}`}
+                  name={`additionalDate_${index + 1}`}
+                  label={`Additional Date ${index + 1}`}
+                  customClass="add-calendar-input"
+                  onChange={date => handleAdditionalDateChange(date, index + 1)}
+                  isClearable
+                  removeErrMsg
+                />
+              ))}
+            <FieldText
+              id="notes"
+              name="notes"
+              type="text"
+              placeholder="Extra comments"
+              label="Notes"
+              component="textarea"
+              rows={5}
+            />
+            <div className="flex items-center justify-between">
+              <FormBtn
+                isDisabled={formikBtnIsDisabled({
+                  isSubmitting,
+                  errorsObj: errors
+                })}
+                isLoading={isSavingTransaction}
+              >
+                Add transaction
+              </FormBtn>
+            </div>
+          </FormContainer>
+        )}
+      </Formik>
+    </div>
   )
 }

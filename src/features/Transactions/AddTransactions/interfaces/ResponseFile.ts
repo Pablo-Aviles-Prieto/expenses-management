@@ -1,5 +1,7 @@
-// TODO: Change the any for the JSON expected for each CSV
+import { TransactionBulk } from './TransactionBulk'
+
 export type ResponseFile = {
   ok: boolean
-  data: any
+  data?: TransactionBulk
+  error?: string
 }
