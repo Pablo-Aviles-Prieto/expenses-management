@@ -20,22 +20,29 @@ export const UploadTransFile = () => {
   }, [])
 
   const handleUpdateFiles = (fileItems: FilePondFile[]) => {
+    console.log('fileItems', fileItems)
+    // const formData = new FormData()
+    // fileItems.forEach(file => formData.append('file', file as unknown as Blob))
     const updatedFiles: Array<FilePondInitialFile | File | Blob> = fileItems.map(
       fileItem => fileItem.file
     )
+    // console.log('CHECK EXECUTION 2', formData)
     setFiles(updatedFiles)
   }
 
-  const handleFileProcessed = (response: ResponseFile) => {
-    console.log('response', response)
-    if (response.ok && response.data) {
-      setUploadFilesInfo(prevState => [response.data as UploadFileInfo, ...prevState])
+  const handleFileProcessed = (response: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
+    const parsedResponse: ResponseFile = JSON.parse(response)
+    console.log('response parse', parsedResponse)
+    if (parsedResponse.ok && parsedResponse.data) {
+      setUploadFilesInfo(prevState => [parsedResponse.data as UploadFileInfo, ...prevState])
       return 'success'
     }
     return 'failure'
   }
 
-  // console.log('files', files)
+  console.log('files', files)
+  console.log('uploadFilesInfo', uploadFilesInfo)
 
   return (
     <>
@@ -58,10 +65,10 @@ export const UploadTransFile = () => {
               withCredentials: false,
               onload: handleFileProcessed,
               onerror: response => {
-                console.error('Error al subir el archivo:', response)
+                console.error('Error uploading:', response)
               },
               ondata: formData => {
-                console.log('formData', formData)
+                console.log('formData onData method', formData)
                 return formData
               }
             }
