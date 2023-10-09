@@ -1,3 +1,5 @@
+/* eslint-disable dot-notation */
+/* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable max-len */
@@ -6,21 +8,21 @@
 
 import { FilePond } from 'react-filepond'
 import { FC, useEffect, useState } from 'react'
-
 import { FilePondFile, FilePondInitialFile } from 'filepond'
 import { useCustomToast } from '@/hooks'
 import { ResponseFile } from '../interfaces/ResponseFile'
+import { TransactionBulk } from '../interfaces/TransactionBulk'
+import { BulkTransTable } from './BulkTransTable'
 
 import 'filepond/dist/filepond.min.css'
-import { TransactionBulk } from '../interfaces/TransactionBulk'
 
 type Props = {
   setIsManualTransExpanded: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const UploadTransFile: FC<Props> = ({ setIsManualTransExpanded }) => {
+export const UploadTransBlock: FC<Props> = ({ setIsManualTransExpanded }) => {
   const [files, setFiles] = useState<Array<FilePondInitialFile | File | Blob>>([])
-  const [parsedData, setParsedData] = useState<TransactionBulk[]>([])
+  const [bulkTransactions, setBulkTransactions] = useState<TransactionBulk[]>([])
   const [isReady, setIsReady] = useState(false)
   const { showToast } = useCustomToast()
 
@@ -37,15 +39,14 @@ export const UploadTransFile: FC<Props> = ({ setIsManualTransExpanded }) => {
 
   const handleFileProcessed = (response: any) => {
     const { ok: responseOk, data }: ResponseFile = JSON.parse(response)
+    console.log('data', data)
     if (responseOk && data) {
       setIsManualTransExpanded(false) // Close the manual transaction block
-      setParsedData(prevState => [data, ...prevState])
+      setBulkTransactions(prevState => [...prevState, ...data])
       return 'success'
     }
     return 'failure'
   }
-
-  console.log('parsedData', parsedData)
 
   return (
     <>
@@ -84,6 +85,9 @@ export const UploadTransFile: FC<Props> = ({ setIsManualTransExpanded }) => {
           }}
         />
       </div>
+      {bulkTransactions && bulkTransactions.length > 0 && (
+        <BulkTransTable bulkTransactions={bulkTransactions} />
+      )}
     </>
   )
 }

@@ -3,8 +3,8 @@
 import { FC, useState } from 'react'
 import { AddTransactions } from '@/features/Transactions/AddTransactions/components/AddTransaction'
 import { CardContainer } from '@/components/styles/CardContainer'
-import { UploadTransFile } from '@/features/Transactions/AddTransactions/components/UploadTransFile'
 import { CategoryI } from '@/interfaces'
+import { UploadTransBlock } from './UploadTransBlock'
 
 type Props = {
   userResponse:
@@ -25,7 +25,7 @@ export const AddTransactionsContainer: FC<Props> = ({ userResponse }) => {
   return (
     <>
       <CardContainer containerWidth="full">
-        <UploadTransFile setIsManualTransExpanded={setIsManualTransExpanded} />
+        <UploadTransBlock setIsManualTransExpanded={setIsManualTransExpanded} />
       </CardContainer>
       <CardContainer containerWidth="full">
         <AddTransactions
