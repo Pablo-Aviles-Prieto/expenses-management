@@ -1,3 +1,5 @@
+'use client'
+
 /* eslint-disable no-void */
 /* eslint-disable max-len */
 import React, { FC, SVGProps, useState } from 'react'

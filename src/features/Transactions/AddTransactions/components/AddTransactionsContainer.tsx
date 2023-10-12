@@ -21,11 +21,14 @@ type Props = {
 export const AddTransactionsContainer: FC<Props> = ({ userResponse }) => {
   const [isManualTransExpanded, setIsManualTransExpanded] = useState(true)
 
-  // TODO: check in the child if userResponse.error exist and work accordingly
+  // TODO: check userResponse.error exist and work accordingly
   return (
     <>
       <CardContainer containerWidth="full">
-        <UploadTransBlock setIsManualTransExpanded={setIsManualTransExpanded} />
+        <UploadTransBlock
+          userResponse={userResponse}
+          setIsManualTransExpanded={setIsManualTransExpanded}
+        />
       </CardContainer>
       <CardContainer containerWidth="full">
         <AddTransactions

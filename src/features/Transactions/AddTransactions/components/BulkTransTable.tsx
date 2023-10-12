@@ -1,14 +1,19 @@
+/* eslint-disable max-len */
 import { FC } from 'react'
+import { ComboboxField } from '@/components/Form'
+import { CoinsStack } from '@/components/icons'
+import { CategoryI } from '@/interfaces'
 import { TransactionBulk } from '../interfaces/TransactionBulk'
 
 type Props = {
   bulkTransactions: TransactionBulk[]
+  categoriesArray: CategoryI[]
 }
 
-const THEAD_CLASSES = 'bg-indigo-600 text-center px-1 py-2 border text-stone-100'
-const ROW_CLASSES = 'text-center text-base border p-1'
+const THEAD_CLASSES = 'bg-indigo-600 text-center p-2 border text-stone-100'
+const ROW_CLASSES = 'text-center text-base border p-2'
 
-export const BulkTransTable: FC<Props> = ({ bulkTransactions }) => {
+export const BulkTransTable: FC<Props> = ({ bulkTransactions, categoriesArray }) => {
   return (
     <>
       <h4 className="text-lg font-bold">Transaction list</h4>
@@ -31,7 +36,17 @@ export const BulkTransTable: FC<Props> = ({ bulkTransactions }) => {
                   <td className={`${ROW_CLASSES}`}>{transaction.Amount}</td>
                   <td className={`text-sm !text-left ${ROW_CLASSES}`}>{transaction.Concept}</td>
                   <td className={`text-sm !text-left ${ROW_CLASSES}`}>{transaction.Notes}</td>
-                  <td className={`${ROW_CLASSES}`}>Add cat</td>
+                  <td className={`${ROW_CLASSES}`}>
+                    <ComboboxField
+                      id={`categories_${i}`}
+                      name={`categories_${i}`}
+                      label="Categories"
+                      dataArray={[...categoriesArray]}
+                      msgToCreateEntry={{ SVG: CoinsStack, message: 'Create this category' }}
+                      subTitle="Select from the pre-defined or your saved categories, or just create a new one"
+                      isRequired
+                    />
+                  </td>
                 </tr>
               )
             })}

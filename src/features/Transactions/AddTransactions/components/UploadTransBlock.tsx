@@ -7,20 +7,28 @@
 'use client'
 
 import { FilePond } from 'react-filepond'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import { FilePondFile, FilePondInitialFile } from 'filepond'
 import { useCustomToast } from '@/hooks'
+import { CategoryI } from '@/interfaces'
 import { ResponseFile } from '../interfaces/ResponseFile'
 import { TransactionBulk } from '../interfaces/TransactionBulk'
 import { BulkTransTable } from './BulkTransTable'
 
 import 'filepond/dist/filepond.min.css'
 
+type ResponseI = {
+  ok: boolean
+  userCategories?: CategoryI[] | string
+  error?: string
+}
+
 type Props = {
+  userResponse: ResponseI
   setIsManualTransExpanded: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const UploadTransBlock: FC<Props> = ({ setIsManualTransExpanded }) => {
+export const UploadTransBlock: FC<Props> = ({ userResponse, setIsManualTransExpanded }) => {
   const [files, setFiles] = useState<Array<FilePondInitialFile | File | Blob>>([])
   const [bulkTransactions, setBulkTransactions] = useState<TransactionBulk[]>([])
   const [isReady, setIsReady] = useState(false)
@@ -39,7 +47,6 @@ export const UploadTransBlock: FC<Props> = ({ setIsManualTransExpanded }) => {
 
   const handleFileProcessed = (response: any) => {
     const { ok: responseOk, data }: ResponseFile = JSON.parse(response)
-    console.log('data', data)
     if (responseOk && data) {
       setIsManualTransExpanded(false) // Close the manual transaction block
       setBulkTransactions(prevState => [...prevState, ...data])
@@ -47,6 +54,11 @@ export const UploadTransBlock: FC<Props> = ({ setIsManualTransExpanded }) => {
     }
     return 'failure'
   }
+
+  const categoriesArray = useMemo(
+    () => (Array.isArray(userResponse.userCategories) ? userResponse.userCategories : []),
+    [userResponse]
+  )
 
   return (
     <>
@@ -72,6 +84,7 @@ export const UploadTransBlock: FC<Props> = ({ setIsManualTransExpanded }) => {
               method: 'POST',
               withCredentials: false,
               onload: handleFileProcessed,
+              // TODO: Refactor it, since if its error constructor cant be parsed with JSON
               onerror: response => {
                 const parsedResponse: ResponseFile = JSON.parse(response)
                 if (!parsedResponse.ok && parsedResponse.error) {
@@ -86,7 +99,7 @@ export const UploadTransBlock: FC<Props> = ({ setIsManualTransExpanded }) => {
         />
       </div>
       {bulkTransactions && bulkTransactions.length > 0 && (
-        <BulkTransTable bulkTransactions={bulkTransactions} />
+        <BulkTransTable bulkTransactions={bulkTransactions} categoriesArray={categoriesArray} />
       )}
     </>
   )
