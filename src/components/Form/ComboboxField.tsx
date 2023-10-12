@@ -29,6 +29,8 @@ interface PropsI<T extends PropsT> {
   msgToCreateEntry?: MsgToCreateEntryI
   subTitle?: string
   isRequired?: boolean
+  displayErrorMsg?: boolean
+  displayOpenIcon?: boolean
 }
 
 type FormikValue<T extends PropsT> = {
@@ -47,6 +49,8 @@ export const ComboboxField = <T extends PropsT>({
   msgToCreateEntry,
   subTitle,
   isRequired,
+  displayErrorMsg = true,
+  displayOpenIcon = true,
   ...props
 }: PropsI<T>) => {
   const [query, setQuery] = useState('')
@@ -176,21 +180,31 @@ export const ComboboxField = <T extends PropsT>({
                 />
               </Combobox.Button>
             </span>
-            <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2 text-gray-600 -bottom-2">
-              <ChevronUpDown width={25} height={25} />
-            </Combobox.Button>
+            {displayOpenIcon ? (
+              <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2 text-gray-600 -bottom-2">
+                <ChevronUpDown width={25} height={25} />
+              </Combobox.Button>
+            ) : (
+              // eslint-disable-next-line react/jsx-no-useless-fragment
+              <></>
+            )}
             {/* The error message should be an object with dataValues property, checking for the array length */}
-            <div className="min-h-[25px] text-red-500">
-              {meta.touched && meta.error ? (
-                typeof meta.error === 'string' ? (
-                  <span>{meta.error}</span>
-                ) : (
-                  Object.entries(meta.error).map(([key, value]) => (
-                    <span key={key}>{value as string}</span>
-                  ))
-                )
-              ) : null}
-            </div>
+            {displayErrorMsg ? (
+              <div className="min-h-[25px] text-red-500">
+                {meta.touched && meta.error ? (
+                  typeof meta.error === 'string' ? (
+                    <span>{meta.error}</span>
+                  ) : (
+                    Object.entries(meta.error).map(([key, value]) => (
+                      <span key={key}>{value as string}</span>
+                    ))
+                  )
+                ) : null}
+              </div>
+            ) : (
+              // eslint-disable-next-line react/jsx-no-useless-fragment
+              <></>
+            )}
           </FormInputContainer>
         </span>
 

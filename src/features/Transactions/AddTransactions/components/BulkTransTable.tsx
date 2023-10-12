@@ -19,13 +19,13 @@ export const BulkTransTable: FC<Props> = ({ bulkTransactions, categoriesArray })
       <h4 className="text-lg font-bold">Transaction list</h4>
       <div className="w-full mt-4 max-h-[22rem] overflow-y-auto">
         <table className="min-w-full border-collapse border-gray-300">
-          <thead className="sticky -top-[1px]">
+          <thead className="sticky -top-[1px] z-20">
             <tr>
-              <th className={`w-[18%] ${THEAD_CLASSES}`}>Date</th>
-              <th className={`w-[10%] ${THEAD_CLASSES}`}>Amount</th>
-              <th className={`w-[40%] ${THEAD_CLASSES}`}>Name (Concept)</th>
-              <th className={`w-[15%] ${THEAD_CLASSES}`}>Notes</th>
-              <th className={`w-[15%] ${THEAD_CLASSES}`}>Categories</th>
+              <th className={`w-[16%] ${THEAD_CLASSES}`}>Date</th>
+              <th className={`w-[9%] ${THEAD_CLASSES}`}>Amount</th>
+              <th className={`w-[25%] ${THEAD_CLASSES}`}>Name (Concept)</th>
+              <th className={`w-[5%] ${THEAD_CLASSES}`}>Notes</th>
+              <th className={`w-[45%] ${THEAD_CLASSES}`}>Categories</th>
             </tr>
           </thead>
           <tbody>
@@ -40,11 +40,11 @@ export const BulkTransTable: FC<Props> = ({ bulkTransactions, categoriesArray })
                     <ComboboxField
                       id={`categories_${i}`}
                       name={`categories_${i}`}
-                      label="Categories"
+                      label=""
                       dataArray={[...categoriesArray]}
                       msgToCreateEntry={{ SVG: CoinsStack, message: 'Create this category' }}
-                      subTitle="Select from the pre-defined or your saved categories, or just create a new one"
-                      isRequired
+                      displayErrorMsg={false}
+                      displayOpenIcon={false}
                     />
                   </td>
                 </tr>

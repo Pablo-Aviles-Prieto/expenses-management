@@ -11,11 +11,22 @@ import { FC, useEffect, useMemo, useState } from 'react'
 import { FilePondFile, FilePondInitialFile } from 'filepond'
 import { useCustomToast } from '@/hooks'
 import { CategoryI } from '@/interfaces'
+import { Form, Formik, FormikHelpers } from 'formik'
+import { FormBtn } from '@/components/Form'
 import { ResponseFile } from '../interfaces/ResponseFile'
 import { TransactionBulk } from '../interfaces/TransactionBulk'
 import { BulkTransTable } from './BulkTransTable'
 
 import 'filepond/dist/filepond.min.css'
+
+type CatValuesI = {
+  name: string
+  id: number | string
+  common?: boolean
+  newEntry?: boolean
+}
+
+type CatFormI = { typeValue: string; dataValues: CatValuesI[] }
 
 type ResponseI = {
   ok: boolean
@@ -38,6 +49,16 @@ export const UploadTransBlock: FC<Props> = ({ userResponse, setIsManualTransExpa
     setIsReady(true)
   }, [])
 
+  const initialFormValues = useMemo(() => {
+    const initialValues: { [key: string]: CatFormI } = {}
+
+    bulkTransactions.forEach((_, i) => {
+      initialValues[`categories_${i}`] = { typeValue: '', dataValues: [] }
+    })
+
+    return initialValues
+  }, [bulkTransactions])
+
   const handleUpdateFiles = (fileItems: FilePondFile[]) => {
     const updatedFiles: Array<FilePondInitialFile | File | Blob> = fileItems.map(
       fileItem => fileItem.file
@@ -59,6 +80,10 @@ export const UploadTransBlock: FC<Props> = ({ userResponse, setIsManualTransExpa
     () => (Array.isArray(userResponse.userCategories) ? userResponse.userCategories : []),
     [userResponse]
   )
+
+  const onSubmit = (values: any, formikHelpers: FormikHelpers<any>) => {
+    console.log('values', values)
+  }
 
   return (
     <>
@@ -99,7 +124,12 @@ export const UploadTransBlock: FC<Props> = ({ userResponse, setIsManualTransExpa
         />
       </div>
       {bulkTransactions && bulkTransactions.length > 0 && (
-        <BulkTransTable bulkTransactions={bulkTransactions} categoriesArray={categoriesArray} />
+        <Formik initialValues={initialFormValues} onSubmit={onSubmit}>
+          <Form>
+            <BulkTransTable bulkTransactions={bulkTransactions} categoriesArray={categoriesArray} />
+            <FormBtn isDisabled={false}>Submit</FormBtn>
+          </Form>
+        </Formik>
       )}
     </>
   )

@@ -21,7 +21,15 @@ type Props = {
 export const AddTransactionsContainer: FC<Props> = ({ userResponse }) => {
   const [isManualTransExpanded, setIsManualTransExpanded] = useState(true)
 
-  // TODO: check userResponse.error exist and work accordingly
+  // if (!userResponse.ok || !userResponse?.userCategories) {
+  // }
+
+  // const categoriesArray = useMemo(
+  //   () => (Array.isArray(userResponse?.userCategories) ? userResponse.userCategories : []),
+  //   [userResponse]
+  // )
+
+  // TODO: check userResponse.error to throw an error
   return (
     <>
       <CardContainer containerWidth="full">
