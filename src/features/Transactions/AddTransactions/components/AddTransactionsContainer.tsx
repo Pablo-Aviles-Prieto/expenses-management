@@ -21,6 +21,8 @@ type Props = {
 export const AddTransactionsContainer: FC<Props> = ({ userResponse }) => {
   const [isManualTransExpanded, setIsManualTransExpanded] = useState(true)
 
+  // TODO: The relog into your account should sign off the user and navigate
+  // to the signin page
   if (!userResponse.ok || !('userCategories' in userResponse) || !userResponse.userCategories) {
     return <div>Error fetching the categories. Please relog into your account</div>
   }

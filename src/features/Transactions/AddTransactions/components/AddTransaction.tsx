@@ -175,7 +175,7 @@ export const AddTransactions: FC<PropsI> = ({
         className="flex items-center justify-between cursor-pointer"
         onClick={() => setIsManualTransExpanded(prevState => !prevState)}
       >
-        <h3 className="mb-2 text-3xl font-bold text-gray-300">Add manual transaction</h3>
+        <h3 className="text-2xl font-bold text-gray-300">Add manual transaction</h3>
         <ChevronDown
           className={`${TRANSITION_CLASSES} ${isManualTransExpanded ? '-rotate-180' : 'rotate-0'}`}
           width={25}

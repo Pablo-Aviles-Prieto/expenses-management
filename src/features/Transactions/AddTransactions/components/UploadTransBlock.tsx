@@ -76,11 +76,8 @@ export const UploadTransBlock: FC<Props> = ({ categoriesArray, setIsManualTransE
 
   return (
     <>
-      <h3 className="mb-2 text-3xl font-bold text-gray-300">Add multiple transactions via file</h3>
-      <div
-        className="mx-auto mt-[1rem] w-[20rem] file-wrapper"
-        style={isReady ? { opacity: 1 } : undefined}
-      >
+      <h3 className="mb-2 text-2xl font-bold text-gray-300">Add multiple transactions via file</h3>
+      <div className="mx-auto w-[20rem] file-wrapper" style={isReady ? { opacity: 1 } : undefined}>
         <FilePond
           files={files}
           allowMultiple
@@ -116,7 +113,9 @@ export const UploadTransBlock: FC<Props> = ({ categoriesArray, setIsManualTransE
         <Formik initialValues={initialFormValues} onSubmit={onSubmit}>
           <Form>
             <BulkTransTable bulkTransactions={bulkTransactions} categoriesArray={categoriesArray} />
-            <FormBtn isDisabled={false}>Submit</FormBtn>
+            <div className="mt-2 text-center">
+              <FormBtn isDisabled={false}>Upload the transactions</FormBtn>
+            </div>
           </Form>
         </Formik>
       )}
