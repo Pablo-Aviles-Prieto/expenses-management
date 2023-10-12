@@ -28,18 +28,12 @@ type CatValuesI = {
 
 type CatFormI = { typeValue: string; dataValues: CatValuesI[] }
 
-type ResponseI = {
-  ok: boolean
-  userCategories?: CategoryI[] | string
-  error?: string
-}
-
 type Props = {
-  userResponse: ResponseI
+  categoriesArray: CategoryI[]
   setIsManualTransExpanded: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const UploadTransBlock: FC<Props> = ({ userResponse, setIsManualTransExpanded }) => {
+export const UploadTransBlock: FC<Props> = ({ categoriesArray, setIsManualTransExpanded }) => {
   const [files, setFiles] = useState<Array<FilePondInitialFile | File | Blob>>([])
   const [bulkTransactions, setBulkTransactions] = useState<TransactionBulk[]>([])
   const [isReady, setIsReady] = useState(false)
@@ -75,11 +69,6 @@ export const UploadTransBlock: FC<Props> = ({ userResponse, setIsManualTransExpa
     }
     return 'failure'
   }
-
-  const categoriesArray = useMemo(
-    () => (Array.isArray(userResponse.userCategories) ? userResponse.userCategories : []),
-    [userResponse]
-  )
 
   const onSubmit = (values: any, formikHelpers: FormikHelpers<any>) => {
     console.log('values', values)

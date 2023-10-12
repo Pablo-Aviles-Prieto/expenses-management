@@ -11,7 +11,7 @@ import {
   ComboboxField
 } from '@/components/Form'
 import { Formik, FormikHelpers } from 'formik'
-import { FC, useMemo, useState } from 'react'
+import { FC, useState } from 'react'
 import { format } from 'date-fns'
 import { formikBtnIsDisabled } from '@/utils/formikBtnDisabled'
 import { AddSchema } from '@/validations/transactions'
@@ -47,15 +47,9 @@ type AdditionalDateKeys =
   | 'additionalDate_5'
 
 type PropsI = {
-  userResponse: ResponseI
+  categoriesArray: CategoryI[]
   isManualTransExpanded: boolean
   setIsManualTransExpanded: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-type ResponseI = {
-  ok: boolean
-  userCategories?: CategoryI[] | string
-  error?: string
 }
 
 const URL_POST_TRANSACTION = `${URL_API || ''}/api/transactions/add`
@@ -64,7 +58,7 @@ const TRANSITION_CLASSES = 'transition-all duration-500 ease-in-out'
 // TODO: Add the currency selected by the user in the global context, in the amount input
 // maybe indicate to the user that is displaying the global currency selected
 export const AddTransactions: FC<PropsI> = ({
-  userResponse,
+  categoriesArray,
   isManualTransExpanded,
   setIsManualTransExpanded
 }) => {
@@ -166,11 +160,6 @@ export const AddTransactions: FC<PropsI> = ({
       return newAdditionalDates
     })
   }
-
-  const categoriesArray = useMemo(
-    () => (Array.isArray(userResponse.userCategories) ? userResponse.userCategories : []),
-    [userResponse]
-  )
 
   // TODO: Create 2 btns, one to create the transaction and redirect to the user dashboard
   // and create other btn so the user can create the transaction and after saving it, keep in
