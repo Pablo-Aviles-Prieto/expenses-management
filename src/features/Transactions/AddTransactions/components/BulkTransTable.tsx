@@ -1,9 +1,11 @@
-/* eslint-disable max-len */
-import { FC } from 'react'
+'use client'
+
+import { FC, useState } from 'react'
 import { ComboboxField } from '@/components/Form'
 import { CoinsStack } from '@/components/icons'
 import { CategoryI } from '@/interfaces'
 import { TransactionBulk } from '../interfaces/TransactionBulk'
+import { TransactionListPagination } from '../../TransactionListPagination'
 
 type Props = {
   bulkTransactions: TransactionBulk[]
@@ -11,15 +13,26 @@ type Props = {
 }
 
 const THEAD_CLASSES = 'bg-indigo-600 text-center p-2 border-x text-stone-100'
-const ROW_CLASSES = 'text-center text-base border p-2'
+const ROW_CLASSES = 'text-center text-sm border p-2'
 
 export const BulkTransTable: FC<Props> = ({ bulkTransactions, categoriesArray }) => {
+  const [bulkPaginated, setBulkPaginate] = useState<TransactionBulk[]>([])
+  const [currentOffset, setCurrentOffset] = useState<number>(0)
+
+  const setPaginatedData = (data: unknown[]) => {
+    setBulkPaginate(data as TransactionBulk[])
+  }
+
+  const getOffset = (offset: number) => {
+    setCurrentOffset(offset)
+  }
+
   return (
     <>
       <h4 className="text-lg font-bold">Transaction list</h4>
-      <div className="w-full mt-2 max-h-[24rem] overflow-y-auto border-y border-gray-300">
+      <div className="w-full mt-2 border-gray-300 border-y">
         <table className="min-w-full border-collapse border-gray-300">
-          <thead className="sticky -top-[1px] z-20">
+          <thead>
             <tr>
               <th className={`w-[16%] ${THEAD_CLASSES}`}>Date</th>
               <th className={`w-[9%] ${THEAD_CLASSES}`}>Amount</th>
@@ -29,19 +42,19 @@ export const BulkTransTable: FC<Props> = ({ bulkTransactions, categoriesArray })
             </tr>
           </thead>
           <tbody>
-            {bulkTransactions.map((transaction, i) => {
+            {bulkPaginated.map((transaction, i) => {
               return (
                 <tr key={transaction.Concept + transaction.Date + i.toString()}>
                   <td className={`${ROW_CLASSES}`}>{transaction.Date}</td>
-                  <td className={`${ROW_CLASSES}`}>{transaction.Amount}</td>
-                  <td className={`text-sm !text-left ${ROW_CLASSES}`}>{transaction.Concept}</td>
-                  <td className={`text-sm !text-left ${ROW_CLASSES}`}>{transaction.Notes}</td>
+                  <td className={`!text-base ${ROW_CLASSES}`}>{transaction.Amount}</td>
+                  <td className={`!text-left ${ROW_CLASSES}`}>{transaction.Concept}</td>
+                  <td className={`!text-left ${ROW_CLASSES}`}>{transaction.Notes}</td>
                   <td className={`${ROW_CLASSES}`}>
                     <ComboboxField
-                      id={`categories_${i}`}
-                      name={`categories_${i}`}
+                      id={`categories_${currentOffset + i}`}
+                      name={`categories_${currentOffset + i}`}
                       label=""
-                      dataArray={[...categoriesArray]}
+                      dataArray={categoriesArray}
                       msgToCreateEntry={{ SVG: CoinsStack, message: 'Create this category' }}
                       displayErrorMsg={false}
                       displayOpenIcon={false}
@@ -53,6 +66,11 @@ export const BulkTransTable: FC<Props> = ({ bulkTransactions, categoriesArray })
           </tbody>
         </table>
       </div>
+      <TransactionListPagination
+        rawTransactions={bulkTransactions}
+        setTransPaginated={setPaginatedData}
+        getOffset={getOffset}
+      />
     </>
   )
 }

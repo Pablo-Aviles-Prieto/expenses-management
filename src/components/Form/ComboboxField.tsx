@@ -1,15 +1,15 @@
-'use client'
-
+/* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable no-void */
 /* eslint-disable max-len */
+
+'use client'
+
 import React, { FC, SVGProps, useState } from 'react'
 import { useField } from 'formik'
 import { Combobox } from '@headlessui/react'
 import { FormInputContainer } from '../styles'
 import { Check, ChevronUpDown, Close } from '../icons'
 
-// TODO: remove the ID and filter/find using name?
-// or use uuid
 type PropsT = {
   id: number | string
   name: string
@@ -54,7 +54,7 @@ export const ComboboxField = <T extends PropsT>({
   ...props
 }: PropsI<T>) => {
   const [query, setQuery] = useState('')
-  const [elementList, setElementList] = useState<T[]>([...dataArray])
+  const [elementList, setElementList] = useState<T[]>(dataArray)
   const [field, meta, helpers] = useField<FormikValue<T>>(props)
   const errorClass = meta.touched && meta.error ? 'border-red-500 border-2' : ''
 
@@ -126,7 +126,6 @@ export const ComboboxField = <T extends PropsT>({
     setQuery('')
   }
 
-  // TODO: Need to put the label border in red when a meta.error exists
   return (
     <Combobox
       value={field.value.dataValues}
@@ -185,7 +184,6 @@ export const ComboboxField = <T extends PropsT>({
                 <ChevronUpDown width={25} height={25} />
               </Combobox.Button>
             ) : (
-              // eslint-disable-next-line react/jsx-no-useless-fragment
               <></>
             )}
             {/* The error message should be an object with dataValues property, checking for the array length */}
@@ -202,7 +200,6 @@ export const ComboboxField = <T extends PropsT>({
                 ) : null}
               </div>
             ) : (
-              // eslint-disable-next-line react/jsx-no-useless-fragment
               <></>
             )}
           </FormInputContainer>
