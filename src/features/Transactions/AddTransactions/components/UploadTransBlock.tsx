@@ -77,7 +77,7 @@ export const UploadTransBlock: FC<Props> = ({ categoriesArray, setIsManualTransE
   ) => {
     setIsSavingTransaction(true)
     // TODO: IMPORTANT HAVE TO KNOW HOW THE DATE FORMAT IS IN THE CSV, so
-    // the date is parsable to a backend format yyyy-mm-dd
+    // the date is parsable to a backend format yyyy-mm-dd!
     const transactions: TransactionObjI[] = bulkTransactions.map((trans, i) => {
       const categories =
         values[`categories_${i}`]?.dataValues?.length > 0
@@ -94,6 +94,7 @@ export const UploadTransBlock: FC<Props> = ({ categoriesArray, setIsManualTransE
     console.log('values', values)
     console.log('transactions', transactions)
     // TODO: Make a petition to the backend
+    // TEST IT WITH JUST A FEW (5) TRANS TO CHECK THAT WORKS FINE WITH GENERIC CAT
     setIsSavingTransaction(false)
     helpers.setSubmitting(false)
     // TODO: Redirect to the transactions page
