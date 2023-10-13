@@ -10,7 +10,7 @@ import { FilePond } from 'react-filepond'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { FilePondFile, FilePondInitialFile } from 'filepond'
 import { useCustomToast } from '@/hooks'
-import { CategoryI } from '@/interfaces'
+import { CategoryI, TransactionObjI } from '@/interfaces'
 import { Form, Formik, FormikHelpers } from 'formik'
 import { FormBtn } from '@/components/Form'
 import { ResponseFile } from '../interfaces/ResponseFile'
@@ -37,6 +37,7 @@ export const UploadTransBlock: FC<Props> = ({ categoriesArray, setIsManualTransE
   const [files, setFiles] = useState<Array<FilePondInitialFile | File | Blob>>([])
   const [bulkTransactions, setBulkTransactions] = useState<TransactionBulk[]>([])
   const [isReady, setIsReady] = useState(false)
+  const [isSavingTransaction, setIsSavingTransaction] = useState(false)
   const { showToast } = useCustomToast()
 
   useEffect(() => {
@@ -70,8 +71,32 @@ export const UploadTransBlock: FC<Props> = ({ categoriesArray, setIsManualTransE
     return 'failure'
   }
 
-  const onSubmit = (values: any, formikHelpers: FormikHelpers<any>) => {
+  const onSubmit = (
+    values: typeof initialFormValues,
+    helpers: FormikHelpers<typeof initialFormValues>
+  ) => {
+    setIsSavingTransaction(true)
+    // TODO: IMPORTANT HAVE TO KNOW HOW THE DATE FORMAT IS IN THE CSV, so
+    // the date is parsable to a backend format yyyy-mm-dd
+    const transactions: TransactionObjI[] = bulkTransactions.map((trans, i) => {
+      const categories =
+        values[`categories_${i}`]?.dataValues?.length > 0
+          ? values[`categories_${i}`].dataValues
+          : [{ id: 99, name: 'Generic', newEntry: true }]
+      return {
+        name: trans.Concept,
+        amount: parseFloat(trans.Amount),
+        date: trans.Date,
+        categories,
+        notes: trans.Notes
+      }
+    })
     console.log('values', values)
+    console.log('transactions', transactions)
+    // TODO: Make a petition to the backend
+    setIsSavingTransaction(false)
+    helpers.setSubmitting(false)
+    // TODO: Redirect to the transactions page
   }
 
   return (

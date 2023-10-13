@@ -106,7 +106,6 @@ export const AddTransactions: FC<PropsI> = ({
           name: values.name,
           amount: parseFloat(values.amount),
           date: format(new Date(additionalDate), dateFormat.ISO),
-          creationDate: new Date().toISOString(),
           notes: values.notes ? values.notes : undefined,
           categories: values.categories.dataValues
         }
@@ -145,7 +144,6 @@ export const AddTransactions: FC<PropsI> = ({
     } finally {
       setIsSavingTransaction(false)
       helpers.setSubmitting(false)
-      // TODO: Redirect to the transactions page?
       if (dataSession?.user?.id && transactionOk) {
         router.push(`/user/${dataSession.user.id}/details`)
       }
@@ -167,9 +165,7 @@ export const AddTransactions: FC<PropsI> = ({
   // TODO: Use the fetch error => addTransactionError
   return (
     <div
-      className={`${TRANSITION_CLASSES} overflow-hidden ${
-        isManualTransExpanded ? 'h-[739px]' : 'h-[35px]'
-      }`}
+      className={`${TRANSITION_CLASSES} overflow-hidden ${isManualTransExpanded ? '' : 'h-[27px]'}`}
     >
       <div
         className="flex items-center justify-between cursor-pointer"
