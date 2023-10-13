@@ -12,7 +12,7 @@ type Props = {
   categoriesArray: CategoryI[]
 }
 
-const THEAD_CLASSES = 'bg-indigo-600 text-center p-2 border-x text-stone-100'
+const THEAD_CLASSES = 'bg-indigo-600 text-center p-2 border text-stone-100'
 const ROW_CLASSES = 'text-center text-sm border p-2'
 
 export const BulkTransTable: FC<Props> = ({ bulkTransactions, categoriesArray }) => {
@@ -30,7 +30,7 @@ export const BulkTransTable: FC<Props> = ({ bulkTransactions, categoriesArray })
   return (
     <>
       <h4 className="text-lg font-bold">Transaction list</h4>
-      <div className="w-full mt-2 border-gray-300 border-y">
+      <div className="w-full mt-2 border-gray-300">
         <table className="min-w-full border-collapse border-gray-300">
           <thead>
             <tr>
