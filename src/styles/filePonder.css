@@ -1,0 +1,31 @@
+.filepond--credits {
+  display: none;
+}
+
+.file-wrapper {
+  opacity: 0;
+  transition: opacity 1s 0.25s;
+}
+
+.file-wrapper .filepond--panel-root {
+  background-color: transparent;
+  border: 2px solid #3b83f681;
+}
+
+.file-wrapper .filepond--drop-label {
+  color: #e0dfdf;
+}
+
+.file-wrapper .filepond--file {
+  background-color: #2e42f3c0;
+}
+
+/* Override background color when processing is complete */
+.file-wrapper [data-filepond-item-state='processing-complete'] .filepond--file {
+  background-color: rgb(54, 151, 99);
+}
+
+/* Override background color when there is an error */
+.file-wrapper [data-filepond-item-state='processing-error'] .filepond--file {
+  background-color: rgb(196, 78, 71);
+}

@@ -18,7 +18,8 @@ const getTransactions = async () => {
 const Page = async () => {
   const transResponse = await getTransactions()
 
-  // TODO: check in the child if transResponse.error exist and work accordingly
+  // TODO: IMPORTANT check in the child if transResponse.error exist and work accordingly
+  // is broking when no data since date-fns throwing error
   return <Transactions transResponse={transResponse} />
 }
 

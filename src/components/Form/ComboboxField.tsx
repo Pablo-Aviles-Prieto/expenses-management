@@ -1,13 +1,15 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable no-void */
 /* eslint-disable max-len */
+
+'use client'
+
 import React, { FC, SVGProps, useState } from 'react'
 import { useField } from 'formik'
 import { Combobox } from '@headlessui/react'
 import { FormInputContainer } from '../styles'
 import { Check, ChevronUpDown, Close } from '../icons'
 
-// TODO: remove the ID and filter/find using name?
-// or use uuid
 type PropsT = {
   id: number | string
   name: string
@@ -27,6 +29,8 @@ interface PropsI<T extends PropsT> {
   msgToCreateEntry?: MsgToCreateEntryI
   subTitle?: string
   isRequired?: boolean
+  displayErrorMsg?: boolean
+  displayOpenIcon?: boolean
 }
 
 type FormikValue<T extends PropsT> = {
@@ -45,10 +49,12 @@ export const ComboboxField = <T extends PropsT>({
   msgToCreateEntry,
   subTitle,
   isRequired,
+  displayErrorMsg = true,
+  displayOpenIcon = true,
   ...props
 }: PropsI<T>) => {
   const [query, setQuery] = useState('')
-  const [elementList, setElementList] = useState<T[]>([...dataArray])
+  const [elementList, setElementList] = useState<T[]>(dataArray)
   const [field, meta, helpers] = useField<FormikValue<T>>(props)
   const errorClass = meta.touched && meta.error ? 'border-red-500 border-2' : ''
 
@@ -120,7 +126,6 @@ export const ComboboxField = <T extends PropsT>({
     setQuery('')
   }
 
-  // TODO: Need to put the label border in red when a meta.error exists
   return (
     <Combobox
       value={field.value.dataValues}
@@ -174,21 +179,29 @@ export const ComboboxField = <T extends PropsT>({
                 />
               </Combobox.Button>
             </span>
-            <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2 text-gray-600 -bottom-2">
-              <ChevronUpDown width={25} height={25} />
-            </Combobox.Button>
+            {displayOpenIcon ? (
+              <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2 text-gray-600 -bottom-2">
+                <ChevronUpDown width={25} height={25} />
+              </Combobox.Button>
+            ) : (
+              <></>
+            )}
             {/* The error message should be an object with dataValues property, checking for the array length */}
-            <div className="min-h-[25px] text-red-500">
-              {meta.touched && meta.error ? (
-                typeof meta.error === 'string' ? (
-                  <span>{meta.error}</span>
-                ) : (
-                  Object.entries(meta.error).map(([key, value]) => (
-                    <span key={key}>{value as string}</span>
-                  ))
-                )
-              ) : null}
-            </div>
+            {displayErrorMsg ? (
+              <div className="min-h-[25px] text-red-500">
+                {meta.touched && meta.error ? (
+                  typeof meta.error === 'string' ? (
+                    <span>{meta.error}</span>
+                  ) : (
+                    Object.entries(meta.error).map(([key, value]) => (
+                      <span key={key}>{value as string}</span>
+                    ))
+                  )
+                ) : null}
+              </div>
+            ) : (
+              <></>
+            )}
           </FormInputContainer>
         </span>
 

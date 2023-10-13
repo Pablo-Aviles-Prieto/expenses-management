@@ -4,11 +4,19 @@ import type { NextRequest } from 'next/server'
 import { errorMessages } from './utils/const'
 
 const USER_DETAILS_PATH = /^\/user\/([^/]+)\/details$/ // /user/:mongoId/details
+const UPLOAD_FILE_API = '/api/transactions/upload'
 
 export default async function middleware(req: NextRequest) {
   const session = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
   const headers = new Headers(req.headers)
   const url = req.nextUrl.clone()
+
+  if (url.pathname.match(UPLOAD_FILE_API)) {
+    const content = req.headers.get('content-type')
+    headers.set('Content-Type', content ?? 'multipart/form-data')
+    headers.set('content-type', content ?? 'multipart/form-data')
+    return NextResponse.next({ request: { headers } })
+  }
 
   if (!session) {
     headers.set('sessionError', errorMessages.relogAcc)
@@ -26,14 +34,10 @@ export default async function middleware(req: NextRequest) {
   }
 
   headers.set('session', JSON.stringify(session))
-  return NextResponse.next({
-    request: {
-      headers
-    }
-  })
+  return NextResponse.next({ request: { headers } })
 }
 
 // Middleware working on pages paths only (no api)
 export const config = {
-  matcher: ['/transactions/:path*', '/user/:path*/details']
+  matcher: ['/transactions/:path*', '/user/:path*/details', '/api/transactions/upload']
 }

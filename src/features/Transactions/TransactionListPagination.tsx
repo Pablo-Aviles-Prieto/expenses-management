@@ -2,21 +2,23 @@
 
 'use client'
 
-import { TransactionObjBack } from '@/interfaces/Transactions'
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'react'
 import ReactPaginate from 'react-paginate'
 
-type PropsI = {
-  rawTransactions: TransactionObjBack[]
-  filteredTransList: TransactionObjBack[] | undefined
-  setTransPaginated: React.Dispatch<React.SetStateAction<TransactionObjBack[]>>
+type PropsI<T> = {
+  rawTransactions: T[]
+  setTransPaginated: (value: T[]) => void
+  filteredTransList?: T[] | undefined
+  getOffset?: (offset: number) => void
 }
 
 const MAX_ITEMS_PER_PAGE = 10
 
-// TODO: Pagination should change a global state with the data to show in the list.
 export const TransactionListPagination = forwardRef(
-  ({ rawTransactions, filteredTransList, setTransPaginated }: PropsI, ref: React.Ref<any>) => {
+  <T,>(
+    { rawTransactions, filteredTransList, setTransPaginated, getOffset }: PropsI<T>,
+    ref: React.Ref<any>
+  ) => {
     const transListToDisplay = useMemo(
       () => filteredTransList ?? rawTransactions,
       [filteredTransList, rawTransactions]
@@ -30,6 +32,9 @@ export const TransactionListPagination = forwardRef(
     useEffect(() => {
       const currentPageData = transListToDisplay.slice(offset, offset + MAX_ITEMS_PER_PAGE)
       setTransPaginated(currentPageData)
+      if (getOffset) {
+        getOffset(offset)
+      }
     }, [offset, transListToDisplay])
 
     const handlePageChange = ({ selected: selectedPage }: { selected: number }) => {

@@ -154,6 +154,10 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
     setTransFilteredType(value)
   }
 
+  const setPaginatedData = (data: unknown[]) => {
+    setTransPaginated(data as TransactionObjBack[])
+  }
+
   const resetPagination = () => {
     resetPageRef.current?.resetPage()
   }
@@ -209,7 +213,7 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
           ref={resetPageRef}
           rawTransactions={transResponseRaw}
           filteredTransList={filteredTransList}
-          setTransPaginated={setTransPaginated}
+          setTransPaginated={setPaginatedData}
         />
       </CardContainer>
     </>
