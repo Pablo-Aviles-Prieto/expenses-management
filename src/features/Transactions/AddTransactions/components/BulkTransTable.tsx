@@ -29,7 +29,6 @@ export const BulkTransTable: FC<Props> = ({ bulkTransactions, categoriesArray })
 
   return (
     <>
-      <h4 className="text-lg font-bold">Transaction list</h4>
       <div className="w-full mt-2 border-gray-300">
         <table className="min-w-full border-collapse border-gray-300">
           <thead>

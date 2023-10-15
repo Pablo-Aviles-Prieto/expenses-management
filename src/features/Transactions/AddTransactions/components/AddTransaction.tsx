@@ -52,7 +52,7 @@ type PropsI = {
   setIsManualTransExpanded: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const URL_POST_TRANSACTION = `${URL_API || ''}/api/transactions/add`
+const URL_POST_TRANSACTION = `${URL_API || ''}/api/transactions/add/single`
 const TRANSITION_CLASSES = 'transition-all duration-500 ease-in-out'
 
 // TODO: Add the currency selected by the user in the global context, in the amount input
