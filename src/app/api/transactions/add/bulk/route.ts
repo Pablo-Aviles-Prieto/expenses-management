@@ -33,7 +33,7 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ ok: false, error: errorMessages.relogAcc }, { status: 400 })
     }
 
-    console.log('transactions', transactions)
+    console.log('transactions!', transactions)
 
     return NextResponse.json(
       { ok: true, insertedTransactions: transactions, updatedUser: user },

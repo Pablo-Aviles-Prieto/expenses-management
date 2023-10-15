@@ -112,7 +112,7 @@ export const UploadTransBlock: FC<Props> = ({ categoriesArray, setIsManualTransE
         const categories =
           values[`categories_${i}`]?.dataValues?.length > 0
             ? values[`categories_${i}`].dataValues
-            : [{ id: 99, name: 'Generic', newEntry: true }]
+            : [{ id: process.env.GENERIC_ID ?? '', name: 'Generic' }]
         return {
           name: trans.Concept,
           amount: parseFloat(trans.Amount),
