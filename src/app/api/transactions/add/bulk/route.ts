@@ -43,20 +43,32 @@ export const POST = async (req: NextRequest) => {
     // Collect new and existing categories for the user
     const newUserCategories = new Set<string>()
     const existingUserCategories = new Set<string | number>()
+    // Collect new and existing categories in general
+    const newGeneralCategories = new Set<string>()
+    const existingGeneralCategories = new Set<string | number>()
 
     transactions.forEach(trans => {
       trans.categories.forEach(category => {
         const lowerCaseName = category.name.toLowerCase()
+        // for user categories
         if (category.newEntry && !allUserCategories.includes(lowerCaseName)) {
           newUserCategories.add(lowerCaseName)
         } else {
           existingUserCategories.add(category.id)
+        }
+        // for general categories
+        if (allCategoryNames.includes(lowerCaseName)) {
+          existingGeneralCategories.add(category.id)
+        } else {
+          newGeneralCategories.add(lowerCaseName)
         }
       })
     })
 
     console.log('newUserCategories', newUserCategories)
     console.log('existingUserCategories', existingUserCategories)
+    console.log('newGeneralCategories', newGeneralCategories)
+    console.log('existingGeneralCategories', existingGeneralCategories)
 
     // Insert new categories and get their IDs
     const newCategoryDocs = Array.from(newUserCategories).map(name => ({
