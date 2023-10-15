@@ -5,6 +5,8 @@ import { isValidTransaction } from '@/utils/isValidTransaction'
 import UserModel from '@/models/user/UsersModel'
 import { getToken } from 'next-auth/jwt'
 import { NextRequest, NextResponse } from 'next/server'
+import CategoriesModel from '@/models/categories/CategoriesModel'
+import { capitalizeFirstLetter } from '@/utils/capitalizeFirstLetter'
 
 interface ReqObjI {
   transactions: TransactionObjI[]
@@ -33,7 +35,39 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ ok: false, error: errorMessages.relogAcc }, { status: 400 })
     }
 
-    console.log('transactions!', transactions)
+    // Fetch all categories and the user's categories from the database
+    const allCategories = await CategoriesModel.find()
+    const allCategoryNames = allCategories.map(cat => cat.name.toLowerCase())
+    const allUserCategories = user.categories.map(id => id.toString())
+
+    // Collect new and existing categories for the user
+    const newUserCategories = new Set<string>()
+    const existingUserCategories = new Set<string | number>()
+
+    transactions.forEach(trans => {
+      trans.categories.forEach(category => {
+        const lowerCaseName = category.name.toLowerCase()
+        if (category.newEntry && !allUserCategories.includes(lowerCaseName)) {
+          newUserCategories.add(lowerCaseName)
+        } else {
+          existingUserCategories.add(category.id)
+        }
+      })
+    })
+
+    console.log('newUserCategories', newUserCategories)
+    console.log('existingUserCategories', existingUserCategories)
+
+    // Insert new categories and get their IDs
+    const newCategoryDocs = Array.from(newUserCategories).map(name => ({
+      insertOne: {
+        document: { name: capitalizeFirstLetter(name) }
+      }
+    }))
+    // const bulkWriteResult = await CategoriesModel.bulkWrite(newCategoryDocs)
+    // const newCategoryIds = Object.values(bulkWriteResult.insertedIds).map(
+    //   id => new mongoose.Types.ObjectId(id as string)
+    // )
 
     return NextResponse.json(
       { ok: true, insertedTransactions: transactions, updatedUser: user },
