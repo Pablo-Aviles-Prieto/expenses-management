@@ -1,5 +1,5 @@
 import connectDb from '@/config/mongooseDB'
-import { TransactionObjI } from '@/interfaces'
+import { CategoryI, TransactionObjI } from '@/interfaces'
 import { errorMessages } from '@/utils/const'
 import { isValidTransaction } from '@/utils/isValidTransaction'
 import UserModel from '@/models/user/UsersModel'
@@ -7,9 +7,16 @@ import { getToken } from 'next-auth/jwt'
 import { NextRequest, NextResponse } from 'next/server'
 import CategoriesModel from '@/models/categories/CategoriesModel'
 import { capitalizeFirstLetter } from '@/utils/capitalizeFirstLetter'
+import mongoose from 'mongoose'
+import TransactionModel from '@/models/transaction/TransactionModel'
 
 interface ReqObjI {
   transactions: TransactionObjI[]
+}
+
+type ParsedCat = {
+  name: string
+  id: string
 }
 
 export const POST = async (req: NextRequest) => {
@@ -35,54 +42,95 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ ok: false, error: errorMessages.relogAcc }, { status: 400 })
     }
 
-    // Fetch all categories and the user's categories from the database
+    // Fetch all categories from the database
     const allCategories = await CategoriesModel.find()
     const allCategoryNames = allCategories.map(cat => cat.name.toLowerCase())
-    const allUserCategories = user.categories.map(id => id.toString())
 
-    // Collect new and existing categories for the user
-    const newUserCategories = new Set<string>()
-    const existingUserCategories = new Set<string | number>()
     // Collect new and existing categories in general
     const newGeneralCategories = new Set<string>()
-    const existingGeneralCategories = new Set<string | number>()
+    const existingGeneralCategories = new Map<string, CategoryI>()
 
     transactions.forEach(trans => {
       trans.categories.forEach(category => {
-        const lowerCaseName = category.name.toLowerCase()
-        // for user categories
-        if (category.newEntry && !allUserCategories.includes(lowerCaseName)) {
-          newUserCategories.add(lowerCaseName)
+        const catLowerCaseName = category.name.toLowerCase()
+        if (allCategoryNames.includes(catLowerCaseName)) {
+          const categoryFound = allCategories.find(
+            cat => cat.name.toLowerCase() === catLowerCaseName
+          )
+          const parsedCat = JSON.parse(JSON.stringify(categoryFound)) as ParsedCat
+          existingGeneralCategories.set(parsedCat.id, parsedCat)
         } else {
-          existingUserCategories.add(category.id)
-        }
-        // for general categories
-        if (allCategoryNames.includes(lowerCaseName)) {
-          existingGeneralCategories.add(category.id)
-        } else {
-          newGeneralCategories.add(lowerCaseName)
+          newGeneralCategories.add(catLowerCaseName)
         }
       })
     })
 
-    console.log('newUserCategories', newUserCategories)
-    console.log('existingUserCategories', existingUserCategories)
-    console.log('newGeneralCategories', newGeneralCategories)
-    console.log('existingGeneralCategories', existingGeneralCategories)
+    let newCategoryIds: mongoose.Types.ObjectId[] = []
+    let newGeneralCatsArr: string[] = []
+    if (newGeneralCategories.size > 0) {
+      // Insert new categories and get their IDs
+      newGeneralCatsArr = Array.from(newGeneralCategories)
+      const newCategoryDocs = newGeneralCatsArr.map(name => ({
+        insertOne: {
+          document: { name: capitalizeFirstLetter(name) }
+        }
+      }))
+      const bulkWriteResult = await CategoriesModel.bulkWrite(newCategoryDocs)
+      newCategoryIds = Object.values(bulkWriteResult.insertedIds as mongoose.Types.ObjectId[])
+    }
 
-    // Insert new categories and get their IDs
-    const newCategoryDocs = Array.from(newUserCategories).map(name => ({
+    const combinedIdCategories = [
+      ...newCategoryIds,
+      ...Array.from(existingGeneralCategories.keys()).map(id => new mongoose.Types.ObjectId(id))
+    ]
+
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      tokenNext.id,
+      {
+        $addToSet: { categories: { $each: combinedIdCategories } }
+      },
+      { new: true }
+    )
+
+    // storing the ObjectId as key and the name string as value
+    const combinedCategoriesObj = new Map<mongoose.Types.ObjectId, string>()
+    newCategoryIds.forEach((newCat, i) => {
+      combinedCategoriesObj.set(newCat, newGeneralCatsArr[i])
+    })
+    Array.from(existingGeneralCategories.entries()).forEach(([id, catObj]) => {
+      const parsedId = new mongoose.Types.ObjectId(id)
+      combinedCategoriesObj.set(parsedId, catObj.name)
+    })
+
+    const parsedTransactions = transactions.map(trans => {
+      const parsedCategories = trans.categories.map(cat => {
+        let categoryId!: mongoose.Types.ObjectId
+        if (typeof cat.id === 'string' && mongoose.Types.ObjectId.isValid(cat.id)) {
+          // If id is a string and a valid ObjectId, convert it to ObjectId
+          categoryId = new mongoose.Types.ObjectId(cat.id)
+        } else {
+          // If id is a number, search for the category name in the map
+          for (const [mongoId, catName] of Array.from(combinedCategoriesObj.entries())) {
+            if (catName.toLowerCase() === cat.name.toLowerCase()) {
+              categoryId = mongoId
+              break
+            }
+          }
+        }
+        return categoryId
+      })
+      return { ...trans, categories: parsedCategories, userId: user._id }
+    })
+
+    const newTransDocs = parsedTransactions.map(trans => ({
       insertOne: {
-        document: { name: capitalizeFirstLetter(name) }
+        document: trans
       }
     }))
-    // const bulkWriteResult = await CategoriesModel.bulkWrite(newCategoryDocs)
-    // const newCategoryIds = Object.values(bulkWriteResult.insertedIds).map(
-    //   id => new mongoose.Types.ObjectId(id as string)
-    // )
+    const bulkTransResult = await TransactionModel.bulkWrite(newTransDocs)
 
     return NextResponse.json(
-      { ok: true, insertedTransactions: transactions, updatedUser: user },
+      { ok: true, insertedTransactions: bulkTransResult.insertedCount, updatedUser },
       { status: 201 }
     )
   } catch (err) {
