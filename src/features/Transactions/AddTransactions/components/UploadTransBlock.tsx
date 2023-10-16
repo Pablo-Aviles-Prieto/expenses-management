@@ -10,14 +10,18 @@ import { FilePond } from 'react-filepond'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { FilePondFile, FilePondInitialFile } from 'filepond'
 import { useCustomToast } from '@/hooks'
-import { CategoryI, TransactionObjI } from '@/interfaces'
+import { CategoryI, ResponseTransactionI, TransactionObjI } from '@/interfaces'
 import { Form, Formik, FormikHelpers } from 'formik'
-import { FormBtn } from '@/components/Form'
+import { URL_API, errorMessages } from '@/utils/const'
+import { useFetch } from '@/hooks/useFetch'
+import { useCustomSession } from '@/hooks/useCustomSession'
 import { ResponseFile } from '../interfaces/ResponseFile'
 import { TransactionBulk } from '../interfaces/TransactionBulk'
 import { BulkTransTable } from './BulkTransTable'
 
 import 'filepond/dist/filepond.min.css'
+import { BulkTransTableHeader } from './BulkTransTableHeader'
+import { parseToBackendDate } from '../utils/parseToBackendDate'
 
 type CatValuesI = {
   name: string
@@ -33,12 +37,25 @@ type Props = {
   setIsManualTransExpanded: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+const URL_POST_TRANSACTION = `${URL_API || ''}/api/transactions/add/bulk`
+const DATES_CSV_FORMAT_OPTIONS = [
+  'dd-MM-yyyy',
+  'MM-dd-yyyy',
+  'yyyy-MM-dd',
+  'dd/MM/yyyy',
+  'MM/dd/yyyy',
+  'yyyy/MM/dd'
+]
+
 export const UploadTransBlock: FC<Props> = ({ categoriesArray, setIsManualTransExpanded }) => {
   const [files, setFiles] = useState<Array<FilePondInitialFile | File | Blob>>([])
   const [bulkTransactions, setBulkTransactions] = useState<TransactionBulk[]>([])
   const [isReady, setIsReady] = useState(false)
   const [isSavingTransaction, setIsSavingTransaction] = useState(false)
+  const [CSVDateFormat, setCSVDateFormat] = useState<string>(DATES_CSV_FORMAT_OPTIONS[0])
   const { showToast } = useCustomToast()
+  const { fetchPetition } = useFetch()
+  const { data: dataSession } = useCustomSession()
 
   useEffect(() => {
     setIsReady(true)
@@ -71,32 +88,62 @@ export const UploadTransBlock: FC<Props> = ({ categoriesArray, setIsManualTransE
     return 'failure'
   }
 
-  const onSubmit = (
+  const handleCSVDateFormat = (value: string | string[]) => {
+    if (Array.isArray(value)) {
+      return
+    }
+    setCSVDateFormat(value)
+  }
+
+  const onSubmit = async (
     values: typeof initialFormValues,
     helpers: FormikHelpers<typeof initialFormValues>
   ) => {
     setIsSavingTransaction(true)
-    // TODO: IMPORTANT HAVE TO KNOW HOW THE DATE FORMAT IS IN THE CSV, so
-    // the date is parsable to a backend format yyyy-mm-dd
-    const transactions: TransactionObjI[] = bulkTransactions.map((trans, i) => {
-      const categories =
-        values[`categories_${i}`]?.dataValues?.length > 0
-          ? values[`categories_${i}`].dataValues
-          : [{ id: 99, name: 'Generic', newEntry: true }]
-      return {
-        name: trans.Concept,
-        amount: parseFloat(trans.Amount),
-        date: trans.Date,
-        categories,
-        notes: trans.Notes
-      }
-    })
-    console.log('values', values)
-    console.log('transactions', transactions)
-    // TODO: Make a petition to the backend
-    setIsSavingTransaction(false)
-    helpers.setSubmitting(false)
-    // TODO: Redirect to the transactions page
+    let transactions: TransactionObjI[] = []
+
+    const resetFormState = () => {
+      setIsSavingTransaction(false)
+      helpers.setSubmitting(false)
+    }
+
+    try {
+      transactions = bulkTransactions.map((trans, i) => {
+        const categories =
+          values[`categories_${i}`]?.dataValues?.length > 0
+            ? values[`categories_${i}`].dataValues
+            : [{ id: process.env.GENERIC_ID ?? '', name: 'Generic', common: true }]
+        return {
+          name: trans.Concept,
+          amount: parseFloat(trans.Amount),
+          date: parseToBackendDate({ dateString: trans.Date, dateFormatFromCSV: CSVDateFormat }),
+          categories,
+          notes: trans.Notes
+        }
+      })
+    } catch {
+      showToast({
+        msg: errorMessages.dateFormatCSV,
+        options: { type: 'error' }
+      })
+      resetFormState()
+      return
+    }
+    const extraHeaders = {
+      Authorization: `Bearer ${dataSession?.accessToken || ''}`
+    }
+    const addTransaction = await fetchPetition<ResponseTransactionI>(
+      URL_POST_TRANSACTION,
+      {
+        method: 'POST',
+        body: JSON.stringify({ transactions })
+      },
+      extraHeaders
+    )
+    console.log('response', addTransaction)
+
+    resetFormState()
+    // TODO: Redirect to the transactions page!
   }
 
   return (
@@ -137,10 +184,14 @@ export const UploadTransBlock: FC<Props> = ({ categoriesArray, setIsManualTransE
       {bulkTransactions && bulkTransactions.length > 0 && (
         <Formik initialValues={initialFormValues} onSubmit={onSubmit}>
           <Form>
+            <BulkTransTableHeader
+              datesCSVFormatOptions={DATES_CSV_FORMAT_OPTIONS}
+              CSVDateFormat={CSVDateFormat}
+              isDisabled={isSavingTransaction}
+              isLoading={isSavingTransaction}
+              handleCSVDateFormat={handleCSVDateFormat}
+            />
             <BulkTransTable bulkTransactions={bulkTransactions} categoriesArray={categoriesArray} />
-            <div className="mt-2 text-center">
-              <FormBtn isDisabled={false}>Upload the transactions</FormBtn>
-            </div>
           </Form>
         </Formik>
       )}

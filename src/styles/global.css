@@ -12,9 +12,28 @@
   scroll-behavior: smooth;
   font-family: 'Inter', sans-serif;
   list-style: none;
+  scrollbar-color: #9233ff #e0e7ff;
+  scrollbar-width: thin;
 }
 
 body {
   background-color: rgb(49 46 129 / 1); /* bg-indigo-900 */
   color: rgb(243 244 246 /1); /* text-gray-100 */
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.35);
+  border-radius: 10px;
+  background-color: #e0e7ff;
+}
+::-webkit-scrollbar {
+  border-radius: 10px;
+  width: 8px;
+  height: 8px;
+  background-color: #e0e7ff;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #9233ff;
 }

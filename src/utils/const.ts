@@ -14,7 +14,8 @@ export const errorMessages = {
   gettingCategories: 'Error getting the categories',
   addingTransaction: 'Error adding the transaction to database',
   fileParsing: 'File processing failed. Try again later',
-  fileType: 'Wrong file type. Only CSV is allowed'
+  fileType: 'Wrong file type. Only CSV is allowed',
+  dateFormatCSV: 'Please, select the correct date format used on your CSV file'
 }
 
 export const textSize = {
