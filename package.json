@@ -6,7 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed:compile": "tsc -p seed.tsconfig.json",
+    "seed:single": "node seed-compiled-files/seeds/clearTransactions.js",
+    "seed:clean": "rimraf seed-compiled-files",
+    "seed:all": "for file in seed-compiled-files/seeds/*.js; do node $file; done",
+    "seed:run-single": "npm run seed:compile && npm run seed:single && npm run seed:clean",
+    "seed:run-all": "npm run seed:compile && npm run seed:all && npm run seed:clean"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^2.0.0",
@@ -44,6 +50,7 @@
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
     "autoprefixer": "^10.4.14",
+    "dotenv": "^16.3.1",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-next": "^13.4.19",
     "eslint-config-prettier": "^8.8.0",

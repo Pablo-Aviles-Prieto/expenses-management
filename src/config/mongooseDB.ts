@@ -1,4 +1,9 @@
 import mongoose from 'mongoose'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import * as dotenv from 'dotenv'
+
+// used for the seeder
+dotenv.config({ path: '.env.local' })
 
 interface CachedMongooseConnection {
   conn: typeof mongoose | null
