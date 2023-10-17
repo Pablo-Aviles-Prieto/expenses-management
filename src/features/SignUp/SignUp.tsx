@@ -63,7 +63,6 @@ const SignUp: FC = () => {
         })
       }
     } catch (err) {
-      console.log(err)
       const errorString = err instanceof Error ? err.message : errorMessages.generic
       setRegisterError(errorString)
       updateToast({

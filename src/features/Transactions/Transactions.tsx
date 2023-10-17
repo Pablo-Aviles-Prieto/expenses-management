@@ -145,7 +145,6 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
   }
 
   useEffect(() => {
-    console.log('CHECK useeffect')
     void handleFiltering()
   }, [transactionStartDate, transactionEndDate, transFilteredType])
 
