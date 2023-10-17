@@ -27,6 +27,16 @@ export const useTransactionsChartData = () => {
     // THE OTHER LINE IF ITS expenses or incomes.
     // TODO: In case that its an income or expense, should display the stacked data of
     // the categories!
+    if (transactions.length === 0) {
+      return {
+        transactionsChartData: {
+          labels: [],
+          datasets: []
+        },
+        highestAmount: 0
+      }
+    }
+
     const incomesTrans = transactions.filter(trans => trans.amount >= 0)
     const expensesTrans = transactions.filter(trans => trans.amount < 0)
 

@@ -81,6 +81,7 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
   const { data: dataSession } = useCustomSession()
   const { fetchPetition } = useFetch()
   const { showToast } = useCustomToast()
+
   const fetchFilteredTransactions = async (url: string) => {
     const extraHeaders = {
       Authorization: `Bearer ${dataSession?.accessToken || ''}`
@@ -144,6 +145,7 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
   }
 
   useEffect(() => {
+    console.log('CHECK useeffect')
     void handleFiltering()
   }, [transactionStartDate, transactionEndDate, transFilteredType])
 

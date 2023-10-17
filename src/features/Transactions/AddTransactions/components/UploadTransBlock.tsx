@@ -10,7 +10,7 @@ import { FilePond } from 'react-filepond'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { FilePondFile, FilePondInitialFile } from 'filepond'
 import { useCustomToast } from '@/hooks'
-import { CategoryI, ResponseTransactionI, TransactionObjI } from '@/interfaces'
+import { CategoryI, ResponseTransactionBulkI, TransactionObjI } from '@/interfaces'
 import { Form, Formik, FormikHelpers } from 'formik'
 import { URL_API, errorMessages } from '@/utils/const'
 import { useFetch } from '@/hooks/useFetch'
@@ -19,9 +19,9 @@ import { ResponseFile } from '../interfaces/ResponseFile'
 import { TransactionBulk } from '../interfaces/TransactionBulk'
 import { BulkTransTable } from './BulkTransTable'
 
-import 'filepond/dist/filepond.min.css'
 import { BulkTransTableHeader } from './BulkTransTableHeader'
 import { parseToBackendDate } from '../utils/parseToBackendDate'
+import 'filepond/dist/filepond.min.css'
 
 type CatValuesI = {
   name: string
@@ -132,7 +132,7 @@ export const UploadTransBlock: FC<Props> = ({ categoriesArray, setIsManualTransE
     const extraHeaders = {
       Authorization: `Bearer ${dataSession?.accessToken || ''}`
     }
-    const addTransaction = await fetchPetition<ResponseTransactionI>(
+    const addTransResponse = await fetchPetition<ResponseTransactionBulkI>(
       URL_POST_TRANSACTION,
       {
         method: 'POST',
@@ -140,7 +140,13 @@ export const UploadTransBlock: FC<Props> = ({ categoriesArray, setIsManualTransE
       },
       extraHeaders
     )
-    console.log('response', addTransaction)
+    console.log('response', addTransResponse)
+    // TODO: if its okay, show a toast with the number of insertedTransactions
+    // and redirect to the transactions/profile page
+    // (adding some seconds maybe before redirecting?)
+
+    // TODO: create seeders to delete all the trans, categories
+    // and also to populate it with the common categories
 
     resetFormState()
     // TODO: Redirect to the transactions page!
