@@ -67,10 +67,13 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
     transResponse.transactions ?? []
   )
   const { parseChartData } = useTransactionsChartData()
-  const { transactionsChartData, highestAmount } = parseChartData(transResponse.transactions ?? [])
+  const [transFilteredType, setTransFilteredType] = useState<string>(DROPDOWN_OPTIONS[0])
+  const { transactionsChartData, highestAmount } = parseChartData({
+    transactions: transResponse.transactions ?? [],
+    transFilterType: transFilteredType
+  })
   const [transactionsChart, setTransactionsChart] = useState<LineChartData>(transactionsChartData)
   const [highestChartNumber, setHighestChartNumber] = useState(highestAmount)
-  const [transFilteredType, setTransFilteredType] = useState<string>(DROPDOWN_OPTIONS[0])
   const [isFilteringData, setIsFilteringData] = useState(true)
   const [isFilteringTransList, setIsFilteringTransList] = useState(false)
   const [filteredTransList, setFilteredTransList] = useState<TransactionObjBack[] | undefined>(
@@ -119,7 +122,10 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
 
       if (transFiltered.ok && transFiltered.transactions && transFiltered.transactions.length > 0) {
         const { transactionsChartData: transChartData, highestAmount: highestChartData } =
-          parseChartData(transFiltered.transactions)
+          parseChartData({
+            transactions: transFiltered.transactions,
+            transFilterType: transFilteredType
+          })
         setTransactionsChart(transChartData)
         setHighestChartNumber(highestChartData)
         setTransResponseRaw(transFiltered.transactions)

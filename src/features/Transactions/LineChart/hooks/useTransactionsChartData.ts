@@ -13,18 +13,21 @@ type GenerateDatasetParams = {
   label: string
 }
 
+type Params = {
+  transactions: TransactionObjBack[]
+  transFilterType: string // 'All transactions', 'Incomes', 'Expenses'
+}
+
 const RED_COLOR = '#e00000'
 
 export const useTransactionsChartData = () => {
   const { dateFormatSelected } = useDateFormat()
 
-  const parseChartData = (transactions: TransactionObjBack[]) => {
+  const parseChartData = ({ transactions, transFilterType }: Params) => {
     // TODO: Check the length of datesInterval since the user could ask
     // for a long period of time, but it doesnt have much data.
     // In case that it has several dates and in different months (min and max date)
     // display a monthly view instead of daily
-    // TODO: Accept a param to know if its parsing expenses/incs or boths. DO NOT DISPLAY
-    // THE OTHER LINE IF ITS expenses or incomes.
     // TODO: In case that its an income or expense, should display the stacked data of
     // the categories!
     if (transactions.length === 0) {
@@ -74,7 +77,10 @@ export const useTransactionsChartData = () => {
 
     const transactionsChartData: LineChartData = {
       labels: datesInterval.map(date => format(new Date(date), dateFormatSelected)),
-      datasets: [expensesDataset, incomesDataset]
+      datasets: [
+        ...(transFilterType !== 'Incomes' ? [expensesDataset] : []),
+        ...(transFilterType !== 'Expenses' ? [incomesDataset] : [])
+      ]
     }
 
     return { transactionsChartData, highestAmount }
