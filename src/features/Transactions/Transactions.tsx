@@ -189,7 +189,6 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
           transactionStartDate={transactionStartDate}
           transactionEndDate={transactionEndDate}
           setFilteredTransList={setFilteredTransList}
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
           resetPagination={resetPagination}
         />
         <div className={`border rounded-lg ${TABLE_BORDER_COLOR}`}>
