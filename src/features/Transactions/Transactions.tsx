@@ -9,7 +9,7 @@ import { CardContainer } from '@/components/styles/CardContainer'
 import { usePersistData } from '@/hooks/usePersistData'
 import { useFetch } from '@/hooks/useFetch'
 import { useCustomSession } from '@/hooks/useCustomSession'
-import { format } from 'date-fns'
+import { format, sub } from 'date-fns'
 import { URL_API, dateFormat, errorMessages } from '@/utils/const'
 import { useCustomToast } from '@/hooks'
 import { TransactionList } from './TransactionList'
@@ -70,7 +70,15 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
   const [transFilteredType, setTransFilteredType] = useState<string>(DROPDOWN_OPTIONS[0])
   const { transactionsChartData, highestAmount } = parseChartData({
     transactions: transResponse.transactions ?? [],
-    transFilterType: transFilteredType
+    transFilterType: transFilteredType,
+    periodInterval: {
+      start: transactionStartDate
+        ? format(new Date(transactionStartDate), dateFormat.ISO)
+        : format(sub(new Date(), { days: 30 }), dateFormat.ISO),
+      end: transactionEndDate
+        ? format(new Date(transactionEndDate), dateFormat.ISO)
+        : format(new Date(), dateFormat.ISO)
+    }
   })
   const [transactionsChart, setTransactionsChart] = useState<LineChartData>(transactionsChartData)
   const [highestChartNumber, setHighestChartNumber] = useState(highestAmount)
@@ -124,7 +132,8 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
         const { transactionsChartData: transChartData, highestAmount: highestChartData } =
           parseChartData({
             transactions: transFiltered.transactions,
-            transFilterType: transFilteredType
+            transFilterType: transFilteredType,
+            periodInterval: { start: formatedStartDate, end: formatedEndDate }
           })
         setTransactionsChart(transChartData)
         setHighestChartNumber(highestChartData)

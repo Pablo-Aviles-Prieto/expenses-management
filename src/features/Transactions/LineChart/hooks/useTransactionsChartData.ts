@@ -5,7 +5,6 @@ import { dateFormat } from '@/utils/const'
 import { format } from 'date-fns'
 import { useDateFormat } from '@/hooks/useDateFormat'
 import { getDaysOfInterval } from '../utils/getDaysOfInterval'
-import { getMinMaxDates } from '../utils/getMinMaxDates'
 import { Dataset, LineChartData } from '../interfaces'
 
 type GenerateDatasetParams = {
@@ -15,6 +14,7 @@ type GenerateDatasetParams = {
 
 type Params = {
   transactions: TransactionObjBack[]
+  periodInterval: { start: string; end: string }
   transFilterType: string // 'All transactions', 'Incomes', 'Expenses'
 }
 
@@ -23,7 +23,7 @@ const RED_COLOR = '#e00000'
 export const useTransactionsChartData = () => {
   const { dateFormatSelected } = useDateFormat()
 
-  const parseChartData = ({ transactions, transFilterType }: Params) => {
+  const parseChartData = ({ transactions, periodInterval, transFilterType }: Params) => {
     // TODO: Check the length of datesInterval since the user could ask
     // for a long period of time, but it doesnt have much data.
     // In case that it has several dates and in different months (min and max date)
@@ -43,14 +43,9 @@ export const useTransactionsChartData = () => {
     const incomesTrans = transactions.filter(trans => trans.amount >= 0)
     const expensesTrans = transactions.filter(trans => trans.amount < 0)
 
-    const { minDate, maxDate } = getMinMaxDates({
-      transactions,
-      stringFormatReturned: dateFormat.ISO
-    })
-
     const datesInterval = getDaysOfInterval({
-      startDate: minDate,
-      endDate: maxDate,
+      startDate: periodInterval.start,
+      endDate: periodInterval.end,
       stringFormatReturned: dateFormat.ISO
     })
 
