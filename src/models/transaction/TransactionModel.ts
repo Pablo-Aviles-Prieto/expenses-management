@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { Schema, model, Document, ObjectId, Model } from 'mongoose'
-import { modelExists } from '@/utils/checkModelExist'
+import { modelExists } from '../../utils/checkModelExist' // imported like this to make the seeder work
 
 export interface ITransaction extends Document {
   _id: ObjectId

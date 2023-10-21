@@ -9,7 +9,7 @@ import { CardContainer } from '@/components/styles/CardContainer'
 import { usePersistData } from '@/hooks/usePersistData'
 import { useFetch } from '@/hooks/useFetch'
 import { useCustomSession } from '@/hooks/useCustomSession'
-import { format } from 'date-fns'
+import { format, sub } from 'date-fns'
 import { URL_API, dateFormat, errorMessages } from '@/utils/const'
 import { useCustomToast } from '@/hooks'
 import { TransactionList } from './TransactionList'
@@ -67,10 +67,21 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
     transResponse.transactions ?? []
   )
   const { parseChartData } = useTransactionsChartData()
-  const { transactionsChartData, highestAmount } = parseChartData(transResponse.transactions ?? [])
+  const [transFilteredType, setTransFilteredType] = useState<string>(DROPDOWN_OPTIONS[0])
+  const { transactionsChartData, highestAmount } = parseChartData({
+    transactions: transResponse.transactions ?? [],
+    transFilterType: transFilteredType,
+    periodInterval: {
+      start: transactionStartDate
+        ? format(new Date(transactionStartDate), dateFormat.ISO)
+        : format(sub(new Date(), { days: 30 }), dateFormat.ISO),
+      end: transactionEndDate
+        ? format(new Date(transactionEndDate), dateFormat.ISO)
+        : format(new Date(), dateFormat.ISO)
+    }
+  })
   const [transactionsChart, setTransactionsChart] = useState<LineChartData>(transactionsChartData)
   const [highestChartNumber, setHighestChartNumber] = useState(highestAmount)
-  const [transFilteredType, setTransFilteredType] = useState<string>(DROPDOWN_OPTIONS[0])
   const [isFilteringData, setIsFilteringData] = useState(true)
   const [isFilteringTransList, setIsFilteringTransList] = useState(false)
   const [filteredTransList, setFilteredTransList] = useState<TransactionObjBack[] | undefined>(
@@ -81,6 +92,7 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
   const { data: dataSession } = useCustomSession()
   const { fetchPetition } = useFetch()
   const { showToast } = useCustomToast()
+
   const fetchFilteredTransactions = async (url: string) => {
     const extraHeaders = {
       Authorization: `Bearer ${dataSession?.accessToken || ''}`
@@ -118,7 +130,11 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
 
       if (transFiltered.ok && transFiltered.transactions && transFiltered.transactions.length > 0) {
         const { transactionsChartData: transChartData, highestAmount: highestChartData } =
-          parseChartData(transFiltered.transactions)
+          parseChartData({
+            transactions: transFiltered.transactions,
+            transFilterType: transFilteredType,
+            periodInterval: { start: formatedStartDate, end: formatedEndDate }
+          })
         setTransactionsChart(transChartData)
         setHighestChartNumber(highestChartData)
         setTransResponseRaw(transFiltered.transactions)
@@ -188,7 +204,6 @@ export const Transactions: FC<PropsI> = ({ transResponse }) => {
           transactionStartDate={transactionStartDate}
           transactionEndDate={transactionEndDate}
           setFilteredTransList={setFilteredTransList}
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
           resetPagination={resetPagination}
         />
         <div className={`border rounded-lg ${TABLE_BORDER_COLOR}`}>

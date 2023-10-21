@@ -125,11 +125,10 @@ const LineChart: FC<PropsI> = ({
       },
       scales: {
         y: {
-          padding: 20,
           min: 0,
           max: highestChartNumber * 1.1,
           ticks: {
-            stepSize: 30,
+            padding: 10,
             color: CHART_LABEL_COLORS,
             callback: (value: any) => Math.round(value).toLocaleString('es-ES')
           },
@@ -141,14 +140,10 @@ const LineChart: FC<PropsI> = ({
         },
         x: {
           ticks: {
-            maxRotation: 45,
-            minRotation: 45,
             beginAtZero: true,
-            setpSize: 5,
-            padding: 15,
+            padding: 5,
             color: CHART_LABEL_COLORS,
             indexAxis: 'x',
-            autoSkip: false,
             font: { size: 13 }
           },
           grid: {

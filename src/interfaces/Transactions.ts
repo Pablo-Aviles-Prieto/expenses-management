@@ -26,3 +26,10 @@ export interface ResponseTransactionI {
   insertedTransactions?: TransactionObjBack[]
   updatedUser?: UserI[]
 }
+
+export interface ResponseTransactionBulkI {
+  ok: boolean
+  error?: string
+  insertedTransactions?: number
+  updatedUser?: UserI[]
+}

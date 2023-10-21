@@ -7,10 +7,12 @@
 'use client'
 
 import { FilePond } from 'react-filepond'
+import { TypeOptions } from 'react-toastify'
+import { useRouter } from 'next/navigation'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { FilePondFile, FilePondInitialFile } from 'filepond'
 import { useCustomToast } from '@/hooks'
-import { CategoryI, ResponseTransactionI, TransactionObjI } from '@/interfaces'
+import { CategoryI, ResponseTransactionBulkI, TransactionObjI } from '@/interfaces'
 import { Form, Formik, FormikHelpers } from 'formik'
 import { URL_API, errorMessages } from '@/utils/const'
 import { useFetch } from '@/hooks/useFetch'
@@ -19,9 +21,9 @@ import { ResponseFile } from '../interfaces/ResponseFile'
 import { TransactionBulk } from '../interfaces/TransactionBulk'
 import { BulkTransTable } from './BulkTransTable'
 
-import 'filepond/dist/filepond.min.css'
 import { BulkTransTableHeader } from './BulkTransTableHeader'
 import { parseToBackendDate } from '../utils/parseToBackendDate'
+import 'filepond/dist/filepond.min.css'
 
 type CatValuesI = {
   name: string
@@ -56,6 +58,7 @@ export const UploadTransBlock: FC<Props> = ({ categoriesArray, setIsManualTransE
   const { showToast } = useCustomToast()
   const { fetchPetition } = useFetch()
   const { data: dataSession } = useCustomSession()
+  const router = useRouter()
 
   useEffect(() => {
     setIsReady(true)
@@ -107,6 +110,8 @@ export const UploadTransBlock: FC<Props> = ({ categoriesArray, setIsManualTransE
       helpers.setSubmitting(false)
     }
 
+    const displayToast = (msg: string, type: TypeOptions) => showToast({ msg, options: { type } })
+
     try {
       transactions = bulkTransactions.map((trans, i) => {
         const categories =
@@ -126,24 +131,42 @@ export const UploadTransBlock: FC<Props> = ({ categoriesArray, setIsManualTransE
         msg: errorMessages.dateFormatCSV,
         options: { type: 'error' }
       })
+      displayToast(errorMessages.dateFormatCSV, 'error')
       resetFormState()
       return
     }
-    const extraHeaders = {
-      Authorization: `Bearer ${dataSession?.accessToken || ''}`
-    }
-    const addTransaction = await fetchPetition<ResponseTransactionI>(
-      URL_POST_TRANSACTION,
-      {
-        method: 'POST',
-        body: JSON.stringify({ transactions })
-      },
-      extraHeaders
-    )
-    console.log('response', addTransaction)
 
-    resetFormState()
-    // TODO: Redirect to the transactions page!
+    let transactionOk
+    try {
+      const extraHeaders = {
+        Authorization: `Bearer ${dataSession?.accessToken || ''}`
+      }
+      const addTransResponse = await fetchPetition<ResponseTransactionBulkI>(
+        URL_POST_TRANSACTION,
+        {
+          method: 'POST',
+          body: JSON.stringify({ transactions })
+        },
+        extraHeaders
+      )
+      transactionOk = addTransResponse.ok
+      if (addTransResponse.ok) {
+        displayToast(
+          `${addTransResponse?.insertedTransactions ?? 0} transactions succesfully saved`,
+          'success'
+        )
+      } else if (addTransResponse.error) {
+        displayToast(addTransResponse.error, 'error')
+      }
+    } catch (err) {
+      const errorString = err instanceof Error ? err.message : errorMessages.generic
+      displayToast(errorString, 'error')
+    } finally {
+      resetFormState()
+      if (dataSession?.user?.id && transactionOk) {
+        router.push(`/transactions`)
+      }
+    }
   }
 
   return (

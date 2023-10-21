@@ -67,7 +67,6 @@ const SignIn: FC = () => {
         type: 'error'
       })
       setSignInLoading(false)
-      console.log('Error during sign-in:', error)
     }
   }
 
