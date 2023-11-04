@@ -1,4 +1,4 @@
-import { genSalt } from 'bcrypt'
+import { genSalt } from 'bcryptjs'
 
 const { BCRYPT_SALT } = process.env
 

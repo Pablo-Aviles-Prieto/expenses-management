@@ -17,9 +17,7 @@
   "dependencies": {
     "@auth/mongodb-adapter": "^2.0.0",
     "@headlessui/react": "^1.7.14",
-    "@types/react": "18.0.29",
-    "@types/react-dom": "18.0.11",
-    "bcrypt": "^5.1.0",
+    "bcryptjs": "^2.4.3",
     "chart.js": "^4.4.0",
     "csv-parser": "^3.0.0",
     "date-fns": "^2.29.3",
@@ -43,7 +41,9 @@
     "zustand": "^4.4.1"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.0",
+    "@types/bcryptjs": "^2.4.5",
+    "@types/react": "18.0.29",
+    "@types/react-dom": "18.0.11",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/node": "^18.15.11",
     "@types/react-datepicker": "^4.10.0",

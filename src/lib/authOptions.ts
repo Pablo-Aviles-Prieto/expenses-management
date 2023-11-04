@@ -7,7 +7,7 @@ import { MongoClient } from 'mongodb'
 import { ICategories, IUser } from '@/models'
 import { JWT, encode } from 'next-auth/jwt'
 import { CustomSessionI } from '@/interfaces'
-import { compare } from 'bcrypt'
+import { compare } from 'bcryptjs'
 import { isAuthProvider } from '@/utils/isAuthProvider'
 
 export const authOptions: NextAuthOptions = {

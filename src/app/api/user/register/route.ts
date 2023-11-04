@@ -1,4 +1,4 @@
-import { hash } from 'bcrypt'
+import { hash } from 'bcryptjs'
 import connectDb from '@/config/mongooseDB'
 import UserModel from '@/models/user/UsersModel'
 import { bcryptSalt } from '@/utils/genBcryptSalt'
